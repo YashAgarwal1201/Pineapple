@@ -1,10 +1,15 @@
-@import 'primereact/resources/primereact.min.css';
-@import 'primeicons/primeicons.css';
-@import 'primereact/resources/themes/tailwind-light/theme.css';
+@import "primereact/resources/primereact.min.css";
+@import "primeicons/primeicons.css";
+@import "primereact/resources/themes/tailwind-light/theme.css";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.p-button:hover {
+  background-color: theme("colors.bud-green") !important;
+  color: theme("colors.naples-yellow") !important;
+}
 
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
