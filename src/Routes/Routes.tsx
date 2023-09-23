@@ -25,7 +25,7 @@
 
 
 import React, { lazy, memo } from "react";
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route, Outlet, BrowserRouter } from "react-router-dom";
 import { App } from "./../App";
 
 const UploadPage = lazy(() => import("./../Pages/UploadData/UploadData"));
@@ -33,12 +33,14 @@ const PageNotFound = lazy(() => import("./../Pages/PageNotFound/PageNotFound"));
 
 function RoutesComponent() {
   return (
+    <BrowserRouter>
     <Routes>
       <Route path="/" element={<Outlet />}>
         <Route path="/" element={<UploadPage />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
+    </BrowserRouter>
   );
 }
 

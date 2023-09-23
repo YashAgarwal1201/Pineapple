@@ -4,7 +4,7 @@ import { Button } from "primereact/button";
 
 const UploadData = () => {
   return (
-    <div className="h-screen bg-ochre">
+    <div className="w-screen h-screen relative flex flex-col bg-ochre">
       <Header />
 
       <div className="h-full p-3 m-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md">

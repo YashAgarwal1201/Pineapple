@@ -20,19 +20,17 @@
 // export default App;
 
 import React, { useRef } from "react";
-import { Outlet } from "react-router-dom";
+// import { Outlet } from "react-router-dom";
 import { Toast } from "primereact/toast";
-import RoutesComponent from "./Routes/Routes"; // Update the import
-import UploadData from "./Pages/UploadData/UploadData";
+import RoutesComponent from "./Routes/Routes";
 
 export function App() {
   const myToast = useRef(null);
 
   return (
-    <div className="w-full h-full">
+    <div className="w-screen h-screen">
       <Toast ref={myToast} />
-      <UploadData />
-      {/* <RoutesComponent /> */}
+      <RoutesComponent />
     </div>
   );
 }
