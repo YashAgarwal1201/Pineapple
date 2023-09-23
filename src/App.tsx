@@ -1,15 +1,36 @@
-import { useState } from "react";
-import Header from "./Components/Header/Header";
-import UploadData from "./Pages/UploadData.tsx/UploadData";
-// import './App.css'
+// import React, { useState, useRef } from "react";
+// import { Outlet } from "react-router-dom";
+// import { Toast } from "primereact/toast";
+// // import './App.css'
+// import RoutesComponent from "./Routes/Routes";
 
-function App() {
-  const [count, setCount] = useState(0);
+// export function App() {
+//   const myToast = useRef<Toast>(null);
+
+//   return (
+//     <div className="bg-red-500">
+//       <RoutesComponent>
+//         <Toast ref={myToast} />
+//         <Outlet />
+//       </RoutesComponent>
+//     </div>
+//   );
+// }
+
+// export default App;
+
+import React, { useRef } from "react";
+// import { Outlet } from "react-router-dom";
+import { Toast } from "primereact/toast";
+import RoutesComponent from "./Routes/Routes";
+
+export function App() {
+  const myToast = useRef(null);
 
   return (
-    <div className="bg-red-500">
-      <Header />
-      <UploadData />
+    <div className="w-screen h-screen">
+      <Toast ref={myToast} />
+      <RoutesComponent />
     </div>
   );
 }
