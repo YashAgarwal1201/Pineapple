@@ -1,8 +1,20 @@
-import React from "react";
+import React, { startTransition } from "react";
 import Header from "../../Components/Header/Header";
 import { Button } from "primereact/button";
+import { useNavigate } from "react-router-dom";
 
 const UploadData = () => {
+  const navigate = useNavigate();
+  const removeHandeler = () => {
+    //
+  };
+
+  const uploadHandeler = () => {
+    //
+    startTransition(() => {
+        navigate('/draw')
+    })
+  };
   return (
     <div className="w-screen h-screen relative flex flex-col bg-ochre">
       <Header />
@@ -21,12 +33,14 @@ const UploadData = () => {
             title="Click to remove the selected image"
             // className="h-full text-metallic-brown bg-ochre border-0"
             className="h-full text-naples-yellow bg-metallic-brown border-naples-yellow"
+            onClick={() => removeHandeler()}
           />
           <Button
             icon="pi pi-upload"
             label="Upload & Continue"
             title="Click to upload and continue"
             className="h-full text-metallic-brown bg-naples-yellow border-naples-yellow"
+            onClick={() => uploadHandeler()}
           />
         </div>
       </div>
