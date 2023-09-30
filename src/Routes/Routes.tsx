@@ -23,23 +23,24 @@
 
 // export default RoutesComponent;
 
-
 import React, { lazy, memo } from "react";
 import { Routes, Route, Outlet, BrowserRouter } from "react-router-dom";
 import { App } from "./../App";
 
 const UploadPage = lazy(() => import("./../Pages/UploadData/UploadData"));
+const DrawComponent = lazy(() => import("./../Pages/DrawPolygon/DrawPolygon"));
 const PageNotFound = lazy(() => import("./../Pages/PageNotFound/PageNotFound"));
 
 function RoutesComponent() {
   return (
     <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Outlet />}>
-        <Route path="/" element={<UploadPage />} />
-        <Route path="*" element={<PageNotFound />} />
-      </Route>
-    </Routes>
+      <Routes>
+        <Route path="/" element={<Outlet />}>
+          <Route path="/" element={<UploadPage />} />
+          <Route path="/draw" element={<DrawComponent />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 }
