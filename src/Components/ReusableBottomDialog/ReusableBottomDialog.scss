@@ -1,0 +1,19 @@
+.reusableBottomDialog {
+    .p-dialog-header {
+      height: 100%;
+      display: flex;
+      // margin: auto;
+      padding: 1.5rem 1.5rem 0 1.5rem;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #f8f2f7;
+      .p-dialog-header-close {
+        color: #000e1a;
+        border: 0px;
+      }
+    }
+    .p-dialog-content {
+      background-color: #f8f2f7;
+    }
+  }
+  

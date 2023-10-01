@@ -23,7 +23,7 @@ const Header = () => {
           });
         }}
       />
-      <h1 className="text-naples-yellow">PINEAPPLE</h1>
+      <h1 className="text-2xl text-naples-yellow font-medium">PINEAPPLE</h1>
       <Button
       disabled={true}
         icon="pi pi-question"
