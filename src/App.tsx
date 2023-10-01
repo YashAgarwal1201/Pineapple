@@ -19,14 +19,21 @@
 
 // export default App;
 
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 // import { Outlet } from "react-router-dom";
 import { Toast } from "primereact/toast";
 import RoutesComponent from "./Routes/Routes";
+import { useAppContext } from "./AppContext/AppContext";
 
 export function App() {
   const myToast = useRef(null);
 
+  const { state } = useAppContext();
+
+  useEffect(() => {
+    sessionStorage.setItem("pineappleState", JSON.stringify(state));
+  }, [state]);
+  
   return (
     <div className="w-screen h-screen">
       <Toast ref={myToast} />

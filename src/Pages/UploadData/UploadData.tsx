@@ -2,19 +2,24 @@ import React, { startTransition } from "react";
 import Header from "../../Components/Header/Header";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../AppContext/AppContext";
 
 const UploadData = () => {
   const navigate = useNavigate();
+  const {state, showToast} = useAppContext()
+
   const removeHandeler = () => {
     //
   };
 
   const uploadHandeler = () => {
     //
+    showToast('success', 'Success', 'Data saved')
     startTransition(() => {
         navigate('/draw')
     })
   };
+
   return (
     <div className="w-screen h-screen relative flex flex-col bg-ochre">
       <Header />
@@ -26,20 +31,20 @@ const UploadData = () => {
             <span className="text-lg text-metallic-brown font-medium">Upload File</span>
           </div>
         </div>
-        <div className="w-full h-10 flex justify-center items-center gap-x-5">
+        <div className="w-full flex flex-col sm:flex-row justify-center items-center gap-x-5 gap-y-3">
           <Button
             icon="pi pi-trash"
             label="Remove Image"
             title="Click to remove the selected image"
             // className="h-full text-metallic-brown bg-ochre border-0"
-            className="h-full text-naples-yellow bg-metallic-brown border-naples-yellow"
+            className="h-10 text-naples-yellow bg-metallic-brown border-2 border-naples-yellow"
             onClick={() => removeHandeler()}
           />
           <Button
             icon="pi pi-upload"
             label="Upload & Continue"
             title="Click to upload and continue"
-            className="h-full text-metallic-brown bg-naples-yellow border-naples-yellow"
+            className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
             onClick={() => uploadHandeler()}
           />
         </div>
