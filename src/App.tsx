@@ -26,14 +26,21 @@ import RoutesComponent from "./Routes/Routes";
 import { useAppContext } from "./AppContext/AppContext";
 
 export function App() {
-  const myToast = useRef(null);
+  const myToast = useRef<Toast>(null);
 
-  const { state } = useAppContext();
+  const { state, dispatch } = useAppContext();
+
+  useEffect(() => {
+    dispatch?.({
+      type: 'SET_TOAST_REF',
+      payload: myToast.current as Toast,
+    });
+  }, []);
 
   useEffect(() => {
     sessionStorage.setItem("pineappleState", JSON.stringify(state));
   }, [state]);
-  
+
   return (
     <div className="w-screen h-screen">
       <Toast ref={myToast} />

@@ -43,7 +43,7 @@ const PolygonDrawer = () => {
     //     navigate("/");
     //   });
     // }
-    console.log(state?.polygons);
+    // console.log(state?.polygons);
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
 
