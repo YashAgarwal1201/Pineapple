@@ -19,11 +19,11 @@
 
 // export default App;
 
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 // import { Outlet } from "react-router-dom";
 import { Toast } from "primereact/toast";
-import RoutesComponent from "./Routes/Routes";
 import { useAppContext } from "./AppContext/AppContext";
+import { Outlet } from "react-router-dom";
 
 export function App() {
   const myToast = useRef<Toast>(null);
@@ -44,7 +44,7 @@ export function App() {
   return (
     <div className="w-screen h-[100dvh]">
       <Toast ref={myToast} />
-      <RoutesComponent />
+      <Outlet />
     </div>
   );
 }

@@ -23,28 +23,57 @@
 
 // export default RoutesComponent;
 
-import React, { lazy, memo } from "react";
-import { Routes, Route, Outlet, BrowserRouter } from "react-router-dom";
-import { App } from "./../App";
+// import React, { lazy, memo } from "react";
+// import { Routes, Route, Outlet, BrowserRouter } from "react-router-dom";
+// import { App } from "./../App";
 
+// const UploadPage = lazy(() => import("./../Pages/UploadData/UploadData"));
+// const DrawComponent = lazy(() => import("./../Pages/DrawPolygon/DrawPolygon"));
+// const SuccessPage = lazy(() => import('./../Pages/SuccessPage/SuccessPage'))
+// const PageNotFound = lazy(() => import("./../Pages/PageNotFound/PageNotFound"));
+
+// function RoutesComponent() {
+//   return (
+//     <BrowserRouter>
+//       <Routes>
+//         <Route path="/" element={<Outlet />}>
+//           <Route path="/" element={<UploadPage />} />
+//           <Route path="/draw" element={<DrawComponent />} />
+//           <Route path='/success' element={<SuccessPage />} />
+//           <Route path="*" element={<PageNotFound />} />
+//         </Route>
+//       </Routes>
+//     </BrowserRouter>
+//   );
+// }
+
+// export default memo(RoutesComponent);
+
+import { lazy } from "react";
+
+import {
+  Route,
+  createBrowserRouter,
+  createRoutesFromElements,
+} from "react-router-dom";
+import App from "./../App";
+
+// Lazy Loaded Components
 const UploadPage = lazy(() => import("./../Pages/UploadData/UploadData"));
+
 const DrawComponent = lazy(() => import("./../Pages/DrawPolygon/DrawPolygon"));
-const SuccessPage = lazy(() => import('./../Pages/SuccessPage/SuccessPage'))
-const PageNotFound = lazy(() => import("./../Pages/PageNotFound/PageNotFound"));
+const SuccessPage = lazy(() => import("../Pages/SuccessPage/SuccessPage"));
+const PageNotFound = lazy(() => import("../Pages/PageNotFound/PageNotFound"));
 
-function RoutesComponent() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Outlet />}>
-          <Route path="/" element={<UploadPage />} />
-          <Route path="/draw" element={<DrawComponent />} />
-          <Route path='/success' element={<SuccessPage />} />
-          <Route path="*" element={<PageNotFound />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  );
-}
+const Router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<App />}>
+      <Route path="/" element={<UploadPage />} />
+      <Route path="*" element={<PageNotFound />} />
+      <Route path="/draw" element={<DrawComponent />} />
+      <Route path="/success" element={<SuccessPage />} />
+    </Route>
+  )
+);
 
-export default memo(RoutesComponent);
+export default Router;
