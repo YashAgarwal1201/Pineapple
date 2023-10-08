@@ -32,7 +32,7 @@ export function App() {
 
   useEffect(() => {
     dispatch?.({
-      type: 'SET_TOAST_REF',
+      type: "SET_TOAST_REF",
       payload: myToast.current as Toast,
     });
   }, []);
@@ -42,7 +42,7 @@ export function App() {
   }, [state]);
 
   return (
-    <div className="w-screen h-screen">
+    <div className="w-screen h-[100dvh]">
       <Toast ref={myToast} />
       <RoutesComponent />
     </div>
