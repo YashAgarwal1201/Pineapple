@@ -5,7 +5,7 @@ import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext/AppContext";
 import { generateRandomColor } from "../../Services/functionServices";
-import startWarsWallpaper from "./../../assets/images/starWarsWallpaper.jpg";
+// import startWarsWallpaper from "./../../assets/images/starWarsWallpaper.jpg";
 import "./PolygonDrawer.scss";
 
 interface Polygon {
@@ -36,6 +36,7 @@ const PolygonDrawer = () => {
     { x: number; y: number }[]
   >([]);
   const [addNew, setAddNew] = useState(false);
+  const [scaleFactor, setScaleFactor] = useState<number>(0);
 
   useEffect(() => {
     // if (state?.imageSelected?.url?.length < 1) {
@@ -44,23 +45,32 @@ const PolygonDrawer = () => {
     //   });
     // }
     // console.log(state?.polygons);
-    const canvas = canvasRef.current;
+    const canvas = canvasRef.current as HTMLCanvasElement;
     const ctx = canvas?.getContext("2d");
 
     if (ctx) {
       ctx.clearRect(0, 0, canvas?.width as number, canvas?.height as number);
 
       const img = new Image();
-      img.src = startWarsWallpaper; //state?.imageSelected?.url; //images;
+      img.src = state?.imageSelected?.url; //images;
 
       img.onload = () => {
-        ctx.drawImage(
-          img,
-          0,
-          0,
-          canvas?.width as number,
-          canvas?.height as number
-        );
+        const imgWidth = img.width;
+        const imgHeight = img.height;
+        const canvasWidth = canvas.width; // Get the current canvas width
+        const canvasHeight = (imgHeight / imgWidth) * canvasWidth; // Calculate canvas height to maintain aspect ratio
+        // console.log(canvasHeight, canvasWidth);
+        canvas.width = canvasWidth; // Set canvas width
+        canvas.height = canvasHeight; // Set canvas height
+
+        const widthScaleFactor = imgWidth / canvasWidth; //canvasWidth / imgWidth;
+        // const heightScaleFactor = canvasHeight / imgHeight;
+        setScaleFactor(widthScaleFactor);
+        // console.log(widthScaleFactor, heightScaleFactor);
+
+        // Clear canvas and draw the image with zoom
+        ctx?.clearRect(0, 0, canvasWidth, canvasHeight);
+        ctx?.drawImage(img, 0, 0, canvasWidth, canvasHeight);
 
         // polygons.forEach((polygon) => {
         state.polygons?.forEach((polygon) => {

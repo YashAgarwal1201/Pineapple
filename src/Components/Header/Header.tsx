@@ -10,24 +10,25 @@ const Header = () => {
   return (
     <div className="w-full p-4 flex justify-between items-center bg-metallic-brown rounded-b-2xl shadow-md">
       <Button
-        disabled={pathname === "/" || pathname.includes("/success")}
+        disabled={pathname === "/"}
         icon="pi pi-angle-left"
         className={`${
-          pathname === '/' || pathname.includes('/success')
-            ? 'text-transparent bg-transparent'
-            : 'text-naples-yellow bg-fern-green'
+          pathname === "/"
+            ? "text-transparent bg-transparent"
+            : "text-naples-yellow bg-fern-green"
         } border-0 rounded-full`}
         onClick={() => {
           startTransition(() => {
-            navigate('/')
+            navigate("/");
           });
         }}
       />
       <h1 className="text-2xl text-naples-yellow font-medium">PINEAPPLE</h1>
       <Button
-      disabled={true}
+        disabled={true}
         icon="pi pi-question"
-        className="bg-fern-green text-naples-yellow border-0 rounded-full"
+        // className="bg-fern-green text-naples-yellow border-0 rounded-full"
+        className={"text-transparent bg-transparent border-0 rounded-full"}
       />
     </div>
   );
