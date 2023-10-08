@@ -29,6 +29,7 @@ import { App } from "./../App";
 
 const UploadPage = lazy(() => import("./../Pages/UploadData/UploadData"));
 const DrawComponent = lazy(() => import("./../Pages/DrawPolygon/DrawPolygon"));
+const SuccessPage = lazy(() => import('./../Pages/SuccessPage/SuccessPage'))
 const PageNotFound = lazy(() => import("./../Pages/PageNotFound/PageNotFound"));
 
 function RoutesComponent() {
@@ -38,6 +39,7 @@ function RoutesComponent() {
         <Route path="/" element={<Outlet />}>
           <Route path="/" element={<UploadPage />} />
           <Route path="/draw" element={<DrawComponent />} />
+          <Route path='/success' element={<SuccessPage />} />
           <Route path="*" element={<PageNotFound />} />
         </Route>
       </Routes>
