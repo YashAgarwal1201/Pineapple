@@ -5,7 +5,6 @@ import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext/AppContext";
 import { generateRandomColor } from "../../Services/functionServices";
-// import startWarsWallpaper from "./../../assets/images/starWarsWallpaper.jpg";
 import "./PolygonDrawer.scss";
 
 interface Polygon {
@@ -126,7 +125,7 @@ const PolygonDrawer = () => {
         });
       };
     }
-  }, [state.polygons, clickedPoints]);
+  }, [state.polygons, clickedPoints, state?.imageSelected?.url]);
   // }, [polygons, clickedPoints]);
 
   const handleCanvasClick = (
@@ -226,17 +225,16 @@ const PolygonDrawer = () => {
     />
   )} */}
               <Button
-                //   disabled={
-                //     state?.imageSelected?.url?.length <= 0 ||
-                //     state.polygons?.length < 1 ||
-                //     addNew
-                //   }
+                disabled={
+                  state?.imageSelected?.url?.length <= 0 ||
+                  state.polygons?.length < 1
+                }
                 label="Save & Continue"
                 className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => {
                   // console.log(canvasRef?.current?.getContext("2d"));
                   startTransition(() => {
-                    navigate("/");
+                    navigate("/success");
                   });
                 }}
               />
@@ -264,6 +262,7 @@ const PolygonDrawer = () => {
                   </span>
                   {!addNew && (
                     <Button
+                      disabled={state.imageSelected.url === ""}
                       icon="pi pi-plus"
                       label="Add Annotation"
                       className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
@@ -281,21 +280,20 @@ const PolygonDrawer = () => {
                 </div>
                 <div>
                   {state.polygons?.map((polygon, index) => (
-                    <div
-                      className="flex justify-between items-center text-base text-blue-900"
-                      key={index}
-                    >
+                    <div className="mt-2" key={index}>
                       <Panel
                         className="annotationPanel w-full mb-1"
                         collapsed={true}
                         header={
-                          <div className="w-full h-full">
-                            <span className="text-base sm:text-lg">
+                          <div className="w-full h-full flex justify-between items-center">
+                            <span className="text-base sm:text-lg text-metallic-brown">
                               {polygon?.label}
-                            </span>{" "}
-                            <span className="ml-5 px-5 py-1 text-xs md:text-sm bg-red-200 rounded-3xl">
-                              polygon
                             </span>
+                            <Button
+                              icon="pi pi-trash"
+                              onClick={() => handleDeletePolygon(index)}
+                              className="p-2 text-sm bg-transparent text-metallic-brown border-0 rounded-full"
+                            />
                           </div>
                         }
                         toggleable
@@ -308,11 +306,6 @@ const PolygonDrawer = () => {
                             optionLabel="name"
                             placeholder="Select an Annotation label"
                             className="w-full md:w-14rem"
-                          />
-                          <Button
-                            icon="pi pi-trash"
-                            onClick={() => handleDeletePolygon(index)}
-                            className="p-2 text-sm bg-transparent text-naples-yellow border-0"
                           />
                         </div>
                       </Panel>
@@ -347,14 +340,13 @@ const PolygonDrawer = () => {
           <Button
             disabled={
               state?.imageSelected?.url?.length <= 0 ||
-              state.polygons?.length < 1 ||
-              addNew
+              state.polygons?.length < 1
             }
             label="Save & Continue"
             className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
             onClick={() => {
               startTransition(() => {
-                navigate("/");
+                navigate("/success");
               });
             }}
           />

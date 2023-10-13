@@ -61,11 +61,12 @@ const UploadData = () => {
   };
 
   const saveAndContinueHandeler = () => {
-    //
-    showToast("success", "Success", "Data saved");
-    startTransition(() => {
-      navigate("/draw");
-    });
+    if (state.imageSelected.url !== "") {
+      showToast("success", "Success", "Data saved");
+      startTransition(() => {
+        navigate("/draw");
+      });
+    }
   };
 
   return (
@@ -107,6 +108,7 @@ const UploadData = () => {
         </div>
         <div className="w-full flex flex-col sm:flex-row justify-center items-center gap-x-5 gap-y-3">
           <Button
+            disabled={state.imageSelected.url === ""}
             icon="pi pi-trash"
             label="Remove Image"
             title="Click to remove the selected image"
@@ -115,6 +117,7 @@ const UploadData = () => {
             onClick={() => removeHandeler()}
           />
           <Button
+            disabled={state.imageSelected.url === ""}
             icon="pi pi-check"
             label="Save & Continue"
             title="Click to save and continue"

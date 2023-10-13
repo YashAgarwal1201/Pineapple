@@ -1,4 +1,4 @@
-import React, { startTransition } from "react";
+import { startTransition } from "react";
 import { Button } from "primereact/button";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -18,9 +18,19 @@ const Header = () => {
             : "text-naples-yellow bg-fern-green"
         } border-0 rounded-full`}
         onClick={() => {
-          startTransition(() => {
-            navigate("/");
-          });
+          if (pathname.includes("/draw")) {
+            startTransition(() => {
+              navigate("/");
+            });
+          } else if (pathname.includes("/success")) {
+            startTransition(() => {
+              navigate("/draw");
+            });
+          } else {
+            startTransition(() => {
+              navigate("/");
+            });
+          }
         }}
       />
       <h1 className="text-2xl text-naples-yellow font-medium">PINEAPPLE</h1>
