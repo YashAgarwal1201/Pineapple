@@ -6,13 +6,15 @@ import { useAppContext } from "../../AppContext/AppContext";
 
 const SuccessPage = () => {
   const navigate = useNavigate();
-  const { showToast, setPolygons, dispatch } = useAppContext();
+  const { showToast, setSelectedImage, setPolygons, dispatch } =
+    useAppContext();
 
   const [loader, setLoader] = useState(false);
 
   const clearSessionStorageAndNavigate = async () => {
     try {
       setPolygons([]);
+      setSelectedImage("", "", "");
       dispatch({ type: "SET_CHANGE_ANNOTATION_OPTION", payload: "" });
       dispatch({ type: "SET_APPROVED_IMAGE_URL", payload: "" });
       dispatch({ type: "SET_PROCESSED_IMAGE_URL", payload: "" });
