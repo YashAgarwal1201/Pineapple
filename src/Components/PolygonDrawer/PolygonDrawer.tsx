@@ -262,6 +262,7 @@ const PolygonDrawer = () => {
                   </span>
                   {!addNew && (
                     <Button
+                      disabled={state.imageSelected.url === ""}
                       icon="pi pi-plus"
                       label="Add Annotation"
                       className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
