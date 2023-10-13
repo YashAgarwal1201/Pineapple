@@ -5,7 +5,6 @@ import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext/AppContext";
 import { generateRandomColor } from "../../Services/functionServices";
-// import startWarsWallpaper from "./../../assets/images/starWarsWallpaper.jpg";
 import "./PolygonDrawer.scss";
 
 interface Polygon {
