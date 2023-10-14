@@ -58,6 +58,8 @@ const UploadData = () => {
 
   const removeHandeler = () => {
     //
+    showToast("warn", "Warning", "Image removed");
+    setSelectedImage("", "", "");
   };
 
   const saveAndContinueHandeler = () => {
