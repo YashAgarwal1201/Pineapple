@@ -22,9 +22,13 @@ const Header = () => {
             startTransition(() => {
               navigate("/");
             });
-          } else if (pathname.includes("/success")) {
+          } else if (pathname.includes("/preview")) {
             startTransition(() => {
               navigate("/draw");
+            });
+          } else if (pathname.includes("/success")) {
+            startTransition(() => {
+              navigate("/preview");
             });
           } else {
             startTransition(() => {

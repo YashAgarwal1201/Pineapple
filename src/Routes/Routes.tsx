@@ -60,8 +60,8 @@ import App from "./../App";
 
 // Lazy Loaded Components
 const UploadPage = lazy(() => import("./../Pages/UploadData/UploadData"));
-
 const DrawComponent = lazy(() => import("./../Pages/DrawPolygon/DrawPolygon"));
+const PreviewData = lazy(() => import("./../Pages/PreviewData/PreviewData"));
 const SuccessPage = lazy(() => import("../Pages/SuccessPage/SuccessPage"));
 const PageNotFound = lazy(() => import("../Pages/PageNotFound/PageNotFound"));
 
@@ -71,6 +71,7 @@ const Router = createBrowserRouter(
       <Route path="/" element={<UploadPage />} />
       <Route path="*" element={<PageNotFound />} />
       <Route path="/draw" element={<DrawComponent />} />
+      <Route path="/preview" element={<PreviewData />} />
       <Route path="/success" element={<SuccessPage />} />
     </Route>
   )

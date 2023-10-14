@@ -172,7 +172,8 @@ const PolygonDrawer = () => {
       setAddNew(false);
       showToast("success", "Success", "Polygon added succesfully");
     } else {
-      alert("A polygon must have at least 3 points to be completed.");
+      // alert("A polygon must have at least 3 points to be completed.");
+      showToast('warn', 'Warning', 'A polygon must have at least 3 points to be completed.')
     }
   };
 
