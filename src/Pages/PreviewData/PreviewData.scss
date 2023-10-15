@@ -1,0 +1,48 @@
+.annotationPanel {
+    background: theme("colors.bud-green");
+    padding: 8px 8px 8px 24px;
+    border-radius: 0.75rem;
+    .p-panel-header {
+      background: theme("colors.naples-yellow");
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
+      // border-radius: 0.75rem;
+      border: 0px;
+      span:nth-child(1) {
+        width: 100%;
+      }
+      .p-panel-header-icon {
+        width: 2.7rem;
+        height: 2.7rem;
+        padding: 0.5rem !important;
+        font-size: 0.875rem !important;
+        line-height: 1.25rem !important;
+        color: theme("colors.metallic-brown");
+      }
+      .p-panel-header-icon:hover {
+        color: theme("colors.naples-yellow") !important;
+        background-color: theme("colors.bud-green") !important;
+      }
+    }
+    .p-panel-content {
+      background: theme("colors.naples-yellow");
+      border: 0px;
+      border-bottom-left-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+    }
+  }
+  
+  .customScrollbar {
+    ::-webkit-scrollbar {
+      width: 12px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: theme("colors.bud-green");
+      border-radius: 8px;
+      border: 4px solid theme("colors.metallic-brown");
+    }
+    ::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+  }
+  
