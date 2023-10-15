@@ -6,13 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext/AppContext";
 import "./PreviewData.scss";
 
-
 const PreviewData = () => {
   const navigate = useNavigate();
-  const { state, setPolygons, showToast } = useAppContext();
+  const { state } = useAppContext();
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [addNew, setAddNew] = useState(false);
   const [scaleFactor, setScaleFactor] = useState<number>(0);
 
   useEffect(() => {
@@ -105,8 +103,6 @@ const PreviewData = () => {
     }
   }, [state.polygons, state?.imageSelected?.url]);
 
-
-
   return (
     <div className="w-screen h-[100dvh] relative flex flex-col bg-ochre">
       <Header />
@@ -131,9 +127,8 @@ const PreviewData = () => {
                 label="Continue"
                 className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => {
-                  
                   startTransition(() => {
-                    navigate("/continue");
+                    navigate("/success");
                   });
                 }}
               />
@@ -155,19 +150,17 @@ const PreviewData = () => {
                       : `${state.polygons?.length}`}
                     )
                   </span>
-                  {!addNew && (
-                    <Button
-                      disabled={state.imageSelected.url === ""}
-                      icon="pi pi-plus"
-                      label="Edit / Add Annotations"
-                      className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
-                      onClick={() =>
-                        startTransition(() => {
-                          navigate("/draw");
-                        })
-                      }
-                    />
-                  )}
+                  <Button
+                    disabled={state.imageSelected.url === ""}
+                    icon="pi pi-plus"
+                    label="Edit / Add Annotations"
+                    className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+                    onClick={() =>
+                      startTransition(() => {
+                        navigate("/draw");
+                      })
+                    }
+                  />
                 </div>
                 <div>
                   {state.polygons?.map((polygon, index) => (

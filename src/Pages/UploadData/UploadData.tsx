@@ -8,15 +8,10 @@ const UploadData = () => {
   const navigate = useNavigate();
   const { state, showToast, setSelectedImage } = useAppContext();
 
-  // const [loader, setLoader] = useState(false)
-
   const uploadHandeler = () => {
     const input = document.createElement("input");
 
     input.setAttribute("accept", "image/*");
-    // input.setAttribute('capture', 'user');
-
-    // input.setAttribute('accept', acceptType === 'rackImage' ? 'image/*' : '.csv, text/csv, application/vnd.ms-excel');
     input.type = "file";
     input.onchange = async () => {
       if (input.files && input.files[0]) {
@@ -57,7 +52,6 @@ const UploadData = () => {
   };
 
   const removeHandeler = () => {
-    //
     showToast("warn", "Warning", "Image removed");
     setSelectedImage("", "", "");
   };
@@ -114,7 +108,6 @@ const UploadData = () => {
             icon="pi pi-trash"
             label="Remove Image"
             title="Click to remove the selected image"
-            // className="h-full text-metallic-brown bg-ochre border-0"
             className="h-10 text-naples-yellow bg-metallic-brown border-2 border-naples-yellow"
             onClick={() => removeHandeler()}
           />
