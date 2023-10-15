@@ -15,16 +15,11 @@ const initialState: State = sessionStorage.getItem("pineappleState")
   ? JSON.parse(sessionStorage.getItem("pineappleState") as string)
   : {
       isOptionSelected: null,
-    //   client_id: "",
       imageSelected: {
         title: "",
         url: "",
         type: "",
       },
-    //   csvSelected: {
-    //     title: "",
-    //     url: "",
-    //   },
       toast: null,
       rectangles: [],
       polygons: [],
@@ -37,13 +32,6 @@ const reducer = (state: State, action: Action<ActionType> | any): State => {
     case "SET_TOAST_REF": {
       return { ...state, toast: action.payload as Toast };
     }
-
-    // case "SET_CLIENT_ID": {
-    //   return {
-    //     ...state,
-    //     client_id: action.payload as string,
-    //   };
-    // }
 
     case "SET_IS_OPTION_SELECTED": {
       return {
@@ -63,17 +51,6 @@ const reducer = (state: State, action: Action<ActionType> | any): State => {
         },
       };
     }
-
-    // case "SET_SELECTED_CSV": {
-    //   return {
-    //     ...state,
-    //     csvSelected: {
-    //       ...state.csvSelected,
-    //       title: action?.payload?.title,
-    //       url: action?.payload?.url,
-    //     },
-    //   };
-    // }
 
     case "SET_RECTANGLES": {
       return {
@@ -99,9 +76,7 @@ const AppContext = createContext<AppContextType>({
   dispatch: () => null,
   setRectangles: () => null,
   setPolygons: () => null,
-//   setClientId: () => null,
   setSelectedImage: () => null,
-//   setSelectedCSV: () => null,
   showToast: () => null,
 });
 
@@ -110,26 +85,12 @@ const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-//   const setClientId = (client_id: string) => {
-//     dispatch({
-//       type: "SET_CLIENT_ID",
-//       payload: { client_id },
-//     });
-//   };
-
   const setSelectedImage = (title: string, url: string, type: string) => {
     dispatch({
       type: "SET_SELECTED_IMAGE",
       payload: { title, url, type },
     });
   };
-
-//   const setSelectedCSV = (title: string, url: string) => {
-//     dispatch({
-//       type: "SET_SELECTED_CSV",
-//       payload: { title, url },
-//     });
-//   };
 
   const setRectangles = (newRectangles: Rectangle[]) => {
     dispatch({ type: "SET_RECTANGLES", payload: newRectangles });
@@ -154,9 +115,7 @@ const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({
     dispatch,
     setRectangles,
     setPolygons,
-    // setClientId,
     setSelectedImage,
-    // setSelectedCSV,
     showToast,
   };
 

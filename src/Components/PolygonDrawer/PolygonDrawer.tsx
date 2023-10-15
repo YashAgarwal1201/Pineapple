@@ -235,7 +235,7 @@ const PolygonDrawer = () => {
                 onClick={() => {
                   // console.log(canvasRef?.current?.getContext("2d"));
                   startTransition(() => {
-                    navigate("/success");
+                    navigate("/preview");
                   });
                 }}
               />
@@ -254,7 +254,7 @@ const PolygonDrawer = () => {
             <div className="w-full md:w-2/4 lg:w-3/5">
               <div className="w-full p-3 rounded-xl bg-fern-green">
                 <div className="flex justify-between items-center text-base text-blue-900 pb-2">
-                  <span className="text-sm sm:text-base text-naples-yellow font-semibold">
+                  <span className="text-base sm:text-lg text-naples-yellow font-semibold">
                     Annotations (
                     {state.polygons?.length < 10
                       ? `0${state.polygons?.length}`
@@ -347,7 +347,7 @@ const PolygonDrawer = () => {
             className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
             onClick={() => {
               startTransition(() => {
-                navigate("/success");
+                navigate("/preview");
               });
             }}
           />
