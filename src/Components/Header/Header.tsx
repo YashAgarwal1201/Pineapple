@@ -12,6 +12,7 @@ const Header = () => {
       <Button
         disabled={pathname === "/"}
         icon="pi pi-angle-left"
+        title="go back button"
         className={`${
           pathname === "/"
             ? "text-transparent bg-transparent"
@@ -41,6 +42,7 @@ const Header = () => {
       <Button
         disabled={true}
         icon="pi pi-question"
+        title="extra button"
         // className="bg-fern-green text-naples-yellow border-0 rounded-full"
         className={"text-transparent bg-transparent border-0 rounded-full"}
       />

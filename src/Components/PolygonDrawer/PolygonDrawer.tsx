@@ -5,6 +5,7 @@ import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext/AppContext";
 import { generateRandomColor } from "../../Services/functionServices";
+// import CaptureImageLibrary from "../CaptureImage/CaptureImage";
 import "./PolygonDrawer.scss";
 
 interface Polygon {
@@ -35,6 +36,7 @@ const PolygonDrawer = () => {
     { x: number; y: number }[]
   >([]);
   const [addNew, setAddNew] = useState(false);
+  const [openCamera, setOpenCamera] = useState<boolean>(false);
   const [scaleFactor, setScaleFactor] = useState<number>(0);
 
   useEffect(() => {
@@ -173,7 +175,11 @@ const PolygonDrawer = () => {
       showToast("success", "Success", "Polygon added succesfully");
     } else {
       // alert("A polygon must have at least 3 points to be completed.");
-      showToast('warn', 'Warning', 'A polygon must have at least 3 points to be completed.')
+      showToast(
+        "warn",
+        "Warning",
+        "A polygon must have at least 3 points to be completed."
+      );
     }
   };
 
@@ -193,6 +199,10 @@ const PolygonDrawer = () => {
       setPolygons(updatedPolygons);
       showToast("success", "Success", "Label Updated");
     }
+  };
+
+  const onCaptureImageClick = () => {
+    setOpenCamera(true);
   };
 
   return (
