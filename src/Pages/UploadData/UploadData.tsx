@@ -4,11 +4,13 @@ import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext/AppContext";
 import { Dialog } from "primereact/dialog";
+import CaptureImageLibrary from "../../Components/CaptureImage/CaptureImage";
 
 const UploadData = () => {
   const navigate = useNavigate();
   const { state, showToast, setSelectedImage } = useAppContext();
   const [showOptions, setShowOptions] = useState(false);
+  const [openCamera, setOpenCamera] = useState<boolean>(false);
 
   const uploadHandeler = () => {
     const input = document.createElement("input");
@@ -48,7 +50,7 @@ const UploadData = () => {
           );
         }
         // onHide(!visible);
-        setShowOptions(!showOptions);
+        // setShowOptions(!showOptions);
       }
     };
     input.click();
@@ -105,7 +107,7 @@ const UploadData = () => {
           {showOptions && (
             <Dialog
               visible={showOptions}
-              onHide={() => setShowOptions(!showOptions)}
+              onHide={() => {setShowOptions(false); setOpenCamera(false)}}
               header={
                 <div className="text-base md:text-lg lg:text-xl">
                   Choose options
@@ -114,27 +116,40 @@ const UploadData = () => {
               draggable={false}
               className="w-full md:w-1/2 lg:w-1/3 2xl:w-[500px] absolute md:static bottom-0 md:bottom-auto left-0 md:left-auto"
             >
-              <div className="flex justify-around items-center">
-                <Button
-                  type="button"
-                  icon="pi pi-upload"
-                  label="Browse System"
-                  title="Click to browse system"
-                  className="flex flex-col items-center gap-y-2 text-sm md:text-base text-naples-yellow bg-fern-green border-fern-green"
-                  onClick={() =>
-                    state.imageSelected.url === "" && uploadHandeler()
-                  }
-                />
-                <Button
-                  type="button"
-                  icon="pi pi-camera"
-                  label="Capture Image"
-                  title="Click to open camera"
-                  className="flex flex-col items-center gap-y-2 text-sm md:text-base text-naples-yellow bg-fern-green border-fern-green"
-                />
+              <div>
+                {!openCamera ? (
+                  <div className="flex justify-around items-center">
+                    <Button
+                      type="button"
+                      icon="pi pi-upload"
+                      label="Browse System"
+                      title="Click to browse system"
+                      className="flex flex-col items-center gap-y-2 text-sm md:text-base text-naples-yellow bg-fern-green border-fern-green"
+                      onClick={() =>
+                        state.imageSelected.url === "" && uploadHandeler()
+                      }
+                    />
+                    <Button
+                      type="button"
+                      icon="pi pi-camera"
+                      label="Capture Image"
+                      title="Click to open camera"
+                      className="flex flex-col items-center gap-y-2 text-sm md:text-base text-naples-yellow bg-fern-green border-fern-green"
+                      onClick={() => setOpenCamera(true)}
+                    />
+                  </div>
+                ) : (
+                  <CaptureImageLibrary
+                    openCamera={openCamera}
+                    onCapture={showOptions}
+                    exitCamera={() => setOpenCamera(false)}
+                    // acceptType={state?.isOptionSelected}
+                  />
+                )}
               </div>
             </Dialog>
           )}
+
           <div className="w-full h-full flex flex-col justify-center items-center gap-y-4 bg-naples-yellow rounded-md">
             {state.imageSelected.url === "" && (
               <span className="pi pi-image p-4 text-4xl text-metallic-brown bg-bud-green rounded-md"></span>
