@@ -15,14 +15,14 @@ export default function CaptureImageLibrary({
   onCapture: any;
 }) {
   const { showToast, setSelectedImage } = useAppContext();
-  const [showImagePreview, setShowImagePreview] = useState<boolean>(false);
+  // const [showImagePreview, setShowImagePreview] = useState<boolean>(false);
   const webcamRef = useRef<Webcam>(null);
   const capture = React.useCallback(async () => {
     try {
       if (webcamRef.current) {
         const imageSrc = webcamRef.current.getScreenshot();
-        if (acceptType === "rackImage") {
-          await setSelectedImage(
+        // if (acceptType === "rackImage") {
+          setSelectedImage(
             "rackImage", //selectedFile.name,
             imageSrc as string, //URL.createObjectURL(imageSrc),
             webcamRef?.current?.props?.screenshotFormat //selectedFile.type
@@ -30,8 +30,8 @@ export default function CaptureImageLibrary({
           exitCamera();
           onCapture(!openCamera);
           showToast("success", "Success", "Image captured and added");
-        }
-        setShowImagePreview(true);
+        // }
+        // setShowImagePreview(true);
       }
     } catch {
       showToast("error", "Error", "OOPS an error has occured with this method");
