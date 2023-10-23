@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext/AppContext";
 import { Dialog } from "primereact/dialog";
 import CaptureImageLibrary from "../../Components/CaptureImage/CaptureImage";
+import "./UploadData.scss";
 
 const UploadData = () => {
   const navigate = useNavigate();
@@ -70,86 +71,21 @@ const UploadData = () => {
     }
   };
 
+  const onCaptureImageClick = () => {
+    setOpenCamera(true);
+  };
+
   return (
     <div className="w-screen h-[100dvh] relative flex flex-col bg-ochre">
       <Header />
 
       <div className="h-full p-3 m-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md">
-        {/* <Dialog
-          visible={showOptions}
-          onHide={() => setShowOptions(!showOptions)}
-          header={<div className="text-base md:text-lg lg:text-xl">Choose options</div>}
-          draggable={false}
-          className="w-full md:w-1/2 lg:w-1/3 2xl:w-[500px] absolute md:static bottom-0 md:bottom-auto left-0 md:left-auto"
-        >
-          <div className="flex justify-around items-center">
-            <Button
-              icon="pi pi-upload"
-              label="Browse System"
-              title="Click to browse system"
-              className="flex flex-col items-center gap-y-2 text-sm md:text-base text-naples-yellow bg-fern-green border-fern-green"
-              onClick={() => state.imageSelected.url === "" && uploadHandeler()}
-            />
-            <Button
-              icon="pi pi-camera"
-              label="Capture Image"
-              title="Click to open camera"
-              className="flex flex-col items-center gap-y-2 text-sm md:text-base text-naples-yellow bg-fern-green border-fern-green"
-            />
-          </div>
-        </Dialog> */}
         <div
           className="w-56 sm:w-60 aspect-square p-3 border-2 border-dashed border-naples-yellow rounded-lg cursor-pointer"
           onClick={() => {
             if (state.imageSelected.url === "") setShowOptions(!showOptions);
           }}
         >
-          {showOptions && (
-            <Dialog
-              visible={showOptions}
-              onHide={() => {setShowOptions(false); setOpenCamera(false)}}
-              header={
-                <div className="text-base md:text-lg lg:text-xl">
-                  Choose options
-                </div>
-              }
-              draggable={false}
-              className="w-full md:w-1/2 lg:w-1/3 2xl:w-[500px] absolute md:static bottom-0 md:bottom-auto left-0 md:left-auto"
-            >
-              <div>
-                {!openCamera ? (
-                  <div className="flex justify-around items-center">
-                    <Button
-                      type="button"
-                      icon="pi pi-upload"
-                      label="Browse System"
-                      title="Click to browse system"
-                      className="flex flex-col items-center gap-y-2 text-sm md:text-base text-naples-yellow bg-fern-green border-fern-green"
-                      onClick={() =>
-                        state.imageSelected.url === "" && uploadHandeler()
-                      }
-                    />
-                    <Button
-                      type="button"
-                      icon="pi pi-camera"
-                      label="Capture Image"
-                      title="Click to open camera"
-                      className="flex flex-col items-center gap-y-2 text-sm md:text-base text-naples-yellow bg-fern-green border-fern-green"
-                      onClick={() => setOpenCamera(true)}
-                    />
-                  </div>
-                ) : (
-                  <CaptureImageLibrary
-                    openCamera={openCamera}
-                    onCapture={showOptions}
-                    exitCamera={() => setOpenCamera(false)}
-                    // acceptType={state?.isOptionSelected}
-                  />
-                )}
-              </div>
-            </Dialog>
-          )}
-
           <div className="w-full h-full flex flex-col justify-center items-center gap-y-4 bg-naples-yellow rounded-md">
             {state.imageSelected.url === "" && (
               <span className="pi pi-image p-4 text-4xl text-metallic-brown bg-bud-green rounded-md"></span>
@@ -197,6 +133,64 @@ const UploadData = () => {
           />
         </div>
       </div>
+      <Dialog
+        visible={showOptions}
+        onHide={() => {
+          setShowOptions(false);
+          setOpenCamera(false);
+        }}
+        header={
+          <div className="text-base md:text-lg lg:text-xl">Choose options</div>
+        }
+        draggable={false}
+        className={`${
+          openCamera ? "h-[90dvh] sm:h-auto" : "h-auto"
+        } reusableDialog w-full md:w-2/3 lg:w-[500px] absolute md:static bottom-0 md:bottom-auto left-0 md:left-auto"`}
+      >
+        <div className="pt-1 w-full">
+          {!openCamera ? (
+            <div className="w-full flex flex-col sm:flex-row justify-center lg:justify-around items-center gap-x-2 gap-y-2">
+              <Button
+                type="button"
+                icon="pi pi-upload"
+                label="Browse System"
+                title="Click to browse system"
+                className="h-10 text-sm md:text-base text-naples-yellow bg-fern-green border-fern-green"
+                onClick={() =>
+                  state.imageSelected.url === "" && uploadHandeler()
+                }
+              />
+              <Button
+                type="button"
+                icon="pi pi-camera"
+                label="Capture Image"
+                title="Click to open camera"
+                className="h-10 text-sm md:text-base text-naples-yellow bg-fern-green border-fern-green"
+                // onClick={() => onCaptureImageClick()}
+                onClick={() => {
+                  if (window.location.protocol === "https:")
+                    onCaptureImageClick();
+                  else {
+                    showToast(
+                      "warn",
+                      "Warning",
+                      "Please use different method to attach file. Camera access is denied according to browser protocols in HTTP",
+                      5000
+                    );
+                  }
+                }}
+              />
+            </div>
+          ) : (
+            <CaptureImageLibrary
+              openCamera={openCamera}
+              onCapture={() => setShowOptions(true)}
+              exitCamera={() => setOpenCamera(false)}
+              // acceptType={state?.isOptionSelected}
+            />
+          )}
+        </div>
+      </Dialog>
     </div>
   );
 };
