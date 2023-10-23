@@ -1,0 +1,33 @@
+.reusableDialog {
+  .p-dialog-header {
+    padding: 1rem;
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+    background-color: theme("colors.naples-yellow");
+    color: theme("colors.metallic-brown");
+    .p-dialog-header-icon {
+      color: theme("colors.metallic-brown");
+    }
+    .p-dialog-header-icon:hover {
+      border-color: theme("colors.bud-green") !important;
+      background-color: theme("colors.bud-green") !important;
+      color: theme("colors.naples-yellow") !important;
+    }
+  }
+  .p-dialog-content:last-of-type {
+    padding: 1rem;
+    border-bottom-left-radius: 0.75rem;
+    border-bottom-right-radius: 0.75rem;
+    background-color: theme("colors.naples-yellow");
+  }
+  @media screen and (max-width: 640px) {
+    .p-dialog-header {
+      border-top-left-radius: 1rem;
+      border-top-right-radius: 1rem;
+    }
+    .p-dialog-content:last-of-type {
+      border-bottom-left-radius: 0rem;
+      border-bottom-right-radius: 0rem;
+    }
+  }
+}

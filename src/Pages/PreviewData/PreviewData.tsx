@@ -1,4 +1,4 @@
-import { startTransition, useEffect, useRef, useState } from "react";
+import { startTransition, useEffect, useRef } from "react";
 import Header from "../../Components/Header/Header";
 import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
@@ -11,7 +11,7 @@ const PreviewData = () => {
   const { state } = useAppContext();
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [scaleFactor, setScaleFactor] = useState<number>(0);
+  // const [scaleFactor, setScaleFactor] = useState<number>(0);
 
   useEffect(() => {
     // if (state?.imageSelected?.url?.length < 1) {
@@ -38,9 +38,9 @@ const PreviewData = () => {
         canvas.width = canvasWidth; // Set canvas width
         canvas.height = canvasHeight; // Set canvas height
 
-        const widthScaleFactor = imgWidth / canvasWidth; //canvasWidth / imgWidth;
+        // const widthScaleFactor = imgWidth / canvasWidth; //canvasWidth / imgWidth;
         // const heightScaleFactor = canvasHeight / imgHeight;
-        setScaleFactor(widthScaleFactor);
+        // setScaleFactor(widthScaleFactor);
         // console.log(widthScaleFactor, heightScaleFactor);
 
         // Clear canvas and draw the image with zoom

@@ -36,8 +36,7 @@ const PolygonDrawer = () => {
     { x: number; y: number }[]
   >([]);
   const [addNew, setAddNew] = useState(false);
-  const [openCamera, setOpenCamera] = useState<boolean>(false);
-  const [scaleFactor, setScaleFactor] = useState<number>(0);
+  // const [scaleFactor, setScaleFactor] = useState<number>(0);
 
   useEffect(() => {
     // if (state?.imageSelected?.url?.length < 1) {
@@ -64,9 +63,9 @@ const PolygonDrawer = () => {
         canvas.width = canvasWidth; // Set canvas width
         canvas.height = canvasHeight; // Set canvas height
 
-        const widthScaleFactor = imgWidth / canvasWidth; //canvasWidth / imgWidth;
+        // const widthScaleFactor = imgWidth / canvasWidth; //canvasWidth / imgWidth;
         // const heightScaleFactor = canvasHeight / imgHeight;
-        setScaleFactor(widthScaleFactor);
+        // setScaleFactor(widthScaleFactor);
         // console.log(widthScaleFactor, heightScaleFactor);
 
         // Clear canvas and draw the image with zoom
@@ -199,10 +198,6 @@ const PolygonDrawer = () => {
       setPolygons(updatedPolygons);
       showToast("success", "Success", "Label Updated");
     }
-  };
-
-  const onCaptureImageClick = () => {
-    setOpenCamera(true);
   };
 
   return (
