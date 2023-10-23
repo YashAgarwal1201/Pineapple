@@ -51,7 +51,7 @@ const UploadData = () => {
           );
         }
         // onHide(!visible);
-        // setShowOptions(!showOptions);
+        setShowOptions(!showOptions);
       }
     };
     input.click();
