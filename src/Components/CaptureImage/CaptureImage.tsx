@@ -4,7 +4,7 @@ import { useAppContext } from "./../../AppContext/AppContext";
 import { Button } from "primereact/button";
 
 export default function CaptureImageLibrary({
-  openCamera,
+  // openCamera,
   exitCamera,
   // acceptType,
   onCapture,
