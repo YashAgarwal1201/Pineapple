@@ -40,11 +40,16 @@ const Header = () => {
       />
       <h1 className="text-2xl text-naples-yellow font-medium">PINEAPPLE</h1>
       <Button
-        disabled={true}
+        // disabled={true}
         icon="pi pi-question"
-        title="extra button"
-        // className="bg-fern-green text-naples-yellow border-0 rounded-full"
-        className={"text-transparent bg-transparent border-0 rounded-full"}
+        title="Link to my profile"
+        className="bg-fern-green text-naples-yellow border-0 rounded-full"
+        onClick={() => {
+          window.location.href = 'https://yashagarwal1201.github.io/'
+          // target="_blank"
+          // rel="noopener noreferrer"
+        }}
+        // className={"text-transparent bg-transparent border-0 rounded-full"}
       />
     </div>
   );
