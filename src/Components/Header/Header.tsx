@@ -42,9 +42,13 @@ const Header = () => {
       <Button
         // disabled={true}
         icon="pi pi-question"
-        title="extra button"
+        title="Link to my profile"
         className="bg-fern-green text-naples-yellow border-0 rounded-full"
-        onClick={() => }
+        onClick={() => {
+          window.location.href = 'https://yashagarwal1201.github.io/'
+          // target="_blank"
+          // rel="noopener noreferrer"
+        }}
         // className={"text-transparent bg-transparent border-0 rounded-full"}
       />
     </div>
