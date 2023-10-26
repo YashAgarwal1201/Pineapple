@@ -41,11 +41,11 @@ const Header = () => {
       <h1 className="text-2xl text-naples-yellow font-medium">PINEAPPLE</h1>
       <Button
         // disabled={true}
-        icon="pi pi-question"
+        icon="pi pi-arrow-up-right"
         title="Link to my profile"
         className="bg-fern-green text-naples-yellow border-0 rounded-full"
         onClick={() => {
-          window.location.href = 'https://yashagarwal1201.github.io/'
+          window.location.href = "https://yashagarwal1201.github.io/";
           // target="_blank"
           // rel="noopener noreferrer"
         }}
