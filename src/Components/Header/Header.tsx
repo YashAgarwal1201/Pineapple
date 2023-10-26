@@ -27,6 +27,10 @@ const Header = () => {
             startTransition(() => {
               navigate("/draw");
             });
+          } else if (pathname.includes("/cropped-data")) {
+            startTransition(() => {
+              navigate("/preview");
+            });
           } else if (pathname.includes("/success")) {
             startTransition(() => {
               navigate("/preview");
@@ -45,9 +49,11 @@ const Header = () => {
         title="Link to my profile"
         className="bg-fern-green text-naples-yellow border-0 rounded-full"
         onClick={() => {
-          window.location.href = "https://yashagarwal1201.github.io/";
-          // target="_blank"
-          // rel="noopener noreferrer"
+          window.open(
+            "https://yashagarwal1201.github.io/",
+            "_blank",
+            "noopener,noreferrer"
+          );
         }}
         // className={"text-transparent bg-transparent border-0 rounded-full"}
       />

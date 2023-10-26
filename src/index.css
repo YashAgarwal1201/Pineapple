@@ -6,8 +6,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* @media (hover: hover) { */
 .p-button:hover {
   border-color: theme("colors.bud-green") !important;
   background-color: theme("colors.bud-green") !important;
   color: theme("colors.naples-yellow") !important;
+}
+/* } */
+.p-button:focus {
+  box-shadow: none !important;
+  outline: none !important;
 }

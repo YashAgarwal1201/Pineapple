@@ -4,9 +4,9 @@ import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext/AppContext";
-import "./PreviewData.scss";
+import "./CroppedData.scss";
 
-const PreviewData = () => {
+const CroppedData = () => {
   const navigate = useNavigate();
   const { state } = useAppContext();
 
@@ -121,7 +121,7 @@ const PreviewData = () => {
                 className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => {
                   startTransition(() => {
-                    navigate("/success");
+                    navigate("/preview");
                   });
                 }}
               />
@@ -143,18 +143,17 @@ const PreviewData = () => {
                       : `${state.polygons?.length}`}
                     )
                   </span>
-                  <Button
+                  {/* <Button
                     disabled={state.imageSelected.url === ""}
                     icon="pi pi-images"
                     label="Show Croppings"
-                    title="Click to show each annotations on cropped image"
                     className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
                     onClick={() =>
                       startTransition(() => {
-                        navigate("/cropped-data");
+                        navigate("/draw");
                       })
                     }
-                  />
+                  /> */}
                 </div>
                 <div>
                   {state.polygons?.map((polygon, index) => (
@@ -218,7 +217,7 @@ const PreviewData = () => {
             className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
             onClick={() => {
               startTransition(() => {
-                navigate("/success");
+                navigate("/preview");
               });
             }}
           />
@@ -228,4 +227,4 @@ const PreviewData = () => {
   );
 };
 
-export default PreviewData;
+export default CroppedData;
