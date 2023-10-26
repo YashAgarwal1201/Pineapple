@@ -202,14 +202,14 @@ const PolygonDrawer = () => {
 
   return (
     <>
-      <div className="customScrollbar h-full p-3 m-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md overflow-y-auto">
+      <div className="customScrollbar h-full py-3 px-1 sm:px-3 my-3 mx-0 sm:mx-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md overflow-y-auto">
         <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5 overflow-y-auto">
           <div className="px-2 md:px-0 flex justify-between items-center">
             <div className="flex flex-col gap-1">
               <span className="text-lg md:text-xl font-medium text-naples-yellow">
                 Draw required polygons
               </span>
-              <span className="text-sm md:text-base text-bud-green">
+              <span className="text-sm md:text-base text-bud-green font-medium">
                 Identify and select the correct annotations in the image
               </span>
             </div>
@@ -235,6 +235,7 @@ const PolygonDrawer = () => {
                   state?.imageSelected?.url?.length <= 0 ||
                   state.polygons?.length < 1
                 }
+                icon="pi pi-check"
                 label="Save & Continue"
                 className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => {
@@ -348,6 +349,7 @@ const PolygonDrawer = () => {
               state?.imageSelected?.url?.length <= 0 ||
               state.polygons?.length < 1
             }
+            icon="pi pi-check"
             label="Save & Continue"
             className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
             onClick={() => {

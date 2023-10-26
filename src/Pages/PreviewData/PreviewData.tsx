@@ -27,7 +27,7 @@ const PreviewData = () => {
       ctx.clearRect(0, 0, canvas?.width as number, canvas?.height as number);
 
       const img = new Image();
-      img.src = state?.imageSelected?.url; //images;
+      img.src = state?.imageSelected?.url;
 
       img.onload = () => {
         const imgWidth = img.width;
@@ -91,14 +91,6 @@ const PreviewData = () => {
 
           ctx.stroke(path);
         });
-
-        // Draw clicked points
-        // clickedPoints.forEach((point) => {
-        //   ctx.beginPath();
-        //   ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
-        //   ctx.fillStyle = "blue";
-        //   ctx.fill();
-        // });
       };
     }
   }, [state.polygons, state?.imageSelected?.url]);
@@ -107,14 +99,14 @@ const PreviewData = () => {
     <div className="w-screen h-[100dvh] relative flex flex-col bg-ochre">
       <Header />
 
-      <div className="customScrollbar h-full p-3 m-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md overflow-y-auto">
+      <div className="customScrollbar h-full py-3 px-1 sm:px-3 my-3 mx-0 sm:mx-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md overflow-y-auto">
         <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5 overflow-y-auto">
           <div className="px-2 md:px-0 flex justify-between items-center">
             <div className="flex flex-col gap-1">
               <span className="text-lg md:text-xl font-medium text-naples-yellow">
                 Preview Data
               </span>
-              <span className="text-sm md:text-base text-bud-green">
+              <span className="text-sm md:text-base text-bud-green font-medium">
                 Preview the data before proceeding
               </span>
             </div>
@@ -124,6 +116,7 @@ const PreviewData = () => {
                   state?.imageSelected?.url?.length <= 0 ||
                   state.polygons?.length < 1
                 }
+                icon="pi pi-check"
                 label="Continue"
                 className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => {
@@ -152,12 +145,13 @@ const PreviewData = () => {
                   </span>
                   <Button
                     disabled={state.imageSelected.url === ""}
-                    icon="pi pi-plus"
-                    label="Edit / Add Annotations"
+                    icon="pi pi-images"
+                    label="Show Croppings"
+                    title="Click to show each annotations on cropped image"
                     className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
                     onClick={() =>
                       startTransition(() => {
-                        navigate("/draw");
+                        navigate("/cropped-data");
                       })
                     }
                   />
@@ -219,6 +213,7 @@ const PreviewData = () => {
               state?.imageSelected?.url?.length <= 0 ||
               state.polygons?.length < 1
             }
+            icon="pi pi-check"
             label="Continue"
             className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
             onClick={() => {
