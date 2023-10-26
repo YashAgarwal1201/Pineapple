@@ -6,6 +6,10 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  scroll-behavior: smooth;
+}
+
 /* @media (hover: hover) { */
 .p-button:hover {
   border-color: theme("colors.bud-green") !important;

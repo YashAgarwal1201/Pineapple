@@ -45,3 +45,8 @@
     background-color: transparent;
   }
 }
+
+.customCarouselScrollbar::-webkit-scrollbar {
+  display: none;
+  scrollbar-width: 0px;
+}

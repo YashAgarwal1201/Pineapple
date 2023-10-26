@@ -1,7 +1,6 @@
 import { startTransition, useEffect, useRef } from "react";
 import Header from "../../Components/Header/Header";
 import { Button } from "primereact/button";
-import { Panel } from "primereact/panel";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext/AppContext";
 import "./CroppedData.scss";
@@ -11,7 +10,21 @@ const CroppedData = () => {
   const { state } = useAppContext();
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([]);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   // const [scaleFactor, setScaleFactor] = useState<number>(0);
+
+  const scrollLeft = () => {
+    if (containerRef.current) {
+      containerRef.current.scrollLeft -= 200;
+    }
+  };
+
+  const scrollRight = () => {
+    if (containerRef.current) {
+      containerRef.current.scrollLeft += 200;
+    }
+  };
 
   useEffect(() => {
     // if (state?.imageSelected?.url?.length < 1) {
@@ -95,6 +108,172 @@ const CroppedData = () => {
     }
   }, [state.polygons, state?.imageSelected?.url]);
 
+  const draw = (
+    ctx: any,
+    polygon: any,
+    // scaleFactoX?: any,
+    // scaleFactoY?: any,
+    x: any,
+    y: any
+  ) => {
+    ctx.imageSmoothingEnabled = true;
+
+    const path = new Path2D();
+    const [startPoint, ...restPoints] = polygon.points;
+    path.moveTo(startPoint.x - x, startPoint.y - y);
+
+    restPoints.forEach((point: any) => {
+      path.lineTo(point.x - x, point.y - y);
+    });
+
+    path.closePath();
+
+    ctx.strokeStyle = polygon.color;
+    ctx.lineWidth = 2.5;
+
+    // Fill polygon with translucent color
+    ctx.fillStyle = `${polygon.color}50`;
+    ctx.fill(path);
+
+    // // Draw label
+    // const labelX =
+    //   polygon.points.reduce((sum: any, point: any) => sum + point.x - x, 0) /
+    //   polygon.points.length;
+    // const labelY =
+    //   polygon.points.reduce((sum: any, point: any) => sum + point.y - y, 0) /
+    //     polygon.points.length +
+    //   40;
+
+    // ctx.fillStyle = "#ffffff90";
+    // const padding = 4;
+    // const labelWidth = ctx.measureText(polygon.label).width + 5;
+    // const labelHeight = 14;
+
+    // ctx.fillRect(
+    //   labelX - labelWidth / 2 - padding,
+    //   labelY - labelHeight / 2 - padding,
+    //   labelWidth + 2 * padding,
+    //   labelHeight + 1 * padding
+    // );
+
+    // ctx.fillStyle = "black";
+    // ctx.font = "11px Arial";
+    // ctx.textAlign = "center";
+    // ctx.textBaseline = "middle";
+    // ctx.fillText(polygon.label, labelX, labelY);
+
+    ctx.stroke(path);
+  };
+
+  const draw2 = (ctx: any, polygon: any, scaleFacto: any) => {
+    const path = new Path2D();
+    const [startPoint, ...restPoints] = polygon.points;
+    path.moveTo(startPoint.x / scaleFacto, startPoint.y / scaleFacto);
+
+    restPoints.forEach((point: any) => {
+      path.lineTo(point.x / scaleFacto, point.y / scaleFacto);
+    });
+
+    path.closePath();
+
+    ctx.strokeStyle = polygon.color;
+    ctx.lineWidth = 2;
+
+    // Fill polygon with translucent color
+    ctx.fillStyle = `${polygon.color}60`;
+    ctx.fill(path);
+
+    ctx.stroke(path);
+  };
+
+  useEffect(() => {
+    // const findMaxBoundingBox = () => {
+    //   let maxWidth = 0;
+    //   let maxHeight = 0;
+
+    // Find the maximum bounding box dimensions
+    //   carouselData.forEach((item) => {
+    //     const width = item.bbox[2] - item.bbox[0];
+    //     const height = item.bbox[3] - item.bbox[1];
+
+    //     if (width > maxWidth) {
+    //       maxWidth = width;
+    //     }
+
+    //     if (height > maxHeight) {
+    //       maxHeight = height;
+    //     }
+    //   });
+
+    //   return { maxWidth, maxHeight };
+    // };
+
+    // const { maxWidth, maxHeight } = findMaxBoundingBox();
+
+    const waitForCanvas2 = () => {
+      canvasRefs?.current?.forEach((canvas, index) => {
+        if (canvas) {
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            // ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const item = state.polygons[index];
+
+            const img = new Image();
+
+            img.src = state.imageSelected.url;
+            // img.src = cropImage(state.feedbackImage.image, item.bbox);
+
+            // const image = new Image();
+            // image.crossOrigin = "anonymous";
+
+            img.onload = () => {
+              const imgWidth = img.width;
+              const imgHeight = img.height;
+
+              const canvasWidth = canvas.width;
+              const canvasHeight = (imgHeight / imgWidth) * canvasWidth;
+
+              let width, height;
+
+              if (item.bbox) {
+                width = item.bbox[2] - item.bbox[0];
+                height = item.bbox[3] - item.bbox[1];
+                canvas.width = width;
+                canvas.height = height;
+                ctx.clearRect(0, 0, width, height);
+                ctx.drawImage(
+                  img,
+                  item.bbox[0],
+                  item.bbox[1],
+                  width,
+                  height,
+                  0,
+                  0,
+                  width,
+                  height
+                );
+                draw(ctx, item, item.bbox[0], item.bbox[1]);
+              } else {
+                canvas.width = canvasWidth;
+                canvas.height = canvasHeight;
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
+                draw2(ctx, item, imgWidth / canvasWidth);
+              }
+            };
+
+            img.onerror = (error) => {
+              console.error("Image load error:", error);
+            };
+          } else {
+            requestAnimationFrame(waitForCanvas2);
+          }
+        }
+      });
+    };
+    waitForCanvas2();
+  }, []);
+
   return (
     <div className="w-screen h-[100dvh] relative flex flex-col bg-ochre">
       <Header />
@@ -104,10 +283,10 @@ const CroppedData = () => {
           <div className="px-2 md:px-0 flex justify-between items-center">
             <div className="flex flex-col gap-1">
               <span className="text-lg md:text-xl font-medium text-naples-yellow">
-                Preview Data
+                Annotations on Cropped Image
               </span>
-              <span className="text-sm md:text-base text-bud-green">
-                Preview the data before proceeding
+              <span className="text-sm md:text-base text-bud-green font-medium">
+                Individual annotations on cropped image
               </span>
             </div>
             <div className="hidden md:flex flex-row gap-x-10">
@@ -155,48 +334,51 @@ const CroppedData = () => {
                     }
                   /> */}
                 </div>
-                <div>
-                  {state.polygons?.map((polygon, index) => (
-                    <div className="mt-2" key={index}>
-                      <Panel
-                        className="annotationPanel w-full mb-1"
-                        collapsed={true}
-                        header={
-                          <div className="w-full h-full flex justify-between items-center">
-                            <span className="text-base sm:text-lg text-metallic-brown">
-                              {polygon?.label}
-                            </span>
-                          </div>
-                        }
-                        toggleable
+                <div className="mt-2 relative">
+                  <div
+                    className="customCarouselScrollbar w-full h-full flex justify-start items-center overflow-x-auto"
+                    ref={containerRef}
+                  >
+                    {state.polygons?.map((item, index) => (
+                      <div
+                        key={index}
+                        title="Click to open eedback dialog box"
+                        className="w-fit h-full p-2 flex flex-col items-center justify-center gap-y-2 bg-bud-green rounded-lg mr-2"
+                        // onClick={() =>
+                        //   feedbackButtonHandeler(item.image, item.id)
+                        // }
                       >
-                        <div className="w-full flex flex-col gap-y-1">
-                          <p className="w-full p-2 bg-fern-green text-naples-yellow font-medium rounded-lg">
-                            Coordinates -{" "}
-                          </p>
-                          {polygon.points?.map((values, key) => (
-                            <p
-                              className="w-full flex flex-row items-center gap-x-1"
-                              key={key}
-                            >
-                              <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
-                                X:
-                              </span>
-                              <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
-                                {Math.round(values.x)}
-                              </span>
-                              <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
-                                Y:
-                              </span>
-                              <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
-                                {Math.round(values.y)}
-                              </span>
-                            </p>
-                          ))}
+                        <div
+                          className="w-fit flex items-center"
+                          style={{ height: "calc(100% - 2.5rem)" }}
+                        >
+                          <canvas
+                            className=" mx-auto rounded-lg"
+                            ref={(canvas) => {
+                              return (canvasRefs.current[index] = canvas);
+                            }}
+                            width={200}
+                            style={{
+                              maxHeight: "200px",
+                              height: "200px",
+                            }}
+                          />
                         </div>
-                      </Panel>
-                    </div>
-                  ))}
+                      </div>
+                    ))}
+                  </div>
+                  <Button
+                    icon="pi pi-angle-left "
+                    title="scroll-left"
+                    className="!w-[30px] !h-[30px] rounded-full border-0 bg-naples-yellow text-fern-green absolute -left-2 top-[45%] shadow-md"
+                    onClick={() => scrollLeft()}
+                  />
+                  <Button
+                    icon="pi pi-angle-right"
+                    title="scroll-right"
+                    className="!w-[30px] !h-[30px] rounded-full border-0 bg-naples-yellow text-fern-green absolute -right-2 top-[45%] shadow-md"
+                    onClick={() => scrollRight()}
+                  />
                 </div>
               </div>
             </div>

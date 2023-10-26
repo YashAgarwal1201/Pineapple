@@ -209,7 +209,7 @@ const PolygonDrawer = () => {
               <span className="text-lg md:text-xl font-medium text-naples-yellow">
                 Draw required polygons
               </span>
-              <span className="text-sm md:text-base text-bud-green">
+              <span className="text-sm md:text-base text-bud-green font-medium">
                 Identify and select the correct annotations in the image
               </span>
             </div>

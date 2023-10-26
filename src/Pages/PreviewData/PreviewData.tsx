@@ -106,7 +106,7 @@ const PreviewData = () => {
               <span className="text-lg md:text-xl font-medium text-naples-yellow">
                 Preview Data
               </span>
-              <span className="text-sm md:text-base text-bud-green">
+              <span className="text-sm md:text-base text-bud-green font-medium">
                 Preview the data before proceeding
               </span>
             </div>
