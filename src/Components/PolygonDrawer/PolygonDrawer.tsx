@@ -7,13 +7,14 @@ import { useAppContext } from "../../AppContext/AppContext";
 import { generateRandomColor } from "../../Services/functionServices";
 // import CaptureImageLibrary from "../CaptureImage/CaptureImage";
 import "./PolygonDrawer.scss";
+import { Polygon } from "../../Interface/interfaces";
 
-interface Polygon {
-  points: { x: number; y: number }[];
-  color: string;
-  label: string;
-  units: string | number;
-}
+// interface Polygon {
+//   points: { x: number; y: number }[];
+//   color: string;
+//   label: string;
+//   units: string | number;
+// }
 
 interface Label {
   name: string;
@@ -36,7 +37,7 @@ const PolygonDrawer = () => {
     { x: number; y: number }[]
   >([]);
   const [addNew, setAddNew] = useState(false);
-  // const [scaleFactor, setScaleFactor] = useState<number>(0);
+  const [scaleFactor, setScaleFactor] = useState<number>(0);
 
   useEffect(() => {
     // if (state?.imageSelected?.url?.length < 1) {
@@ -63,9 +64,9 @@ const PolygonDrawer = () => {
         canvas.width = canvasWidth; // Set canvas width
         canvas.height = canvasHeight; // Set canvas height
 
-        // const widthScaleFactor = imgWidth / canvasWidth; //canvasWidth / imgWidth;
+        const widthScaleFactor = imgWidth / canvasWidth; //canvasWidth / imgWidth;
         // const heightScaleFactor = canvasHeight / imgHeight;
-        // setScaleFactor(widthScaleFactor);
+        setScaleFactor(widthScaleFactor);
         // console.log(widthScaleFactor, heightScaleFactor);
 
         // Clear canvas and draw the image with zoom
@@ -145,6 +146,12 @@ const PolygonDrawer = () => {
         label: `${DEFAULT_LABEL} ${state.polygons?.length + 1}`,
         points: [{ x: clickX, y: clickY }],
         units: 0,
+        bbox: [
+          clickX * scaleFactor,
+          clickY * scaleFactor,
+          clickX * scaleFactor,
+          clickY * scaleFactor,
+        ],
       });
     } else {
       const updatedClickedPoints = [
@@ -154,6 +161,7 @@ const PolygonDrawer = () => {
       setCurrentPolygon({
         ...currentPolygon,
         points: updatedClickedPoints,
+        bbox: calculateBoundingBox(updatedClickedPoints),
       });
       setClickedPoints([...clickedPoints, { x: clickX, y: clickY }]);
 
@@ -161,6 +169,33 @@ const PolygonDrawer = () => {
       //   handleCompletePolygon();
       // }
     }
+  };
+
+  const calculateBoundingBox = (points: string | any[], padding = 20) => {
+    if (points.length === 0) {
+      return [0, 0, 0, 0]; // Return an empty bounding box if there are no points
+    }
+
+    let minX = points[0].x;
+    let minY = points[0].y;
+    let maxX = points[0].x;
+    let maxY = points[0].y;
+
+    for (let i = 1; i < points.length; i++) {
+      const { x, y } = points[i];
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+    }
+
+    // Apply padding to the bounding box
+    minX -= padding;
+    minY -= padding;
+    maxX += padding;
+    maxY += padding;
+
+    return [minX, minY, maxX, maxY];
   };
 
   const handleCompletePolygon = () => {

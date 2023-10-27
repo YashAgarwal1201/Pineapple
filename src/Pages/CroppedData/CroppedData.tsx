@@ -1,4 +1,4 @@
-import { startTransition, useEffect, useRef } from "react";
+import { startTransition, useEffect, useRef, useState } from "react";
 import Header from "../../Components/Header/Header";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,7 @@ const CroppedData = () => {
   const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement | null>(null);
   // const [scaleFactor, setScaleFactor] = useState<number>(0);
+  const [imgType, setImgType] = useState("full");
 
   const scrollLeft = () => {
     if (containerRef.current) {
@@ -187,29 +188,6 @@ const CroppedData = () => {
   };
 
   useEffect(() => {
-    // const findMaxBoundingBox = () => {
-    //   let maxWidth = 0;
-    //   let maxHeight = 0;
-
-    // Find the maximum bounding box dimensions
-    //   carouselData.forEach((item) => {
-    //     const width = item.bbox[2] - item.bbox[0];
-    //     const height = item.bbox[3] - item.bbox[1];
-
-    //     if (width > maxWidth) {
-    //       maxWidth = width;
-    //     }
-
-    //     if (height > maxHeight) {
-    //       maxHeight = height;
-    //     }
-    //   });
-
-    //   return { maxWidth, maxHeight };
-    // };
-
-    // const { maxWidth, maxHeight } = findMaxBoundingBox();
-
     const waitForCanvas2 = () => {
       canvasRefs?.current?.forEach((canvas, index) => {
         if (canvas) {
@@ -235,7 +213,8 @@ const CroppedData = () => {
 
               let width, height;
 
-              if (item.bbox) {
+              if (item.bbox && imgType === "cropped") {
+                console.log(99);
                 width = item.bbox[2] - item.bbox[0];
                 height = item.bbox[3] - item.bbox[1];
                 canvas.width = width;
@@ -252,7 +231,7 @@ const CroppedData = () => {
                   width,
                   height
                 );
-                draw(ctx, item, item.bbox[0], item.bbox[1]);
+                draw(ctx, item, item?.bbox[0], item?.bbox[1]);
               } else {
                 canvas.width = canvasWidth;
                 canvas.height = canvasHeight;
@@ -272,7 +251,7 @@ const CroppedData = () => {
       });
     };
     waitForCanvas2();
-  }, []);
+  }, [imgType]);
 
   return (
     <div className="w-screen h-[100dvh] relative flex flex-col bg-ochre">
@@ -316,23 +295,26 @@ const CroppedData = () => {
               <div className="w-full p-3 rounded-xl bg-fern-green">
                 <div className="flex justify-between items-center text-base text-blue-900 pb-2">
                   <span className="text-base sm:text-lg text-naples-yellow font-semibold">
-                    Annotations (
+                    Annotations on{" "}
+                    {imgType === "cropped" ? "cropped image" : "full image"} (
                     {state.polygons?.length < 10
                       ? `0${state.polygons?.length}`
                       : `${state.polygons?.length}`}
                     )
                   </span>
-                  {/* <Button
+                  <Button
                     disabled={state.imageSelected.url === ""}
                     icon="pi pi-images"
-                    label="Show Croppings"
+                    label={`${
+                      imgType === "cropped" ? "Cropped Image" : "Full Image"
+                    }`}
+                    title="change orientation"
                     className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
-                    onClick={() =>
-                      startTransition(() => {
-                        navigate("/draw");
-                      })
-                    }
-                  /> */}
+                    onClick={() => {
+                      if (imgType === "full") setImgType("cropped");
+                      else setImgType("full");
+                    }}
+                  />
                 </div>
                 <div className="mt-2 relative">
                   <div
@@ -359,8 +341,8 @@ const CroppedData = () => {
                             }}
                             width={200}
                             style={{
-                              maxHeight: "200px",
-                              height: "200px",
+                              maxHeight: "250px",
+                              height: "250px",
                             }}
                           />
                         </div>

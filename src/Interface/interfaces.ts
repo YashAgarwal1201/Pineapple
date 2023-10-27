@@ -1,6 +1,6 @@
-import { Dispatch } from 'react';
+import { Dispatch } from "react";
 
-import { Toast } from 'primereact/toast';
+import { Toast } from "primereact/toast";
 
 // import { AxiosResponse } from 'axios';
 
@@ -8,7 +8,6 @@ export type Action<T> = { type: string; payload?: T };
 
 export interface State {
   [key: string]: any;
-//   client_id: string;
   isOptionSelected: any;
   imageSelected: {
     title: string;
@@ -16,13 +15,12 @@ export interface State {
     type: string;
   };
   toast: Toast | null;
-//   rectangles: Rectangle[];
   polygons: Polygon[];
 }
 
 export interface ToastInterface {
-  severity: 'success' | 'info' | 'warn' | 'error' | undefined;
-  summary: 'Success' | 'Info' | 'Warning' | 'Error';
+  severity: "success" | "info" | "warn" | "error" | undefined;
+  summary: "Success" | "Info" | "Warning" | "Error";
   detail: string;
   life?: number;
 }
@@ -32,10 +30,8 @@ export type ActionType =
   | boolean
   | string
   | null
-//   | { client_id: string }
   | ToastInterface
   | { title: string; url: string; type: string }
-//   | { title: string; url: string }
   | { key: string; value: boolean }
   | Rectangle
   | Polygon
@@ -46,12 +42,10 @@ export interface AppContextType {
   dispatch: Dispatch<Action<ActionType>>;
   setRectangles: (newRectangles: Rectangle[]) => void;
   setPolygons: (newPolygons: Polygon[]) => void;
-//   setClientId: (client_id: string) => void;
   setSelectedImage: (title: string, url: string, type: string) => void;
-//   setSelectedCSV: (title: string, url: string) => void;
   showToast: (
-    severity: 'success' | 'info' | 'warn' | 'error' | undefined,
-    summary: 'Success' | 'Info' | 'Warning' | 'Error',
+    severity: "success" | "info" | "warn" | "error" | undefined,
+    summary: "Success" | "Info" | "Warning" | "Error",
     detail: string,
     life?: number
   ) => void;
@@ -67,6 +61,7 @@ export interface Rectangle {
 }
 
 export interface Polygon {
+  bbox: number[];
   points: { x: number; y: number }[];
   color: string;
   label: string;
