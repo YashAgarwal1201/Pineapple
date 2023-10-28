@@ -143,7 +143,7 @@ const PreviewData = () => {
                       : `${state.polygons?.length}`}
                     )
                   </span>
-                  <Button
+                  {/* <Button
                     disabled={state.imageSelected.url === ""}
                     icon="pi pi-images"
                     label="Show Croppings"
@@ -154,7 +154,7 @@ const PreviewData = () => {
                         navigate("/cropped-data");
                       })
                     }
-                  />
+                  /> */}
                 </div>
                 <div>
                   {state.polygons?.map((polygon, index) => (

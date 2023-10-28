@@ -7,4 +7,5 @@ export default defineConfig({
     port: 5373, // Change this to the desired port
   },
   plugins: [react()],
+  base: "/Pineapple/",
 });
