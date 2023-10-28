@@ -169,10 +169,10 @@ const CroppedData = () => {
   const draw2 = (ctx: any, polygon: any, scaleFacto: any) => {
     const path = new Path2D();
     const [startPoint, ...restPoints] = polygon.points;
-    path.moveTo(startPoint.x / scaleFacto, startPoint.y / scaleFacto);
+    path.moveTo(startPoint.x * scaleFacto, startPoint.y * scaleFacto);
 
     restPoints.forEach((point: any) => {
-      path.lineTo(point.x / scaleFacto, point.y / scaleFacto);
+      path.lineTo(point.x * scaleFacto, point.y * scaleFacto);
     });
 
     path.closePath();
