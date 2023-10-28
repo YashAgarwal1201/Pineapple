@@ -321,7 +321,7 @@ const CroppedData = () => {
                     className="customCarouselScrollbar w-full h-full flex justify-start items-center overflow-x-auto"
                     ref={containerRef}
                   >
-                    {state.polygons?.map((item, index) => (
+                    {state.polygons?.map((_item, index) => (
                       <div
                         key={index}
                         title="Click to open eedback dialog box"
