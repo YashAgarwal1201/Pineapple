@@ -99,7 +99,13 @@ export default function CaptureImageLibrary({
       <div className="h-[80%] flex relative w-full rounded-lg">
         <Webcam
           id="video"
-          onLoad={() => showToast("error", "Error", "Some error has occured with this method")}
+          onLoad={() =>
+            showToast(
+              "error",
+              "Error",
+              "Some error has occured with this method"
+            )
+          }
           style={{
             // border: "2px solid [#3C5164]",
             borderRadius: "8px",
