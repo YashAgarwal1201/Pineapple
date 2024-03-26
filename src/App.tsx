@@ -41,7 +41,7 @@ export function App() {
     sessionStorage.setItem("pineappleState", JSON.stringify(state));
   }, [state]);
 
-  console.log(import.meta.env.DEV ? '/' : '/Pineapple/')
+  console.log(import.meta.env.DEV ? "/" : "/Pineapple/");
 
   return (
     <div className="w-screen h-[100dvh]">

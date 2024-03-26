@@ -51,7 +51,8 @@ const Router = createBrowserRouter(
       <Route path="/cropped-data" element={<CroppedData />} />
       <Route path="/success" element={<SuccessPage />} />
     </Route>
-  ),{ basename: import.meta.env.DEV ? '/' : '/Pineapple/' }
+  ),
+  { basename: import.meta.env.DEV ? "/" : "/Pineapple/" }
 );
 
 export default Router;
