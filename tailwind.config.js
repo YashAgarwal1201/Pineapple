@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+import { fontFamily } from 'tailwindcss/defaultTheme';
+
 export default {
   content: [
     "./index.html",
@@ -6,16 +8,19 @@ export default {
     "./src/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    colors: {
-      transparent: "transparent",
-      current: "currentColor",
-      "metallic-brown": "#A14712",
-      ochre: "#C27815",
-      "naples-yellow": "#FFD964",
-      "fern-green": "#557B3F",
-      "bud-green": "#7CB35C",
+    extend: {
+      colors: {
+        "metallic-brown": "#A14712",
+        ochre: "#C27815",
+        "naples-yellow": "#FFD964",
+        "fern-green": "#557B3F",
+        "bud-green": "#7CB35C",
+      },
+      fontFamily: {
+        heading: ["var(--heading)", ...fontFamily.sans], // Specify backup font family as serif
+        content: ["var(--content)", ...fontFamily.serif], // Specify backup font family as sans-serif
+      },
     },
-    extend: {},
   },
   plugins: [],
 };

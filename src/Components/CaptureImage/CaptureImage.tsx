@@ -59,10 +59,11 @@ export default function CaptureImageLibrary({
   };
 
   useEffect(() => {
-    const video = document.getElementById("video") as HTMLVideoElement;
+    const video = document.getElementById("video");
+    console.log(video?.clientWidth)
     setVideoConstraints({
-      width: video?.width || 1280,
-      height: video?.height || 720,
+      width: video?.clientWidth || 1920,
+      height: video?.clientHeight || 1080,
       facingMode: "environment",
     });
     calcNumberOfCamera();
@@ -73,14 +74,14 @@ export default function CaptureImageLibrary({
     if (videoConstraints) {
       if (videoConstraints?.facingMode === "user") {
         setVideoConstraints({
-          width: videoConstraints?.width || 1280,
-          height: videoConstraints?.height || 720,
+          width: videoConstraints?.width || 1920,
+          height: videoConstraints?.height || 1080,
           facingMode: "environment",
         });
       } else {
         setVideoConstraints({
-          width: videoConstraints?.width || 1280,
-          height: videoConstraints?.height || 720,
+          width: videoConstraints?.width || 1920,
+          height: videoConstraints?.height || 1080,
           facingMode: "user",
         });
       }
@@ -95,10 +96,10 @@ export default function CaptureImageLibrary({
       );
   };
   return (
-    <div className="w-full h-full flex flex-col justify-end items-center gap-3">
-      <div className="h-[80%] flex relative w-full rounded-lg">
+    <div className="w-full h-full flex flex-col items-center gap-3">
+      <div className="h-[80%] flex relative w-full rounded-lg" id="video">
         <Webcam
-          id="video"
+          
           onLoad={() =>
             showToast(
               "error",
@@ -107,7 +108,7 @@ export default function CaptureImageLibrary({
             )
           }
           style={{
-            // border: "2px solid [#3C5164]",
+            // border: "2px solid #3C5164",
             borderRadius: "8px",
             width: "100%",
             height: "100%",
@@ -123,14 +124,14 @@ export default function CaptureImageLibrary({
         <Button
           className="border-0 bg-fern-green text-naples-yellow"
           icon="pi pi-arrow-left"
-          title="Back"
+          title="Go back"
           id="back-button"
           onClick={() => onBackButtonClick()}
         />
         <Button
           className="border-0 bg-fern-green text-naples-yellow"
           icon="pi pi-camera"
-          title="Click Photo"
+          title="Take photo"
           id="click-photo"
           onClick={() => capture()}
         />
