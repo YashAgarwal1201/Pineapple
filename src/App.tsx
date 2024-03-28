@@ -24,6 +24,7 @@ import { useEffect, useRef } from "react";
 import { Toast } from "primereact/toast";
 import { useAppContext } from "./AppContext/AppContext";
 import { Outlet } from "react-router-dom";
+import "./App.scss";
 
 export function App() {
   const myToast = useRef<Toast>(null);

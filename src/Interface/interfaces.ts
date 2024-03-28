@@ -1,8 +1,8 @@
-import { Dispatch } from "react";
+// File for type and interfaces definitons
+
+import { Dispatch, SetStateAction } from "react";
 
 import { Toast } from "primereact/toast";
-
-// import { AxiosResponse } from 'axios';
 
 export type Action<T> = { type: string; payload?: T };
 
@@ -84,4 +84,13 @@ export type dispatchParamType = {
   type: string;
   contextStateKey: string;
   payload: any;
+};
+
+export type UploadImageOptionsDialogType = {
+  showOptions: boolean;
+  setShowOptions: Dispatch<SetStateAction<boolean>>;
+  openCamera: boolean;
+  setOpenCamera: Dispatch<SetStateAction<boolean>>;
+  uploadHandeler: () => void;
+  onCaptureImageClick: () => void;
 };

@@ -1,9 +1,9 @@
 import { startTransition, useEffect, useRef, useState } from "react";
-import Header from "../../Components/Header/Header";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext/AppContext";
 import "./CroppedData.scss";
+import Layout from "../../Layout/Layout";
 
 const CroppedData = () => {
   const navigate = useNavigate();
@@ -254,9 +254,7 @@ const CroppedData = () => {
   }, [imgType]);
 
   return (
-    <div className="w-screen h-[100dvh] relative flex flex-col bg-ochre">
-      <Header />
-
+    <Layout>
       <div className="customScrollbar h-full py-3 px-1 sm:px-3 my-3 mx-0 sm:mx-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md overflow-y-auto">
         <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5 overflow-y-auto">
           <div className="px-2 md:px-0 flex justify-between items-center">
@@ -387,7 +385,7 @@ const CroppedData = () => {
           />
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

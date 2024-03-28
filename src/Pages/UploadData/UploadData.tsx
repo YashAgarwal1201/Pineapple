@@ -1,17 +1,17 @@
-import { startTransition, useState } from "react";
-import Header from "../../Components/Header/Header";
+import { startTransition, useEffect, useState } from "react";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext/AppContext";
-import { Dialog } from "primereact/dialog";
-import CaptureImageLibrary from "../../Components/CaptureImage/CaptureImage";
 import "./UploadData.scss";
+import Layout from "../../Layout/Layout";
+import UploadImageOptionsDialog from "../../Components/UploadImageOptionsDialog/UploadImageOptionsDialog";
 
 const UploadData = () => {
   const navigate = useNavigate();
-  const { state, showToast, setSelectedImage } = useAppContext();
+  const { state, showToast, setSelectedImage, setPolygons } = useAppContext();
   const [showOptions, setShowOptions] = useState(false);
   const [openCamera, setOpenCamera] = useState<boolean>(false);
+  const [showContent, setShowContent] = useState(false);
 
   const uploadHandeler = () => {
     const input = document.createElement("input");
@@ -21,6 +21,15 @@ const UploadData = () => {
     input.onchange = async () => {
       if (input.files && input.files[0]) {
         const selectedFile = input.files[0];
+
+        if (selectedFile.size > 1024 * 1024) {
+          showToast(
+            "error",
+            "Error",
+            "Please select an image smaller than 1MB"
+          );
+          return;
+        }
 
         if (selectedFile?.type?.includes("image")) {
           // await setSelectedImage(
@@ -32,7 +41,7 @@ const UploadData = () => {
           reader.onload = async (e) => {
             const base64Data = e.target?.result as string; // Base64-encoded image data
             await setSelectedImage(
-              selectedFile.name, // Set the image title to the file name
+              selectedFile.name,
               base64Data,
               selectedFile.type
             );
@@ -41,6 +50,7 @@ const UploadData = () => {
               "Success",
               "Rack image uploaded successfully!"
             );
+            if (state.polygons?.length > 0) setPolygons([]);
           };
           reader.readAsDataURL(selectedFile);
         } else {
@@ -50,8 +60,7 @@ const UploadData = () => {
             "Either wrong file is selected or there's some issue"
           );
         }
-        // onHide(!visible);
-        setShowOptions(!showOptions);
+        setShowOptions(false);
       }
     };
     input.click();
@@ -60,10 +69,11 @@ const UploadData = () => {
   const removeHandeler = () => {
     showToast("warn", "Warning", "Image removed");
     setSelectedImage("", "", "");
+    if (state.polygons?.length > 0) setPolygons([]);
   };
 
   const saveAndContinueHandeler = () => {
-    if (state.imageSelected.url !== "") {
+    if (state.imageSelected?.url !== "") {
       showToast("success", "Success", "Data saved");
       startTransition(() => {
         navigate("/draw");
@@ -75,123 +85,86 @@ const UploadData = () => {
     setOpenCamera(true);
   };
 
-  return (
-    <div className="w-screen h-[100dvh] relative flex flex-col bg-ochre">
-      <Header />
+  useEffect(() => {
+    setShowContent(true);
+  }, []);
 
-      <div className="h-full p-3 m-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md">
+  return (
+    <Layout>
+      <div
+        className={`h-full p-2 sm:p-3 m-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md transition-all duration-1000 transform ${
+          showContent
+            ? "translate-y-0 opacity-100"
+            : "-translate-y-full opacity-0"
+        }`}
+      >
         <div
-          className="w-56 sm:w-60 aspect-square p-3 border-2 border-dashed border-naples-yellow rounded-lg cursor-pointer"
+          className="w-60 sm:w-64 md:w-72 lg:w-96 aspect-square p-3 border-2 border-dashed border-naples-yellow rounded-lg cursor-pointer"
           onClick={() => {
-            if (state.imageSelected.url === "") setShowOptions(!showOptions);
+            if (state.imageSelected?.url === "") setShowOptions(true);
           }}
         >
           <div className="w-full h-full flex flex-col justify-center items-center gap-y-4 bg-naples-yellow rounded-md">
-            {state.imageSelected.url === "" && (
-              <span className="pi pi-image p-4 text-4xl text-metallic-brown bg-bud-green rounded-md"></span>
-            )}
-            <span className="text-lg text-metallic-brown font-medium">
-              {state.imageSelected.url === "" ? "Upload File" : "Selected File"}
-            </span>
-            {state.imageSelected.url !== "" && (
-              <div className="p-2 relative">
+            <div className="h-2/5 flex flex-col justify-center items-center">
+              {state.imageSelected.url === "" && (
+                <span className="w-fit pi pi-image p-4 text-4xl text-metallic-brown bg-bud-green rounded-md"></span>
+              )}
+              <span className="text-lg sm:text-xl lg:text-2xl text-metallic-brown font-heading">
+                {state.imageSelected?.url === ""
+                  ? "Upload Image"
+                  : "Selected Image"}
+              </span>
+            </div>
+            {state.imageSelected?.url !== "" && (
+              <div className="h-3/5 p-2 relative">
                 <img
                   src={state.imageSelected.url}
                   alt="selected file"
-                  className="rounded-md shadow-md"
+                  className="h-full w-auto rounded-md shadow-md"
                 />
                 <Button
-                  icon="pi pi-minus"
-                  className="absolute top-0.5 right-0.5 !w-[16px] !h-[16px] !p-[12px] bg-metallic-brown text-naples-yellow !text-xs border-2 border-naples-yellow rounded-full"
+                  icon="pi pi-sync"
+                  rounded
+                  className="absolute top-0.5 right-0.5 !w-[16px] !h-[16px] !p-[12px] bg-metallic-brown text-naples-yellow !text-xs border-2 border-naples-yellow font-content"
                   type="button"
-                  title="Click to remove this file"
+                  title="Click to change the image"
                   onClick={() => {
-                    showToast("warn", "Warning", "Image removed");
-                    setSelectedImage("", "", "");
+                    if (state.imageSelected.url) setShowOptions(true);
                   }}
                 />
               </div>
             )}
           </div>
         </div>
-        <div className="w-full flex flex-col sm:flex-row justify-center items-center gap-x-5 gap-y-3">
+        <div className="w-full flex flex-col sm:flex-row justify-center items-center gap-x-5 gap-y-2 sm:gap-y-3 font-content">
           <Button
-            disabled={state.imageSelected.url === ""}
+            disabled={state.imageSelected?.url === ""}
             icon="pi pi-trash"
             label="Remove Image"
             title="Click to remove the selected image"
-            className="h-10 text-naples-yellow bg-metallic-brown border-2 border-naples-yellow"
+            className="h-9 sm:h-10 text-sm sm:text-base text-naples-yellow bg-metallic-brown border-2 border-naples-yellow"
             onClick={() => removeHandeler()}
           />
           <Button
-            disabled={state.imageSelected.url === ""}
+            disabled={state.imageSelected?.url === ""}
             icon="pi pi-check"
             label="Save & Continue"
             title="Click to save and continue"
-            className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
+            className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
             onClick={() => saveAndContinueHandeler()}
           />
         </div>
       </div>
-      <Dialog
-        visible={showOptions}
-        onHide={() => {
-          setShowOptions(false);
-          setOpenCamera(false);
-        }}
-        header={
-          <div className="text-base md:text-lg lg:text-xl">Choose options</div>
-        }
-        draggable={false}
-        className={`${
-          openCamera ? "h-[90dvh] sm:h-auto" : "h-auto"
-        } reusableDialog w-full md:w-2/3 lg:w-[500px] absolute md:static bottom-0 md:bottom-auto left-0 md:left-auto"`}
-      >
-        <div className="pt-1 w-full">
-          {!openCamera ? (
-            <div className="w-full flex flex-col sm:flex-row justify-center lg:justify-around items-center gap-x-2 gap-y-2">
-              <Button
-                type="button"
-                icon="pi pi-upload"
-                label="Browse System"
-                title="Click to browse system"
-                className="h-10 text-sm md:text-base text-naples-yellow bg-fern-green border-fern-green"
-                onClick={() =>
-                  state.imageSelected.url === "" && uploadHandeler()
-                }
-              />
-              <Button
-                type="button"
-                icon="pi pi-camera"
-                label="Capture Image"
-                title="Click to open camera"
-                className="h-10 text-sm md:text-base text-naples-yellow bg-fern-green border-fern-green"
-                // onClick={() => onCaptureImageClick()}
-                onClick={() => {
-                  if (window.location.protocol === "https:")
-                    onCaptureImageClick();
-                  else {
-                    showToast(
-                      "warn",
-                      "Warning",
-                      "Please use different method to attach file. Camera access is denied according to browser protocols in HTTP",
-                      5000
-                    );
-                  }
-                }}
-              />
-            </div>
-          ) : (
-            <CaptureImageLibrary
-              openCamera={openCamera}
-              onCapture={() => setShowOptions(true)}
-              exitCamera={() => setOpenCamera(false)}
-              // acceptType={state?.isOptionSelected}
-            />
-          )}
-        </div>
-      </Dialog>
-    </div>
+
+      <UploadImageOptionsDialog
+        showOptions={showOptions}
+        setShowOptions={setShowOptions}
+        openCamera={openCamera}
+        setOpenCamera={setOpenCamera}
+        uploadHandeler={uploadHandeler}
+        onCaptureImageClick={onCaptureImageClick}
+      />
+    </Layout>
   );
 };
 

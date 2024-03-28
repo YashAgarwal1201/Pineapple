@@ -1,16 +1,17 @@
-import { startTransition, useEffect, useRef } from "react";
-import Header from "../../Components/Header/Header";
+import { startTransition, useEffect, useRef, useState } from "react";
 import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext/AppContext";
 import "./PreviewData.scss";
+import Layout from "../../Layout/Layout";
 
 const PreviewData = () => {
   const navigate = useNavigate();
   const { state } = useAppContext();
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [showContent, setShowContent] = useState(false);
   // const [scaleFactor, setScaleFactor] = useState<number>(0);
 
   useEffect(() => {
@@ -95,22 +96,30 @@ const PreviewData = () => {
     }
   }, [state.polygons, state?.imageSelected?.url]);
 
-  return (
-    <div className="w-screen h-[100dvh] relative flex flex-col bg-ochre">
-      <Header />
+  useEffect(() => {
+    setShowContent(true);
+  }, []);
 
-      <div className="customScrollbar h-full py-3 px-1 sm:px-3 my-3 mx-0 sm:mx-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md overflow-y-auto">
+  return (
+    <Layout>
+      <div
+        className={`customScrollbar h-full py-3 px-1 sm:px-3 my-3 mx-0 sm:mx-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md overflow-y-auto transition-all duration-1000 transform ${
+          showContent
+            ? "translate-y-0 opacity-100"
+            : "-translate-y-full opacity-0"
+        }`}
+      >
         <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5 overflow-y-auto">
           <div className="px-2 md:px-0 flex justify-between items-center">
             <div className="flex flex-col gap-1">
-              <span className="text-lg md:text-xl font-medium text-naples-yellow">
+              <span className="text-lg md:text-xl font-heading text-naples-yellow">
                 Preview Data
               </span>
-              <span className="text-sm md:text-base text-bud-green font-medium">
+              <span className="text-sm md:text-base text-bud-green font-content font-medium">
                 Preview the data before proceeding
               </span>
             </div>
-            <div className="hidden md:flex flex-row gap-x-10">
+            <div className="hidden md:block font-content">
               <Button
                 disabled={
                   state?.imageSelected?.url?.length <= 0 ||
@@ -136,7 +145,7 @@ const PreviewData = () => {
             <div className="w-full md:w-2/4 lg:w-3/5">
               <div className="w-full p-3 rounded-xl bg-fern-green">
                 <div className="flex justify-between items-center text-base text-blue-900 pb-2">
-                  <span className="text-base sm:text-lg text-naples-yellow font-semibold">
+                  <span className="text-base sm:text-lg text-naples-yellow font-heading">
                     Annotations (
                     {state.polygons?.length < 10
                       ? `0${state.polygons?.length}`
@@ -164,20 +173,26 @@ const PreviewData = () => {
                         collapsed={true}
                         header={
                           <div className="w-full h-full flex justify-between items-center">
-                            <span className="text-base sm:text-lg text-metallic-brown">
+                            <span className="text-base sm:text-lg text-metallic-brown font-heading">
                               {polygon?.label}
                             </span>
                           </div>
                         }
+                        collapseIcon={
+                          <span className="p-2 pi pi-angle-up text-metallic-brown"></span>
+                        }
+                        expandIcon={
+                          <span className="p-2 pi pi-angle-down text-metallic-brown"></span>
+                        }
                         toggleable
                       >
-                        <div className="w-full flex flex-col gap-y-1">
+                        <div className="w-full flex flex-col gap-y-1 font-content">
                           <p className="w-full p-2 bg-fern-green text-naples-yellow font-medium rounded-lg">
                             Coordinates -{" "}
                           </p>
                           {polygon.points?.map((values, key) => (
                             <p
-                              className="w-full flex flex-row items-center gap-x-1"
+                              className="w-full flex flex-row items-center gap-x-1 text-sm sm:text-base"
                               key={key}
                             >
                               <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
@@ -205,9 +220,13 @@ const PreviewData = () => {
         </div>
       </div>
       <div
-        className={`w-full p-2 flex md:hidden flex-col items-center sticky bottom-0 left-0 right-0 bg-metallic-brown rounded-t-3xl text-xs`}
+        className={`w-full p-2 flex md:hidden flex-col items-center sticky bottom-0 left-0 right-0 bg-metallic-brown rounded-t-3xl transition-all duration-1000 transform ${
+          showContent
+            ? "translate-y-0 opacity-100"
+            : "translate-y-full opacity-0"
+        }`}
       >
-        <div className="flex flex-row gap-x-10">
+        <div className="flex flex-row gap-x-10 font-content">
           <Button
             disabled={
               state?.imageSelected?.url?.length <= 0 ||
@@ -215,7 +234,7 @@ const PreviewData = () => {
             }
             icon="pi pi-check"
             label="Continue"
-            className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
+            className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
             onClick={() => {
               startTransition(() => {
                 navigate("/success");
@@ -224,7 +243,7 @@ const PreviewData = () => {
           />
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
