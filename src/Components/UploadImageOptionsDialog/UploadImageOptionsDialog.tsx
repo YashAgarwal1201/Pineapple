@@ -13,7 +13,7 @@ const UploadImageOptionsDialog = ({
   uploadHandeler,
   onCaptureImageClick,
 }: UploadImageOptionsDialogType) => {
-  const { state, showToast } = useAppContext();
+  const { showToast } = useAppContext();
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   useEffect(() => {
