@@ -52,7 +52,7 @@ const Router = createBrowserRouter(
       <Route path="/success" element={<SuccessPage />} />
     </Route>
   ),
-  { basename: import.meta.env.DEV ? "/" : "/Pineapple/" }
+  { basename: "/Pineapple/" }
 );
 
 export default Router;
