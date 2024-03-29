@@ -5,16 +5,8 @@ import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext/AppContext";
 import { generateRandomColor } from "../../Services/functionServices";
-// import CaptureImageLibrary from "../CaptureImage/CaptureImage";
 import "./PolygonDrawer.scss";
 import { Polygon } from "../../Interface/interfaces";
-
-// interface Polygon {
-//   points: { x: number; y: number }[];
-//   color: string;
-//   label: string;
-//   units: string | number;
-// }
 
 interface Label {
   name: string;
@@ -208,7 +200,6 @@ const PolygonDrawer = () => {
       setAddNew(false);
       showToast("success", "Success", "Polygon added succesfully");
     } else {
-      // alert("A polygon must have at least 3 points to be completed.");
       showToast(
         "warn",
         "Warning",
@@ -218,7 +209,6 @@ const PolygonDrawer = () => {
   };
 
   const handleDeletePolygon = (index: number) => {
-    // const updatedPolygons = [...polygons];
     const updatedPolygons = [...state.polygons];
     updatedPolygons.splice(index, 1);
     setPolygons(updatedPolygons);
@@ -227,7 +217,6 @@ const PolygonDrawer = () => {
 
   const handleLabelChange = (index: number, selectedLabel: Label | null) => {
     if (selectedLabel) {
-      // const updatedPolygons = [...polygons];
       const updatedPolygons = [...state.polygons];
       updatedPolygons[index].label = selectedLabel.name;
       setPolygons(updatedPolygons);
@@ -241,30 +230,14 @@ const PolygonDrawer = () => {
         <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5 overflow-y-auto">
           <div className="px-2 md:px-0 flex justify-between items-center">
             <div className="flex flex-col gap-1">
-              <span className="text-lg md:text-xl font-medium text-naples-yellow">
+              <span className="text-lg md:text-xl font-heading text-naples-yellow">
                 Draw required polygons
               </span>
-              <span className="text-sm md:text-base text-bud-green font-medium">
+              <span className="text-sm md:text-base text-bud-green font-content font-medium">
                 Identify and select the correct annotations in the image
               </span>
             </div>
             <div className="hidden md:flex flex-row gap-x-10">
-              {/* {!addNew && (
-    <Button
-      icon="pi pi-plus"
-      label="Add New"
-      className="px-5 text-[#3778B1] border-2 border-[#3778B1] bg-transparent"
-      onClick={() => setAddNew(true)}
-    />
-  )}
-  {addNew && (
-    <Button
-      icon="pi pi-plus"
-      label="Complete Polygon"
-      onClick={handleCompletePolygon}
-      className="px-5 text-[#3778B1] border-2 border-[#3778B1] bg-transparent"
-    />
-  )} */}
               <Button
                 disabled={
                   state?.imageSelected?.url?.length <= 0 ||
@@ -272,7 +245,7 @@ const PolygonDrawer = () => {
                 }
                 icon="pi pi-check"
                 label="Save & Continue"
-                className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
+                className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => {
                   // console.log(canvasRef?.current?.getContext("2d"));
                   startTransition(() => {
@@ -295,30 +268,32 @@ const PolygonDrawer = () => {
             <div className="w-full md:w-2/4 lg:w-3/5">
               <div className="w-full p-3 rounded-xl bg-fern-green">
                 <div className="flex justify-between items-center text-base text-blue-900 pb-2">
-                  <span className="text-base sm:text-lg text-naples-yellow font-semibold">
+                  <span className="text-base sm:text-lg text-naples-yellow font-heading font-medium">
                     Annotations (
                     {state.polygons?.length < 10
                       ? `0${state.polygons?.length}`
                       : `${state.polygons?.length}`}
                     )
                   </span>
-                  {!addNew && (
-                    <Button
-                      disabled={state.imageSelected.url === ""}
-                      icon="pi pi-plus"
-                      label="Add Annotation"
-                      className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
-                      onClick={() => setAddNew(true)}
-                    />
-                  )}
-                  {addNew && (
-                    <Button
-                      icon="pi pi-plus"
-                      label="Complete Polygon"
-                      onClick={handleCompletePolygon}
-                      className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
-                    />
-                  )}
+                  <div className="hidden md:block">
+                    {!addNew && (
+                      <Button
+                        disabled={state.imageSelected.url === ""}
+                        icon="pi pi-plus"
+                        label="Add Annotation"
+                        className="h-9 sm:h-10 text-sm sm:text-base px-2 md:px-5 text-naples-yellow border-2 border-naples-yellow bg-transparent"
+                        onClick={() => setAddNew(true)}
+                      />
+                    )}
+                    {addNew && (
+                      <Button
+                        icon="pi pi-plus"
+                        label="Complete Polygon"
+                        onClick={handleCompletePolygon}
+                        className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+                      />
+                    )}
+                  </div>
                 </div>
                 <div>
                   {state.polygons?.map((polygon, index) => (
@@ -360,39 +335,40 @@ const PolygonDrawer = () => {
         </div>
       </div>
       <div
-        className={`w-full p-2 flex md:hidden flex-col items-center sticky bottom-0 left-0 right-0 bg-metallic-brown rounded-t-3xl text-xs`}
+        className={`w-full p-2 block md:hidden sticky bottom-0 left-0 right-0 bg-metallic-brown rounded-t-3xl text-xs`}
       >
-        <div className="flex flex-row gap-x-10">
-          {/* {!addNew && (
-      <Button
-        icon="pi pi-plus"
-        label="Add New"
-        className="px-2 md:px-5 text-xs sm:text-sm text-[#3778B1] border-2 border-[#3778B1] bg-transparent"
-        onClick={() => setAddNew(true)}
-      />
-    )}
-    {addNew && (
-      <Button
-        icon="pi pi-plus"
-        label="Complete Polygon"
-        onClick={handleCompletePolygon}
-        className="px-2 md:px-5 text-xs sm:text-sm text-[#3778B1] border-2 border-[#3778B1] bg-transparent"
-      />
-    )} */}
+        <div className="flex justify-center items-center flex-row gap-x-5 font-content">
           <Button
             disabled={
               state?.imageSelected?.url?.length <= 0 ||
               state.polygons?.length < 1
             }
             icon="pi pi-check"
-            label="Save & Continue"
-            className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
+            label="Continue"
+            className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
             onClick={() => {
               startTransition(() => {
                 navigate("/preview");
               });
             }}
           />
+          {!addNew && (
+            <Button
+              disabled={state.imageSelected.url === ""}
+              icon="pi pi-plus"
+              label="Add Annotation"
+              className="h-9 sm:h-10 text-sm sm:text-base px-2 md:px-5 text-naples-yellow border-2 border-naples-yellow bg-transparent"
+              onClick={() => setAddNew(true)}
+            />
+          )}
+          {addNew && (
+            <Button
+              icon="pi pi-plus"
+              label="Complete Polygon"
+              onClick={handleCompletePolygon}
+              className="h-9 sm:h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+            />
+          )}
         </div>
       </div>
     </>

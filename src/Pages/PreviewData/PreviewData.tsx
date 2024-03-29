@@ -127,7 +127,7 @@ const PreviewData = () => {
                 }
                 icon="pi pi-check"
                 label="Continue"
-                className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
+                className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => {
                   startTransition(() => {
                     navigate("/success");
