@@ -39,11 +39,11 @@ jobs:
         run: npm install
       - name: Build
         run: npm run build
-      - name: Set Base Path
-        run: |
-          sed -i 's#base: "/"#base: "/Pineapple/"#' vite.config.ts
-      - name: Rebuild with Base Path
-        run: npm run build
+      # - name: Set Base Path
+      #   run: | 
+      #     sed -i 's#base: "/"#base: "/Pineapple/"#' vite.config.ts
+      # - name: Rebuild with Base Path
+      #   run: npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
