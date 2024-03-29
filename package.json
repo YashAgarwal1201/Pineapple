@@ -2,6 +2,7 @@
   "name": "vite-project",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://yashagarwal1201.github.io/Pineapple/",
   "type": "module",
   "scripts": {
     "dev": "vite",
