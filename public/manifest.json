@@ -1,6 +1,6 @@
 {
-	"short_name": "O&M Planogram",
-	"name": "Owens and Minors - Planogram",
+	"short_name": "Project Pineapple",
+	"name": "Project Pineapple",
 	"icons": [
 		{
 			"src": "maskable_icon_x48.png",
@@ -51,6 +51,7 @@
 		}
 	],
 	"start_url": "/",
+	"scope": "/Pineapple/",
 	"display": "standalone",
 	"theme_color": "#000000",
 	"background_color": "#ffffff",
