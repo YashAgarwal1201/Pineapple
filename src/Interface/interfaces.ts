@@ -68,6 +68,11 @@ export interface Polygon {
   units: string | number;
 }
 
+export interface Label {
+  name: string;
+  code: string;
+}
+
 export interface Point {
   x: number;
   y: number;

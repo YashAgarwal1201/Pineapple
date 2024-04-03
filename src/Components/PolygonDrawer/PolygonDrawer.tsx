@@ -1,27 +1,18 @@
 import React, { startTransition, useEffect, useRef, useState } from "react";
 import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
-import { Dropdown } from "primereact/dropdown";
+// import { Dropdown } from "primereact/dropdown";
+import { InputText } from "primereact/inputtext";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext/AppContext";
 import { generateRandomColor } from "../../Services/functionServices";
 import "./PolygonDrawer.scss";
 import { Polygon } from "../../Interface/interfaces";
-
-interface Label {
-  name: string;
-  code: string;
-}
+import { DEFAULT_LABEL } from "../../Services/constants";
 
 const PolygonDrawer = () => {
   const navigate = useNavigate();
   const { state, setPolygons, showToast } = useAppContext();
-
-  const DEFAULT_LABEL = "Item";
-  const labels: Label[] = [
-    { name: "Label A", code: "LA" },
-    { name: "Label B", code: "LB" },
-  ];
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [currentPolygon, setCurrentPolygon] = useState<Polygon | null>(null);
@@ -30,19 +21,16 @@ const PolygonDrawer = () => {
   >([]);
   const [addNew, setAddNew] = useState(false);
   const [scaleFactor, setScaleFactor] = useState<number>(0);
+  const [editLabel, setEditLabel] = useState<number | null>(null);
+  const [editedLabel, setEditedLabel] = useState<string>("");
 
   useEffect(() => {
-    // if (state?.imageSelected?.url?.length < 1) {
-    //   startTransition(() => {
-    //     navigate("/");
-    //   });
-    // }
-    // console.log(state?.polygons);
     const canvas = canvasRef.current as HTMLCanvasElement;
     const ctx = canvas?.getContext("2d");
 
     if (ctx) {
       ctx.clearRect(0, 0, canvas?.width as number, canvas?.height as number);
+      ctx.imageSmoothingEnabled = false;
 
       const img = new Image();
       img.src = state?.imageSelected?.url; //images;
@@ -91,21 +79,21 @@ const PolygonDrawer = () => {
             polygon.points.length;
 
           ctx.fillStyle = "white";
-          const padding = 4;
-          const labelWidth = ctx.measureText(polygon.label).width + 5;
+          const padding = 10;
+          const labelWidth = ctx.measureText(polygon.label.substring(0, 10))?.width + 8;
           const labelHeight = 14;
           ctx.fillRect(
             labelX - labelWidth / 2 - padding,
             labelY - labelHeight / 2 - padding,
             labelWidth + 2 * padding,
-            labelHeight + 1 * padding
+            labelHeight + 1.7 * padding
           );
 
           ctx.fillStyle = "black";
-          ctx.font = "12px Arial";
+          ctx.font = "14px 'Verdana'";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-          ctx.fillText(polygon.label, labelX, labelY);
+          ctx.fillText(polygon.label.substring(0, 10), labelX, labelY);
 
           ctx.stroke(path);
         });
@@ -163,6 +151,7 @@ const PolygonDrawer = () => {
     }
   };
 
+  // Calculate BBox
   const calculateBoundingBox = (points: string | any[], padding = 20) => {
     if (points.length === 0) {
       return [0, 0, 0, 0]; // Return an empty bounding box if there are no points
@@ -208,6 +197,7 @@ const PolygonDrawer = () => {
     }
   };
 
+  // Delete Polygon
   const handleDeletePolygon = (index: number) => {
     const updatedPolygons = [...state.polygons];
     updatedPolygons.splice(index, 1);
@@ -215,13 +205,21 @@ const PolygonDrawer = () => {
     showToast("warn", "Warning", "Polygon deleted");
   };
 
-  const handleLabelChange = (index: number, selectedLabel: Label | null) => {
-    if (selectedLabel) {
+  // Enable Edit for Polygon Lable
+  const handleEditLabel = (index: number) => {
+    setEditLabel(index);
+    setEditedLabel(state.polygons[index].label);
+  };
+
+  // Save new Polygon Label
+  const handleSaveLabel = () => {
+    if (editLabel !== null && editedLabel.trim() !== "") {
       const updatedPolygons = [...state.polygons];
-      updatedPolygons[index].label = selectedLabel.name;
+      updatedPolygons[editLabel].label = editedLabel?.trim();
       setPolygons(updatedPolygons);
       showToast("success", "Success", "Label Updated");
     }
+    setEditLabel(null);
   };
 
   return (
@@ -256,12 +254,13 @@ const PolygonDrawer = () => {
             </div>
           </div>
           <div className="w-full h-full flex flex-col md:flex-row gap-2">
-            <div className="w-full md:w-2/4 lg:w-2/5 h-fit md:mb-0 mx-auto">
-              <div className="w-fit h-fit m-auto border-2 border-ochre rounded-lg">
+            <div className="w-full md:w-2/4 lg:w-2/5 h-full md:mb-0 mx-auto flex justify-center items-center">
+              <div className="w-full h-fit m-auto border-2 border-ochre rounded-lg">
                 <canvas
-                  className="mx-auto rounded-lg"
+                  className="w-full mx-auto rounded-lg"
                   ref={canvasRef}
                   onClick={(e) => (addNew ? handleCanvasClick(e) : "")}
+                  
                 />
               </div>
             </div>
@@ -269,7 +268,7 @@ const PolygonDrawer = () => {
               <div className="w-full p-3 rounded-xl bg-fern-green">
                 <div className="flex justify-between items-center text-base text-blue-900 pb-2">
                   <span className="text-base sm:text-lg text-naples-yellow font-heading font-medium">
-                    Annotations (
+                    Polygon (
                     {state.polygons?.length < 10
                       ? `0${state.polygons?.length}`
                       : `${state.polygons?.length}`}
@@ -280,7 +279,7 @@ const PolygonDrawer = () => {
                       <Button
                         disabled={state.imageSelected.url === ""}
                         icon="pi pi-plus"
-                        label="Add Annotation"
+                        label="Add Polygon"
                         className="h-9 sm:h-10 text-sm sm:text-base px-2 md:px-5 text-naples-yellow border-2 border-naples-yellow bg-transparent"
                         onClick={() => setAddNew(true)}
                       />
@@ -316,14 +315,31 @@ const PolygonDrawer = () => {
                         toggleable
                       >
                         <div className="w-full flex items-center gap-4">
-                          <Dropdown
-                            value={polygon?.label}
-                            onChange={(e) => handleLabelChange(index, e.value)}
-                            options={labels}
-                            optionLabel="name"
-                            placeholder="Select an Annotation label"
-                            className="w-full md:w-14rem"
-                          />
+                          <div className="w-full h-9 sm:h-10 text-sm sm:text-base flex items-center gap-4">
+                            <InputText
+                              value={
+                                editLabel !== index ? polygon?.label : editedLabel
+                              }
+                              readOnly={editLabel !== index}
+                              className="h-full w-3/4 bg-naples-yellow border-2 border-bud-green text-metallic-brown"
+                              onChange={(e) => setEditedLabel(e.target?.value)}
+                            />
+                            {editLabel === index ? (
+                              <Button
+                                icon="pi pi-check"
+                                label="Save Label"
+                                className="w-1/4 h-full bg-fern-green text-naples-yellow border-fern-green"
+                                onClick={handleSaveLabel}
+                              />
+                            ) : (
+                              <Button
+                                icon="pi pi-pencil"
+                                label="Edit Label"
+                                className="w-1/4 h-full bg-fern-green text-naples-yellow border-fern-green"
+                                onClick={() => handleEditLabel(index)}
+                              />
+                            )}
+                          </div>
                         </div>
                       </Panel>
                     </div>

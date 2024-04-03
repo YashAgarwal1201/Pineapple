@@ -3,10 +3,11 @@ import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext/AppContext";
 import Layout from "../../Layout/Layout";
+import { downloadPolygonsData } from "../../Services/functionServices";
 
 const SuccessPage = () => {
   const navigate = useNavigate();
-  const { showToast, setSelectedImage, setPolygons, dispatch } =
+  const { state, showToast, setSelectedImage, setPolygons, dispatch } =
     useAppContext();
 
   const [loader, setLoader] = useState(false);
@@ -50,21 +51,30 @@ const SuccessPage = () => {
         <p className="text-center text-lg md:text-2xl font-heading">
           Thank you for using this product
         </p>
-        <div className={`w-full hidden md:flex flex-col items-center`}>
+        <div
+          className={`w-full hidden md:flex flex-row justify-center items-center gap-x-4`}
+        >
           <Button
             loading={loader}
             icon="pi pi-times"
             label="Close"
-            className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
+            className="h-10 text-naples-yellow bg-transparent border-2 border-naples-yellow"
             onClick={async () => {
               setLoader(true);
               await clearSessionStorageAndNavigate();
             }}
           />
+          <Button
+            disabled={state.polygons.length < 1}
+            icon="pi pi-download"
+            label="Download data"
+            className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
+            onClick={() => downloadPolygonsData(state.polygons)}
+          />
         </div>
       </div>
       <div
-        className={`w-full p-2 flex md:hidden flex-col items-center font-content sticky bottom-0 left-0 right-0 bg-metallic-brown rounded-t-3xl drop-shadow-top drop-shadow-right transition-all duration-1000 transform ${
+        className={`w-full p-2 flex md:hidden justify-center items-center gap-x-4 font-content sticky bottom-0 left-0 right-0 bg-metallic-brown rounded-t-3xl drop-shadow-top drop-shadow-right transition-all duration-1000 transform ${
           showContent
             ? "translate-y-0 opacity-100"
             : "translate-y-full opacity-0"
@@ -74,11 +84,18 @@ const SuccessPage = () => {
           loading={loader}
           icon="pi pi-times"
           label="Close"
-          className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
+          className="h-9 sm:h-10 text-sm sm:text-base text-naples-yellow bg-transparent border-2 border-naples-yellow"
           onClick={async () => {
             setLoader(true);
             await clearSessionStorageAndNavigate();
           }}
+        />
+        <Button
+          disabled={state.polygons.length < 1}
+          icon="pi pi-download"
+          label="Download data"
+          className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
+          onClick={() => downloadPolygonsData(state.polygons)}
         />
       </div>
     </Layout>
