@@ -1,8 +1,8 @@
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import CaptureImageLibrary from "../CaptureImage/CaptureImage";
-import { useAppContext } from "../../AppContext/AppContext";
-import { UploadImageOptionsDialogType } from "../../Interface/interfaces";
+import { useAppContext } from "../../Services/AppContext";
+import { UploadImageOptionsDialogType } from "../../Services/interfaces";
 import { useState, useEffect } from "react";
 
 const UploadImageOptionsDialog = ({

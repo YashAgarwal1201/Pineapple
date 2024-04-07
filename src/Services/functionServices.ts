@@ -1,4 +1,4 @@
-import { Polygon } from "../Interface/interfaces";
+import { Polygon } from "./interfaces";
 
 export const generateRandomColor = (): string => {
   const letters = "0123456789ABCDEF";

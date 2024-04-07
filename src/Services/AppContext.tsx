@@ -9,7 +9,7 @@ import {
   State,
   Rectangle,
   Polygon,
-} from "./../Interface/interfaces";
+} from "./interfaces";
 
 const initialState: State = sessionStorage.getItem("pineappleState")
   ? JSON.parse(sessionStorage.getItem("pineappleState") as string)

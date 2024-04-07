@@ -4,10 +4,10 @@ import { Panel } from "primereact/panel";
 // import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../../AppContext/AppContext";
+import { useAppContext } from "../../Services/AppContext";
 import { generateRandomColor } from "../../Services/functionServices";
 import "./PolygonDrawer.scss";
-import { Polygon } from "../../Interface/interfaces";
+import { Polygon } from "../../Services/interfaces";
 import { DEFAULT_LABEL } from "../../Services/constants";
 
 const PolygonDrawer = () => {

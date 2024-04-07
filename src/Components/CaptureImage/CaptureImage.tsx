@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
-import { useAppContext } from "./../../AppContext/AppContext";
+import { useAppContext } from "../../Services/AppContext";
 import { Button } from "primereact/button";
 
 export default function CaptureImageLibrary({
