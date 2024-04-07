@@ -1,7 +1,7 @@
 import { startTransition, useEffect, useState } from "react";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../../AppContext/AppContext";
+import { useAppContext } from "../../Services/AppContext";
 import "./UploadData.scss";
 import Layout from "../../Layout/Layout";
 import UploadImageOptionsDialog from "../../Components/UploadImageOptionsDialog/UploadImageOptionsDialog";

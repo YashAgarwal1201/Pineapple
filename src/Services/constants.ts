@@ -1,4 +1,4 @@
-import { Label } from "../Interface/interfaces";
+import { Label } from "./interfaces";
 
 export const DEFAULT_LABEL = "Polygon";
 
