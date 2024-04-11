@@ -5,6 +5,7 @@ import { useAppContext } from "../../Services/AppContext";
 import "./UploadData.scss";
 import Layout from "../../Layout/Layout";
 import UploadImageOptionsDialog from "../../Components/UploadImageOptionsDialog/UploadImageOptionsDialog";
+import { PROJECT_NAME } from "../../Services/constants";
 
 const UploadData = () => {
   const navigate = useNavigate();
@@ -92,67 +93,72 @@ const UploadData = () => {
   return (
     <Layout>
       <div
-        className={`h-full p-2 sm:p-3 m-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md transition-all duration-1000 transform ${
+        className={`h-full p-2 sm:p-3 m-3 flex flex-col md:flex-row justify-around items-center bg-metallic-brown rounded-lg shadow-md transition-all duration-1000 transform ${
           showContent
             ? "translate-y-0 opacity-100"
             : "-translate-y-full opacity-0"
         }`}
       >
-        <div
-          className="w-60 sm:w-64 md:w-72 lg:w-96 aspect-square p-3 border-2 border-dashed border-naples-yellow rounded-lg cursor-pointer"
-          onClick={() => {
-            if (state.imageSelected?.url === "") setShowOptions(true);
-          }}
-        >
-          <div className="w-full h-full flex flex-col justify-center items-center gap-y-4 bg-naples-yellow rounded-md">
-            <div className="h-2/5 flex flex-col justify-center items-center">
-              {state.imageSelected.url === "" && (
-                <span className="w-fit pi pi-image p-4 text-4xl text-metallic-brown bg-bud-green rounded-md"></span>
-              )}
-              <span className="text-lg sm:text-xl lg:text-2xl text-metallic-brown font-heading">
-                {state.imageSelected?.url === ""
-                  ? "Upload Image"
-                  : "Selected Image"}
-              </span>
-            </div>
-            {state.imageSelected?.url !== "" && (
-              <div className="h-3/5 p-2 relative">
-                <img
-                  src={state.imageSelected.url}
-                  alt="selected file"
-                  className="h-full w-auto rounded-md shadow-md"
-                />
-                <Button
-                  icon="pi pi-sync"
-                  rounded
-                  className="absolute top-0.5 right-0.5 !w-[16px] !h-[16px] !p-[12px] bg-metallic-brown text-naples-yellow !text-xs border-2 border-naples-yellow font-content"
-                  type="button"
-                  title="Click to change the image"
-                  onClick={() => {
-                    if (state.imageSelected.url) setShowOptions(true);
-                  }}
-                />
+        <div className="w-1/2 h-full flex justify-center items-center">
+          <div
+            className="w-60 sm:w-64 md:w-72 lg:w-96 aspect-square p-3 border-2 border-dashed border-naples-yellow rounded-lg cursor-pointer"
+            onClick={() => {
+              if (state.imageSelected?.url === "") setShowOptions(true);
+            }}
+          >
+            <div className="w-full h-full flex flex-col justify-center items-center gap-y-4 bg-naples-yellow rounded-md">
+              <div className="h-2/5 flex flex-col justify-center items-center">
+                {state.imageSelected.url === "" && (
+                  <span className="w-fit pi pi-image p-4 text-4xl text-metallic-brown bg-bud-green rounded-md"></span>
+                )}
+                <span className="text-lg sm:text-xl lg:text-2xl text-metallic-brown font-heading">
+                  {state.imageSelected?.url === ""
+                    ? "Upload Image"
+                    : "Selected Image"}
+                </span>
               </div>
-            )}
+              {state.imageSelected?.url !== "" && (
+                <div className="h-3/5 p-2 relative">
+                  <img
+                    src={state.imageSelected.url}
+                    alt="selected file"
+                    className="h-full w-auto rounded-md shadow-md"
+                  />
+                  <Button
+                    icon="pi pi-sync"
+                    rounded
+                    className="absolute top-0.5 right-0.5 !w-[16px] !h-[16px] !p-[12px] bg-metallic-brown text-naples-yellow !text-xs border-2 border-naples-yellow font-content"
+                    type="button"
+                    title="Click to change the image"
+                    onClick={() => {
+                      if (state.imageSelected.url) setShowOptions(true);
+                    }}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
-        <div className="w-full flex flex-col sm:flex-row justify-center items-center gap-x-5 gap-y-2 sm:gap-y-3 font-content">
-          <Button
-            disabled={state.imageSelected?.url === ""}
-            icon="pi pi-trash"
-            label="Remove Image"
-            title="Click to remove the selected image"
-            className="h-9 sm:h-10 text-sm sm:text-base text-naples-yellow bg-metallic-brown border-2 border-naples-yellow"
-            onClick={() => removeHandeler()}
-          />
-          <Button
-            disabled={state.imageSelected?.url === ""}
-            icon="pi pi-check"
-            label="Save & Continue"
-            title="Click to save and continue"
-            className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
-            onClick={() => saveAndContinueHandeler()}
-          />
+        <div className="w-1/2 h-full flex flex-col justify-center items-center gap-y-10">
+          <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-naples-yellow">{PROJECT_NAME}</h1>
+          <div className="w-full flex flex-row justify-center items-center gap-x-5 font-content">
+            <Button
+              disabled={state.imageSelected?.url === ""}
+              icon="pi pi-trash"
+              label="Remove Image"
+              title="Click to remove the selected image"
+              className="h-9 sm:h-10 text-sm sm:text-base text-naples-yellow bg-metallic-brown border-2 border-naples-yellow"
+              onClick={() => removeHandeler()}
+            />
+            <Button
+              disabled={state.imageSelected?.url === ""}
+              icon="pi pi-check"
+              label="Save & Continue"
+              title="Click to save and continue"
+              className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
+              onClick={() => saveAndContinueHandeler()}
+            />
+          </div>
         </div>
       </div>
 
