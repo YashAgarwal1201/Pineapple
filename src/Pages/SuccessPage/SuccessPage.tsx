@@ -41,36 +41,42 @@ const SuccessPage = () => {
   return (
     <Layout>
       <div
-        className={`h-full p-3 m-3 flex flex-col justify-around items-center text-naples-yellow bg-metallic-brown rounded-lg shadow-md transition-all duration-1000 transform ${
+        className={`h-full p-3 m-3 flex flex-col md:flex-row justify-center items-center gap-y-10 md:gap-y-auto text-naples-yellow bg-metallic-brown rounded-lg shadow-md transition-all duration-1000 transform ${
           showContent
-            ? "translate-y-0 opacity-100"
-            : "-translate-y-full opacity-0"
+            ? "translate-y-0 md:translate-x-0 opacity-100"
+            : "-translate-y-0 md:-translate-x-full opacity-0"
         }`}
       >
-        <span className="pi pi-check p-5 text-[80px] text-naples-yellow bg-fern-green rounded-full shadow-md"></span>
-        <p className="text-center text-lg md:text-2xl font-heading">
-          Thank you for using this product
-        </p>
-        <div
-          className={`w-full hidden md:flex flex-row justify-center items-center gap-x-4`}
-        >
-          <Button
-            loading={loader}
-            icon="pi pi-times"
-            label="Close"
-            className="h-10 text-naples-yellow bg-transparent border-2 border-naples-yellow"
-            onClick={async () => {
-              setLoader(true);
-              await clearSessionStorageAndNavigate();
-            }}
-          />
-          <Button
-            disabled={state.polygons.length < 1}
-            icon="pi pi-download"
-            label="Download data"
-            className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
-            onClick={() => downloadPolygonsData(state.polygons)}
-          />
+        <div className="w-full md:w-1/2 h-auto md:h-full flex justify-center items-center">
+          <div className="p-5 md:p-7 bg-transparent border-2 border-dashed border-fern-green rounded-full">
+            <span className="pi pi-check p-7 md:p-10 text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-naples-yellow bg-fern-green rounded-full"></span>
+          </div>
+        </div>
+        <div className="w-full md:w-1/2 h-auto md:h-full flex flex-col justify-center items-center gap-y-10">
+          <p className="text-center text-lg md:text-2xl lg:text-3xl font-heading">
+            Thank you for using this product
+          </p>
+          <div
+            className={`w-full hidden md:flex flex-row justify-center items-center gap-x-4`}
+          >
+            <Button
+              loading={loader}
+              icon="pi pi-times"
+              label="Close"
+              className="h-10 text-naples-yellow bg-transparent border-2 border-naples-yellow"
+              onClick={async () => {
+                setLoader(true);
+                await clearSessionStorageAndNavigate();
+              }}
+            />
+            <Button
+              disabled={state.polygons.length < 1}
+              icon="pi pi-download"
+              label="Download data"
+              className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
+              onClick={() => downloadPolygonsData(state.polygons)}
+            />
+          </div>
         </div>
       </div>
       <div

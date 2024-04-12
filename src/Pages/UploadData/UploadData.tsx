@@ -23,7 +23,7 @@ const UploadData = () => {
       if (input.files && input.files[0]) {
         const selectedFile = input.files[0];
 
-        if (selectedFile.size > 1024 * 1024) {
+        if (selectedFile.size > 2048 * 2048) {
           showToast(
             "error",
             "Error",
@@ -41,11 +41,7 @@ const UploadData = () => {
           const reader = new FileReader();
           reader.onload = async (e) => {
             const base64Data = e.target?.result as string; // Base64-encoded image data
-            await setSelectedImage(
-              selectedFile.name,
-              base64Data,
-              selectedFile.type
-            );
+            setSelectedImage(selectedFile.name, base64Data, selectedFile.type);
             showToast(
               "success",
               "Success",
@@ -99,7 +95,7 @@ const UploadData = () => {
             : "-translate-y-full opacity-0"
         }`}
       >
-        <div className="w-1/2 h-full flex justify-center items-center">
+        <div className="w-full md:w-2/5 lg:w-1/2 h-2/3 md:h-full flex justify-center items-center">
           <div
             className="w-60 sm:w-64 md:w-72 lg:w-96 aspect-square p-3 border-2 border-dashed border-naples-yellow rounded-lg cursor-pointer"
             onClick={() => {
@@ -111,7 +107,7 @@ const UploadData = () => {
                 {state.imageSelected.url === "" && (
                   <span className="w-fit pi pi-image p-4 text-4xl text-metallic-brown bg-bud-green rounded-md"></span>
                 )}
-                <span className="text-lg sm:text-xl lg:text-2xl text-metallic-brown font-heading">
+                <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-metallic-brown font-heading">
                   {state.imageSelected?.url === ""
                     ? "Upload Image"
                     : "Selected Image"}
@@ -139,9 +135,12 @@ const UploadData = () => {
             </div>
           </div>
         </div>
-        <div className="w-1/2 h-full flex flex-col justify-center items-center gap-y-10">
-          <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-naples-yellow">{PROJECT_NAME}</h1>
-          <div className="w-full flex flex-row justify-center items-center gap-x-5 font-content">
+
+        <div className="w-full md:w-3/5 lg:w-1/2 h-1/3 md:h-full flex flex-col justify-center items-center gap-y-10">
+          <h1 className="hidden md:block font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-naples-yellow select-none">
+            {PROJECT_NAME}
+          </h1>
+          <div className="w-full flex flex-row justify-center items-center gap-x-3 lg:gap-x-5 font-content">
             <Button
               disabled={state.imageSelected?.url === ""}
               icon="pi pi-trash"
