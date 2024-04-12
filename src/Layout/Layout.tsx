@@ -7,11 +7,17 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="w-screen h-[100dvh] relative flex flex-col bg-ochre">
-      {location.pathname !== "/" && !location.pathname.includes("/success") ? (
+      <div className="hidden md:block">
+        {location.pathname !== "/" &&
+        !location.pathname.includes("/success") ? (
+          <Header />
+        ) : (
+          ""
+        )}
+      </div>
+      <div className="block md:hidden">
         <Header />
-      ) : (
-        ""
-      )}
+      </div>
       {children}
     </div>
   );
