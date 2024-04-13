@@ -31,7 +31,7 @@
             .slice(1)
             .split("&")
             .map(function (s) {
-              return s.replace(/~and~/g, "&");
+              return s.replace(/~and~/g, "");
             })
             .join("?");
           window.history.replaceState(
