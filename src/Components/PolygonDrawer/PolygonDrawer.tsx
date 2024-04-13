@@ -15,6 +15,7 @@ const PolygonDrawer = () => {
   const { state, setPolygons, showToast } = useAppContext();
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const canvasParentRef = useRef<HTMLDivElement | null>(null);
   const [currentPolygon, setCurrentPolygon] = useState<Polygon | null>(null);
   const [clickedPoints, setClickedPoints] = useState<
     { x: number; y: number }[]
@@ -23,6 +24,7 @@ const PolygonDrawer = () => {
   const [scaleFactor, setScaleFactor] = useState<number>(0);
   const [editLabel, setEditLabel] = useState<number | null>(null);
   const [editedLabel, setEditedLabel] = useState<string>("");
+  const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current as HTMLCanvasElement;
@@ -80,7 +82,8 @@ const PolygonDrawer = () => {
 
           ctx.fillStyle = "white";
           const padding = 10;
-          const labelWidth = ctx.measureText(polygon.label.substring(0, 10))?.width + 8;
+          const labelWidth =
+            ctx.measureText(polygon.label.substring(0, 10))?.width + 8;
           const labelHeight = 14;
           ctx.fillRect(
             labelX - labelWidth / 2 - padding,
@@ -222,9 +225,19 @@ const PolygonDrawer = () => {
     setEditLabel(null);
   };
 
+  useEffect(() => {
+    setShowContent(true);
+  }, []);
+
   return (
     <>
-      <div className="customScrollbar h-full py-3 px-1 sm:px-3 my-3 mx-0 sm:mx-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md overflow-y-auto">
+      <div
+        className={`customScrollbar h-full py-3 px-1 sm:px-3 my-3 mx-0 sm:mx-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md overflow-y-auto transition-all duration-1000 transform ${
+          showContent
+            ? "translate-y-0 opacity-100"
+            : "-translate-y-full opacity-0"
+        }`}
+      >
         <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5 overflow-y-auto">
           <div className="px-2 md:px-0 flex justify-between items-center">
             <div className="flex flex-col gap-1">
@@ -255,12 +268,13 @@ const PolygonDrawer = () => {
           </div>
           <div className="w-full h-full flex flex-col md:flex-row gap-2">
             <div className="w-full md:w-2/4 lg:w-2/5 h-full md:mb-0 mx-auto flex justify-center items-center">
-              <div className="w-full h-fit m-auto border-2 border-ochre rounded-lg">
+              <div className="w-full h-fit m-auto border-2 border-ochre rounded-lg" ref={canvasParentRef}>
                 <canvas
-                  className="w-full mx-auto rounded-lg"
+                  className="mx-auto rounded-lg"
                   ref={canvasRef}
                   onClick={(e) => (addNew ? handleCanvasClick(e) : "")}
-                  
+                  width={canvasParentRef?.current?.clientWidth}
+                  height={canvasParentRef?.current?.clientHeight}
                 />
               </div>
             </div>
@@ -318,7 +332,9 @@ const PolygonDrawer = () => {
                           <div className="w-full h-9 sm:h-10 text-sm sm:text-base flex items-center gap-4">
                             <InputText
                               value={
-                                editLabel !== index ? polygon?.label : editedLabel
+                                editLabel !== index
+                                  ? polygon?.label
+                                  : editedLabel
                               }
                               readOnly={editLabel !== index}
                               className="h-full w-3/4 bg-naples-yellow border-2 border-bud-green text-metallic-brown"
