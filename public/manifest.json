@@ -50,7 +50,7 @@
 			"sizes": "512x512"
 		}
 	],
-	"start_url": "/",
+	"start_url": "/Pineapple/",
 	"scope": "/Pineapple/",
 	"display": "standalone",
 	"theme_color": "#000000",
