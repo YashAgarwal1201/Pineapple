@@ -27,6 +27,23 @@ const PolygonDrawer = () => {
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
+    const updateCanvasSize = () => {
+      if (canvasRef.current && canvasParentRef.current) {
+        const canvasParentWidth = canvasParentRef.current.clientWidth;
+        canvasRef.current.width = canvasParentWidth;
+        // Optionally update canvas height here if needed
+      }
+    };
+
+    updateCanvasSize(); // Update canvas size initially
+    window.addEventListener("resize", updateCanvasSize); // Add listener for window resize
+
+    return () => {
+      window.removeEventListener("resize", updateCanvasSize); // Remove listener on component unmount
+    };
+  }, []);
+
+  useEffect(() => {
     const canvas = canvasRef.current as HTMLCanvasElement;
     const ctx = canvas?.getContext("2d");
 
@@ -273,8 +290,8 @@ const PolygonDrawer = () => {
                   className="mx-auto rounded-lg"
                   ref={canvasRef}
                   onClick={(e) => (addNew ? handleCanvasClick(e) : "")}
-                  width={canvasParentRef?.current?.clientWidth}
-                  height={canvasParentRef?.current?.clientHeight}
+                  // width={canvasParentRef?.current?.clientWidth}
+                  // height={canvasParentRef?.current?.clientHeight}
                 />
               </div>
             </div>
