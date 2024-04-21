@@ -140,7 +140,7 @@ const UploadData = () => {
           <h1 className="hidden md:block font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-naples-yellow select-none">
             {PROJECT_NAME}
           </h1>
-          <div className="w-full flex flex-row justify-center items-center gap-x-3 lg:gap-x-5 font-content">
+          <div className="w-full flex flex-col xs:flex-row justify-center items-center gap-x-0 xs:gap-x-3 lg:gap-x-5 gap-y-2 xs:gap-y-0 font-content">
             <Button
               disabled={state.imageSelected?.url === ""}
               icon="pi pi-trash"

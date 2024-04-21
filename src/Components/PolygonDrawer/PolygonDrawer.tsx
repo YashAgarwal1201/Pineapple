@@ -285,7 +285,10 @@ const PolygonDrawer = () => {
           </div>
           <div className="w-full h-full flex flex-col md:flex-row gap-2">
             <div className="w-full md:w-2/4 lg:w-2/5 h-full md:mb-0 mx-auto flex justify-center items-center">
-              <div className="w-full h-fit m-auto border-2 border-ochre rounded-lg" ref={canvasParentRef}>
+              <div
+                className="w-full h-fit m-auto border-2 border-ochre rounded-lg"
+                ref={canvasParentRef}
+              >
                 <canvas
                   className="mx-auto rounded-lg"
                   ref={canvasRef}
@@ -346,7 +349,7 @@ const PolygonDrawer = () => {
                         toggleable
                       >
                         <div className="w-full flex items-center gap-4">
-                          <div className="w-full h-9 sm:h-10 text-sm sm:text-base flex items-center gap-4">
+                          <div className="w-full h-fit xs:h-9 sm:h-10 text-sm sm:text-base flex flex-col justify-center xs:flex-row items-end xs:items-center gap-4">
                             <InputText
                               value={
                                 editLabel !== index
@@ -354,21 +357,21 @@ const PolygonDrawer = () => {
                                   : editedLabel
                               }
                               readOnly={editLabel !== index}
-                              className="h-full w-3/4 bg-naples-yellow border-2 border-bud-green text-metallic-brown"
+                              className="h-full w-full xs:w-3/4 bg-naples-yellow border-2 border-bud-green text-metallic-brown"
                               onChange={(e) => setEditedLabel(e.target?.value)}
                             />
                             {editLabel === index ? (
                               <Button
                                 icon="pi pi-check"
                                 label="Save Label"
-                                className="w-1/4 h-full bg-fern-green text-naples-yellow border-fern-green"
+                                className="w-fit xs:w-1/4 h-full bg-fern-green text-naples-yellow border-fern-green"
                                 onClick={handleSaveLabel}
                               />
                             ) : (
                               <Button
                                 icon="pi pi-pencil"
                                 label="Edit Label"
-                                className="w-1/4 h-full bg-fern-green text-naples-yellow border-fern-green"
+                                className="w-fit xs:w-1/4 h-full bg-fern-green text-naples-yellow border-fern-green"
                                 onClick={() => handleEditLabel(index)}
                               />
                             )}

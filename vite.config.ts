@@ -17,7 +17,8 @@ import react from "@vitejs/plugin-react";
 export default defineConfig(({ command }) => {
   const config = {
     plugins: [react()],
-    base: command === "serve" ? "/" : "/Pineapple/", // Set base dynamically
+    // base: command === "serve" ? "/" : "/Pineapple/", // Set base dynamically
+    base: "/",
     server: {
       port: 5373, // Change this to the desired port
     },

@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-import { fontFamily } from 'tailwindcss/defaultTheme';
+import { fontFamily } from "tailwindcss/defaultTheme";
 
 export default {
   content: [
@@ -19,6 +19,9 @@ export default {
       fontFamily: {
         heading: ["var(--heading)", ...fontFamily.sans], // Specify backup font family as serif
         content: ["var(--content)", ...fontFamily.serif], // Specify backup font family as sans-serif
+      },
+      screens: {
+        xs: "480px",
       },
     },
   },
