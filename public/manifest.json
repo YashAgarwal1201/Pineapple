@@ -4,8 +4,8 @@
   "icons": [
     { "src": "./pineapple.svg", "sizes": "any", "type": "image/svg+xml" }
   ],
-  "start_url": "/Pineapple/",
-  "scope": "/Pineapple/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff",
