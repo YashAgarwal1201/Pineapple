@@ -22,6 +22,7 @@ export default {
       },
       screens: {
         xs: "480px",
+        mdl: "896px",
       },
     },
   },
