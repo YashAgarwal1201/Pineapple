@@ -34,6 +34,9 @@ import {
 import App from "./../App";
 
 // Lazy Loaded Components
+const LandingScreen = lazy(
+  () => import("./../Pages/LandingScreen/LandingScreen")
+);
 const UploadPage = lazy(() => import("./../Pages/UploadData/UploadData"));
 const DrawComponent = lazy(() => import("./../Pages/DrawPolygon/DrawPolygon"));
 const PreviewData = lazy(() => import("./../Pages/PreviewData/PreviewData"));
@@ -44,7 +47,8 @@ const PageNotFound = lazy(() => import("../Pages/PageNotFound/PageNotFound"));
 const Router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-      <Route path="/" element={<UploadPage />} />
+      <Route path="/" element={<LandingScreen />} />
+      <Route path="/upload-image" element={<UploadPage />} />
       <Route path="*" element={<PageNotFound />} />
       <Route path="/draw" element={<DrawComponent />} />
       <Route path="/preview" element={<PreviewData />} />

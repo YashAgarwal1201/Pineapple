@@ -30,6 +30,13 @@
   z-index: 10000;
 }
 
+a:hover,
+.p-button:hover {
+  border-color: none;
+  background-color: unset;
+  color: unset;
+}
+
 @media (hover: hover) {
   a:hover,
   .p-button:hover {

@@ -20,9 +20,13 @@ const Header = () => {
             : "text-naples-yellow bg-fern-green"
         } border-0`}
         onClick={() => {
-          if (pathname.includes("/draw")) {
+          if (pathname.includes("/upload-image")) {
             startTransition(() => {
               navigate("/");
+            });
+          } else if (pathname.includes("/draw")) {
+            startTransition(() => {
+              navigate("/upload-image");
             });
           } else if (pathname.includes("/preview")) {
             startTransition(() => {
@@ -43,7 +47,7 @@ const Header = () => {
           }
         }}
       />
-      <h1 className="text-2xl text-naples-yellow font-heading">PINEAPPLE</h1>
+      {/* <h1 className="text-2xl text-naples-yellow font-heading">PINEAPPLE</h1> */}
 
       <Link
         title="check my profile"
