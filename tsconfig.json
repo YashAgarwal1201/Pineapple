@@ -17,6 +17,7 @@
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
+    "noImplicitAny": false, // This disables errors for `any`
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },

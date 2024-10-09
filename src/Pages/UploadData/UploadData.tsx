@@ -5,7 +5,6 @@ import { useAppContext } from "../../Services/AppContext";
 import "./UploadData.scss";
 import Layout from "../../Layout/Layout";
 import UploadImageOptionsDialog from "../../Components/UploadImageOptionsDialog/UploadImageOptionsDialog";
-import { PROJECT_NAME } from "../../Services/constants";
 
 const UploadData = () => {
   const navigate = useNavigate();

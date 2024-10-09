@@ -1,86 +1,11 @@
-import { startTransition, useEffect, useState } from "react";
-import { Button } from "primereact/button";
-import { Link, useNavigate } from "react-router-dom";
-import { useAppContext } from "../../Services/AppContext";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 // import "./UploadData.scss";
 import Layout from "../../Layout/Layout";
-import UploadImageOptionsDialog from "../../Components/UploadImageOptionsDialog/UploadImageOptionsDialog";
 import { PROJECT_NAME } from "../../Services/constants";
 
 const LandingScreen = () => {
-  const navigate = useNavigate();
-  const { state, showToast, setSelectedImage, setPolygons } = useAppContext();
-  const [showOptions, setShowOptions] = useState(false);
-  const [openCamera, setOpenCamera] = useState<boolean>(false);
   const [showContent, setShowContent] = useState(false);
-
-  const uploadHandeler = () => {
-    const input = document.createElement("input");
-
-    input.setAttribute("accept", "image/*");
-    input.type = "file";
-    input.onchange = async () => {
-      if (input.files && input.files[0]) {
-        const selectedFile = input.files[0];
-
-        if (selectedFile.size > 2048 * 2048) {
-          showToast(
-            "error",
-            "Error",
-            "Please select an image smaller than 1MB"
-          );
-          return;
-        }
-
-        if (selectedFile?.type?.includes("image")) {
-          // await setSelectedImage(
-          // 	selectedFile.name, // Set the image title to the file name
-          // 	URL.createObjectURL(selectedFile),
-          // 	selectedFile.type
-          // );
-          const reader = new FileReader();
-          reader.onload = async (e) => {
-            const base64Data = e.target?.result as string; // Base64-encoded image data
-            setSelectedImage(selectedFile.name, base64Data, selectedFile.type);
-            showToast(
-              "success",
-              "Success",
-              "Rack image uploaded successfully!"
-            );
-            if (state.polygons?.length > 0) setPolygons([]);
-          };
-          reader.readAsDataURL(selectedFile);
-        } else {
-          showToast(
-            "error",
-            "Error",
-            "Either wrong file is selected or there's some issue"
-          );
-        }
-        setShowOptions(false);
-      }
-    };
-    input.click();
-  };
-
-  const removeHandeler = () => {
-    showToast("warn", "Warning", "Image removed");
-    setSelectedImage("", "", "");
-    if (state.polygons?.length > 0) setPolygons([]);
-  };
-
-  const saveAndContinueHandeler = () => {
-    if (state.imageSelected?.url !== "") {
-      showToast("success", "Success", "Data saved");
-      startTransition(() => {
-        navigate("/draw");
-      });
-    }
-  };
-
-  const onCaptureImageClick = () => {
-    setOpenCamera(true);
-  };
 
   useEffect(() => {
     setShowContent(true);
