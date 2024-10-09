@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { startTransition, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 // import "./UploadData.scss";
 import Layout from "../../Layout/Layout";
 import { PROJECT_NAME } from "../../Services/constants";
+import { Button } from "primereact/button";
 
 const LandingScreen = () => {
+  const navigate = useNavigate();
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
@@ -33,13 +35,20 @@ const LandingScreen = () => {
             Welcome to Project {PROJECT_NAME}
           </h1>
 
-          <Link
+          {/* <Link
             title="Click to proceed"
             className="w-10 xs:w-11 md:w-12 lg:w-13 h-10 xs:h-11 md:h-12 lg:h-13 rounded-full flex justify-center items-center bg-fern-green text-naples-yellow border-none"
             to={"/upload-image"}
           >
             <span className="pi pi-chevron-right"></span>
-          </Link>
+          </Link> */}
+          <Button
+            title="Click to proceed"
+            className="w-10 xs:w-11 md:w-12 lg:w-13 h-10 xs:h-11 md:h-12 lg:h-13 rounded-full flex justify-center items-center bg-fern-green text-naples-yellow border-none"
+            onClick={() => startTransition(() => navigate("/upload-image"))}
+          >
+            <span className="pi pi-chevron-right"></span>
+          </Button>
         </div>
       </div>
     </Layout>
