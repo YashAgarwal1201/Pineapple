@@ -2,7 +2,12 @@
   "short_name": "Pineapple",
   "name": "Project Pineapple",
   "icons": [
-    { "src": "./logo.svg", "sizes": "any", "type": "image/svg+xml" }
+    {
+      "src": "./logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
   ],
   "start_url": "/",
   "scope": "/",
