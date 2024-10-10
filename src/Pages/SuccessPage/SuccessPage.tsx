@@ -1,8 +1,10 @@
 import { startTransition, useEffect, useState } from "react";
+
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../../Services/AppContext";
+
 import Layout from "../../Layout/Layout";
+import { useAppContext } from "../../Services/AppContext";
 import { downloadPolygonsData } from "../../Services/functionServices";
 
 const SuccessPage = () => {
@@ -63,7 +65,7 @@ const SuccessPage = () => {
               loading={loader}
               icon="pi pi-times"
               label="Close"
-              className="h-10 text-naples-yellow bg-transparent border-2 border-naples-yellow"
+              className="h-10 px-2 md:px-5 text-naples-yellow bg-transparent border-2 border-naples-yellow"
               onClick={async () => {
                 setLoader(true);
                 await clearSessionStorageAndNavigate();
@@ -73,7 +75,7 @@ const SuccessPage = () => {
               disabled={state.polygons.length < 1}
               icon="pi pi-download"
               label="Download data"
-              className="h-10 text-metallic-brown bg-naples-yellow border-naples-yellow"
+              className="h-10 px-2 md:px-5 text-metallic-brown bg-naples-yellow border-naples-yellow"
               onClick={() => downloadPolygonsData(state.polygons)}
             />
           </div>

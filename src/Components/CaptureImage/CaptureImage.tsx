@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import Webcam from "react-webcam";
-import { useAppContext } from "../../Services/AppContext";
+
 import { Button } from "primereact/button";
+import Webcam from "react-webcam";
+
+import { useAppContext } from "../../Services/AppContext";
 
 export default function CaptureImageLibrary({
   // openCamera,
@@ -60,7 +62,7 @@ export default function CaptureImageLibrary({
 
   useEffect(() => {
     const video = document.getElementById("video");
-    console.log(video?.clientWidth)
+    console.log(video?.clientWidth);
     setVideoConstraints({
       width: video?.clientWidth || 1920,
       height: video?.clientHeight || 1080,
@@ -99,7 +101,6 @@ export default function CaptureImageLibrary({
     <div className="w-full h-full flex flex-col items-center gap-3">
       <div className="h-[80%] flex relative w-full rounded-lg" id="video">
         <Webcam
-          
           onLoad={() =>
             showToast(
               "error",

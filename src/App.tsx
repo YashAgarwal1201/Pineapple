@@ -1,7 +1,9 @@
 import { useEffect, useRef } from "react";
+
 import { Toast } from "primereact/toast";
-import { useAppContext } from "./Services/AppContext";
 import { Outlet } from "react-router-dom";
+
+import { useAppContext } from "./Services/AppContext";
 import "./App.scss";
 
 export function App() {

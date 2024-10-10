@@ -2,12 +2,17 @@
   "short_name": "Pineapple",
   "name": "Project Pineapple",
   "icons": [
-    { "src": "./logo.svg", "sizes": "any", "type": "image/svg+xml" }
+    {
+      "src": "./logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
   ],
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff",
+  "theme_color": "#A14712",
+  "background_color": "#A14712",
   "prefer-related-application": true
 }

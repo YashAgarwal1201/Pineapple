@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
+
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import CaptureImageLibrary from "../CaptureImage/CaptureImage";
+
 import { useAppContext } from "../../Services/AppContext";
 import { UploadImageOptionsDialogType } from "../../Services/interfaces";
-import { useState, useEffect } from "react";
+import CaptureImageLibrary from "../CaptureImage/CaptureImage";
 
 const UploadImageOptionsDialog = ({
   showOptions,
@@ -33,12 +35,14 @@ const UploadImageOptionsDialog = ({
         setOpenCamera(false);
       }}
       header={
-        <div className="text-base md:text-lg lg:text-xl font-heading">Choose options</div>
+        <div className="text-base md:text-lg lg:text-xl font-heading">
+          Choose options
+        </div>
       }
       draggable={false}
       className={`${
         openCamera ? "h-[90dvh] sm:h-auto" : "h-auto"
-        } reusableDialog w-full md:w-2/3 lg:w-[500px] absolute bottom-0 md:bottom-auto !m-0`}
+      } reusableDialog w-full md:w-2/3 lg:w-[500px] absolute bottom-0 md:bottom-auto !m-0`}
       position={isSmallScreen ? "bottom" : "center"}
       // contentClassName={`${openCamera ? "px-0" : "bg-black"}`}
     >

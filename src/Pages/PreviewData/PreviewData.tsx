@@ -1,18 +1,41 @@
 import { startTransition, useEffect, useRef, useState } from "react";
+
 import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
+import { Sidebar } from "primereact/sidebar";
 import { useNavigate } from "react-router-dom";
+
+import Layout from "../../Layout/Layout";
 import { useAppContext } from "../../Services/AppContext";
 import "./PreviewData.scss";
-import Layout from "../../Layout/Layout";
 
 const PreviewData = () => {
   const navigate = useNavigate();
   const { state } = useAppContext();
 
+  const canvasParentRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
   const [showContent, setShowContent] = useState(false);
+  const [showListOfPolygons, setShowListOfPolygons] = useState<boolean>(false);
   // const [scaleFactor, setScaleFactor] = useState<number>(0);
+
+  useEffect(() => {
+    const updateCanvasSize = () => {
+      if (canvasRef.current && canvasParentRef.current) {
+        const canvasParentWidth = canvasParentRef.current.clientWidth;
+        canvasRef.current.width = canvasParentWidth;
+        // Optionally update canvas height here if needed
+      }
+    };
+
+    updateCanvasSize(); // Update canvas size initially
+    window.addEventListener("resize", updateCanvasSize); // Add listener for window resize
+
+    return () => {
+      window.removeEventListener("resize", updateCanvasSize); // Remove listener on component unmount
+    };
+  }, []);
 
   useEffect(() => {
     // if (state?.imageSelected?.url?.length < 1) {
@@ -110,7 +133,7 @@ const PreviewData = () => {
         }`}
       >
         <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5 overflow-y-auto">
-          <div className="px-2 md:px-0 flex justify-between items-center">
+          <div className="px-2 md:px-0 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-y-3">
             <div className="flex flex-col gap-1">
               <span className="text-lg md:text-xl font-heading text-naples-yellow">
                 Preview Data
@@ -119,34 +142,63 @@ const PreviewData = () => {
                 Preview the data before proceeding
               </span>
             </div>
-            <div className="hidden md:block font-content">
+            <div className="w-full xl:w-auto hidden md:flex flex-row-reverse gap-x-4">
               <Button
                 disabled={
                   state?.imageSelected?.url?.length <= 0 ||
                   state.polygons?.length < 1
                 }
-                icon="pi pi-check"
+                icon="pi pi-thumbs-up"
                 label="Continue"
-                className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
+                className="h-10 px-2 md:px-5 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => {
                   startTransition(() => {
                     navigate("/success");
                   });
                 }}
               />
+              <Button
+                icon={"pi pi-list"}
+                label={"Polygons Data"}
+                onClick={() => setShowListOfPolygons(true)}
+                className="h-10 px-2 md:px-5 text-sm sm:text-base text-naples-yellow border-2 border-naples-yellow bg-transparent"
+              />
             </div>
           </div>
           <div className="w-full h-full flex flex-col md:flex-row gap-2">
-            <div className="w-full md:w-2/4 lg:w-2/5 h-fit md:mb-0 mx-auto">
-              <div className="w-fit h-fit m-auto border-2 border-ochre rounded-lg">
+            <div className="w-full h-full md:mb-0 mx-auto">
+              <div
+                className="w-full h-fit m-auto border-2 border-ochre rounded-lg my-auto"
+                ref={canvasParentRef}
+              >
                 <canvas className="mx-auto rounded-lg" ref={canvasRef} />
               </div>
+
+              {/* <video
+                autoPlay
+                muted
+                playsInline
+                className="product-image product-video"
+              >
+                <source
+                  src={
+                    "https://cdn.sanity.io/files/nlg69nbd/production/8461cbf484b27b6d10c8a60d17268c6826b9ef94.mov"
+                  }
+                  type="video/mp4"
+                />
+                <source
+                  src={
+                    "https://cdn.sanity.io/files/nlg69nbd/production/de8a8c5f776c9d24850c4c06da93513af6b64dee.webm"
+                  }
+                  type="video/webm"
+                />
+              </video> */}
             </div>
-            <div className="w-full md:w-2/4 lg:w-3/5">
+            <div className=" hidden w-full md:w-2/4 lg:w-3/5">
               <div className="w-full p-3 rounded-xl bg-fern-green">
                 <div className="flex justify-between items-center text-base text-blue-900 pb-2">
                   <span className="text-base sm:text-lg text-naples-yellow font-heading">
-                    Annotations (
+                    Polygons (
                     {state.polygons?.length < 10
                       ? `0${state.polygons?.length}`
                       : `${state.polygons?.length}`}
@@ -165,7 +217,7 @@ const PreviewData = () => {
                     }
                   /> */}
                 </div>
-                <div>
+                {/* <div>
                   {state.polygons?.map((polygon, index) => (
                     <div className="mt-2" key={index}>
                       <Panel
@@ -213,7 +265,7 @@ const PreviewData = () => {
                       </Panel>
                     </div>
                   ))}
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -226,23 +278,98 @@ const PreviewData = () => {
             : "translate-y-full opacity-0"
         }`}
       >
-        <div className="flex flex-row gap-x-10 font-content">
+        <div className="flex flex-row gap-x-5 font-content">
           <Button
             disabled={
               state?.imageSelected?.url?.length <= 0 ||
               state.polygons?.length < 1
             }
-            icon="pi pi-check"
-            label="Continue"
-            className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
+            title="Save & Conitnue"
+            icon="pi pi-thumbs-up"
+            rounded
+            className="text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
             onClick={() => {
               startTransition(() => {
                 navigate("/success");
               });
             }}
           />
+          <Button
+            title="Show Polygons Data"
+            icon={"pi pi-list"}
+            rounded
+            onClick={() => setShowListOfPolygons(true)}
+            className="text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+          />
         </div>
       </div>
+
+      <Sidebar
+        visible={showListOfPolygons}
+        onHide={() => setShowListOfPolygons(false)}
+        dismissable
+        position="left"
+        className="polygon-list-sidebar w-full md:w-[768px]"
+        header={
+          <h3 className="font-heading text-metallic-brown text-xl sm:text-2xl">
+            Polygons
+          </h3>
+        }
+        maskClassName="backdrop-blur"
+        closeIcon={
+          <span className="pi pi-times text-metallic-brown bg-naples-yellow w-10 h-10 flex justify-center items-center"></span>
+        }
+      >
+        <div className="w-full h-full rounded-lg bg-metallic-brown p-2 xs:p-3 sm:p-4">
+          {state.polygons?.map((polygon, index) => (
+            <div className="mb-2" key={index}>
+              <Panel
+                className="annotationPanel w-full mb-1"
+                collapsed={true}
+                header={
+                  <div className="w-full h-full flex justify-between items-center">
+                    <span className="text-base sm:text-lg text-metallic-brown font-heading">
+                      {polygon?.label}
+                    </span>
+                  </div>
+                }
+                collapseIcon={
+                  <span className="p-2 pi pi-angle-up text-metallic-brown"></span>
+                }
+                expandIcon={
+                  <span className="p-2 pi pi-angle-down text-metallic-brown"></span>
+                }
+                toggleable
+              >
+                <div className="w-full flex flex-col gap-y-1 font-content">
+                  <p className="w-full p-2 bg-fern-green text-naples-yellow font-medium rounded-lg">
+                    Coordinates -{" "}
+                  </p>
+                  {polygon.points?.map((values, key) => (
+                    <p
+                      className="w-full flex flex-row items-center gap-x-1 text-sm sm:text-base"
+                      key={key}
+                    >
+                      <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
+                        X:
+                      </span>
+                      <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
+                        {Math.round(values.x)}
+                      </span>
+                      <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
+                        Y:
+                      </span>
+                      <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
+                        {Math.round(values.y)}
+                      </span>
+                    </p>
+                  ))}
+                </div>
+              </Panel>
+            </div>
+          ))}
+        </div>
+      </Sidebar>
     </Layout>
   );
 };

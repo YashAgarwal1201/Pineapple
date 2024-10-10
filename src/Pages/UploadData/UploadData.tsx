@@ -1,10 +1,12 @@
 import { startTransition, useEffect, useState } from "react";
+
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
+
+import UploadImageOptionsDialog from "../../Components/UploadImageOptionsDialog/UploadImageOptionsDialog";
+import Layout from "../../Layout/Layout";
 import { useAppContext } from "../../Services/AppContext";
 import "./UploadData.scss";
-import Layout from "../../Layout/Layout";
-import UploadImageOptionsDialog from "../../Components/UploadImageOptionsDialog/UploadImageOptionsDialog";
 
 const UploadData = () => {
   const navigate = useNavigate();
@@ -152,7 +154,7 @@ const UploadData = () => {
                 icon="pi pi-trash"
                 label="Remove Image"
                 title="Click to remove the selected image"
-                className="h-9 sm:h-10 text-sm sm:text-base text-naples-yellow bg-metallic-brown border-2 border-naples-yellow"
+                className="w-full sm:w-auto h-9 sm:h-10 px-10 text-sm sm:text-base text-naples-yellow bg-metallic-brown border-2 border-naples-yellow"
                 onClick={() => removeHandeler()}
               />
               <Button
@@ -160,7 +162,7 @@ const UploadData = () => {
                 icon="pi pi-check"
                 label="Save & Continue"
                 title="Click to save and continue"
-                className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
+                className="w-full sm:w-auto h-9 sm:h-10 px-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => saveAndContinueHandeler()}
               />
             </div>

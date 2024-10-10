@@ -1,9 +1,11 @@
 import { startTransition, useEffect, useRef, useState } from "react";
+
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
+
+import Layout from "../../Layout/Layout";
 import { useAppContext } from "../../Services/AppContext";
 import "./CroppedData.scss";
-import Layout from "../../Layout/Layout";
 
 const CroppedData = () => {
   const navigate = useNavigate();
