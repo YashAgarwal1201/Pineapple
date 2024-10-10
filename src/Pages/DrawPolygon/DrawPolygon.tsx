@@ -80,8 +80,13 @@ const DrawPolygon = () => {
         onHide={() => setShowListOfPolygons(false)}
         dismissable
         position="left"
-        className="polygon-list-sidebar w-full sm:w-2/3"
+        className="polygon-list-sidebar !w-full md:!w-[768px] rounded-none md:rounded-r-md"
         maskClassName="backdrop-blur"
+        header={
+          <h3 className="font-heading text-metallic-brown font-xl sm:font-2xl">
+            Polygons
+          </h3>
+        }
       >
         <div className="w-full h-full rounded-lg bg-metallic-brown p-2 xs:p-3 sm:p-4">
           {state.polygons?.map((polygon, index) => (
@@ -91,7 +96,7 @@ const DrawPolygon = () => {
                 collapsed={true}
                 header={
                   <div className="w-full h-full flex justify-between items-center">
-                    <span className="text-base sm:text-lg text-metallic-brown">
+                    <span className="text-base sm:text-lg text-metallic-brown font-heading">
                       {polygon?.label}
                     </span>
                     <Button
@@ -109,26 +114,35 @@ const DrawPolygon = () => {
                 }
                 toggleable
               >
-                <div className="w-full flex items-center gap-4">
-                  <div className="w-full h-fit xs:h-9 sm:h-10 text-sm sm:text-base flex flex-col justify-center xs:flex-row items-end xs:items-center gap-4">
+                <div className="w-full flex flex-col gap-4 font-content">
+                  {editLabel === index ? (
+                    <p className="text-fern-green">
+                      Enter new label for the polygon
+                    </p>
+                  ) : (
+                    <p className="text-fern-green font-medium">
+                      Change the label of polygon
+                    </p>
+                  )}
+                  <div className="w-full h-fit text-sm sm:text-base flex flex-col justify-center xs:flex-row items-end xs:items-center gap-4">
                     <InputText
                       value={editLabel !== index ? polygon?.label : editedLabel}
                       readOnly={editLabel !== index}
-                      className="h-full w-full xs:w-3/4 bg-naples-yellow border-2 border-bud-green text-metallic-brown"
+                      className="h-10 w-full xs:w-[calc(100%-2.5rem)] px-2 font-content bg-naples-yellow border-2 border-bud-green text-metallic-brown"
                       onChange={(e) => setEditedLabel(e.target?.value)}
                     />
                     {editLabel === index ? (
                       <Button
                         icon="pi pi-check"
-                        label="Save Label"
-                        className="w-fit xs:w-1/4 h-full bg-fern-green text-naples-yellow border-fern-green"
+                        // label="Save Label"
+                        className="w-10 h-10 bg-fern-green text-naples-yellow border-fern-green"
                         onClick={handleSaveLabel}
                       />
                     ) : (
                       <Button
                         icon="pi pi-pencil"
-                        label="Edit Label"
-                        className="w-fit xs:w-1/4 h-full bg-fern-green text-naples-yellow border-fern-green"
+                        // label="Edit Label"
+                        className="w-10 h-10 bg-fern-green text-naples-yellow border-fern-green"
                         onClick={() => handleEditLabel(index)}
                       />
                     )}

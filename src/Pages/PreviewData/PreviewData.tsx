@@ -287,7 +287,7 @@ const PreviewData = () => {
             title="Save & Conitnue"
             icon="pi pi-thumbs-up"
             rounded
-            className="h-8 sm:h-9 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
+            className="text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
             onClick={() => {
               startTransition(() => {
                 navigate("/success");
@@ -299,7 +299,7 @@ const PreviewData = () => {
             icon={"pi pi-list"}
             rounded
             onClick={() => setShowListOfPolygons(true)}
-            className="h-8 sm:h-9 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+            className="text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
           />
         </div>
       </div>
@@ -310,8 +310,11 @@ const PreviewData = () => {
         dismissable
         position="left"
         className="polygon-list-sidebar w-full sm:w-2/3"
-        // header={<>dfsdgdfg</>}
-        title="sfsfs"
+        header={
+          <h3 className="font-heading text-metallic-brown font-xl sm:font-2xl">
+            Polygons
+          </h3>
+        }
         maskClassName="backdrop-blur"
       >
         <div className="w-full h-full rounded-lg bg-metallic-brown p-2 xs:p-3 sm:p-4">

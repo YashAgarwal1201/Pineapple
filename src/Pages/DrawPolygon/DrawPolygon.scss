@@ -1,5 +1,7 @@
+@import url("./../../Components/PolygonDrawer/PolygonDrawer.scss");
+
 .polygon-list-sidebar {
-  width: 100%;
+  // width: 100%;
   background-color: theme("colors.ochre") !important;
 
   .p-sidebar-content {
@@ -8,7 +10,7 @@
 
   @media screen and (max-width: 640px) {
     .p-sidebar-content {
-      padding: 1rem;
+      padding: 0.5rem;
     }
   }
 }

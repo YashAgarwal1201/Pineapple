@@ -302,6 +302,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               )}
 
               <Button
+                disabled={state.polygons.length < 1}
                 icon={"pi pi-list"}
                 label={`Polygons (${
                   state.polygons?.length < 10
@@ -428,7 +429,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
             }
             icon="pi pi-thumbs-up"
             rounded
-            className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
+            className=" text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
             onClick={() => {
               startTransition(() => {
                 navigate("/preview");
@@ -440,7 +441,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               disabled={state.imageSelected.url === ""}
               icon="pi pi-pencil"
               rounded
-              className="h-9 sm:h-10 text-sm sm:text-base px-2 md:px-5 text-naples-yellow border-2 border-naples-yellow bg-transparent"
+              className=" text-sm sm:text-base px-2 md:px-5 text-naples-yellow border-2 border-naples-yellow bg-transparent"
               onClick={() => setAddNew(true)}
             />
           )}
@@ -449,15 +450,16 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               icon="pi pi-check"
               rounded
               onClick={handleCompletePolygon}
-              className="h-8 sm:h-9 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+              className=" text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
             />
           )}
           <div className="relative">
             <Button
+              disabled={state.polygons.length < 1}
               icon={"pi pi-list"}
               rounded
               // size="small"
-              className="h-8 sm:h-9 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+              className=" text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
               onClick={() => setShowListOfPolygons(true)}
             />
             {state.polygons.length > 0 && (
