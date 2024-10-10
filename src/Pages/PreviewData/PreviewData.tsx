@@ -1,20 +1,41 @@
 import { startTransition, useEffect, useRef, useState } from "react";
+
 import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
+import { Sidebar } from "primereact/sidebar";
 import { useNavigate } from "react-router-dom";
+
+import Layout from "../../Layout/Layout";
 import { useAppContext } from "../../Services/AppContext";
 import "./PreviewData.scss";
-import Layout from "../../Layout/Layout";
-import { Sidebar } from "primereact/sidebar";
 
 const PreviewData = () => {
   const navigate = useNavigate();
   const { state } = useAppContext();
 
+  const canvasParentRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
   const [showContent, setShowContent] = useState(false);
   const [showListOfPolygons, setShowListOfPolygons] = useState<boolean>(false);
   // const [scaleFactor, setScaleFactor] = useState<number>(0);
+
+  useEffect(() => {
+    const updateCanvasSize = () => {
+      if (canvasRef.current && canvasParentRef.current) {
+        const canvasParentWidth = canvasParentRef.current.clientWidth;
+        canvasRef.current.width = canvasParentWidth;
+        // Optionally update canvas height here if needed
+      }
+    };
+
+    updateCanvasSize(); // Update canvas size initially
+    window.addEventListener("resize", updateCanvasSize); // Add listener for window resize
+
+    return () => {
+      window.removeEventListener("resize", updateCanvasSize); // Remove listener on component unmount
+    };
+  }, []);
 
   useEffect(() => {
     // if (state?.imageSelected?.url?.length < 1) {
@@ -146,9 +167,32 @@ const PreviewData = () => {
           </div>
           <div className="w-full h-full flex flex-col md:flex-row gap-2">
             <div className="w-full h-full md:mb-0 mx-auto">
-              <div className="w-full h-fit m-auto border-2 border-ochre rounded-lg my-auto">
+              <div
+                className="w-full h-fit m-auto border-2 border-ochre rounded-lg my-auto"
+                ref={canvasParentRef}
+              >
                 <canvas className="mx-auto rounded-lg" ref={canvasRef} />
               </div>
+
+              {/* <video
+                autoPlay
+                muted
+                playsInline
+                className="product-image product-video"
+              >
+                <source
+                  src={
+                    "https://cdn.sanity.io/files/nlg69nbd/production/8461cbf484b27b6d10c8a60d17268c6826b9ef94.mov"
+                  }
+                  type="video/mp4"
+                />
+                <source
+                  src={
+                    "https://cdn.sanity.io/files/nlg69nbd/production/de8a8c5f776c9d24850c4c06da93513af6b64dee.webm"
+                  }
+                  type="video/webm"
+                />
+              </video> */}
             </div>
             <div className=" hidden w-full md:w-2/4 lg:w-3/5">
               <div className="w-full p-3 rounded-xl bg-fern-green">
@@ -234,20 +278,28 @@ const PreviewData = () => {
             : "translate-y-full opacity-0"
         }`}
       >
-        <div className="flex flex-row gap-x-10 font-content">
+        <div className="flex flex-row gap-x-5 font-content">
           <Button
             disabled={
               state?.imageSelected?.url?.length <= 0 ||
               state.polygons?.length < 1
             }
-            icon="pi pi-check"
-            label="Continue"
-            className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
+            title="Save & Conitnue"
+            icon="pi pi-thumbs-up"
+            rounded
+            className="h-8 sm:h-9 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
             onClick={() => {
               startTransition(() => {
                 navigate("/success");
               });
             }}
+          />
+          <Button
+            title="Show Polygons Data"
+            icon={"pi pi-list"}
+            rounded
+            onClick={() => setShowListOfPolygons(true)}
+            className="h-8 sm:h-9 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
           />
         </div>
       </div>
@@ -262,9 +314,9 @@ const PreviewData = () => {
         title="sfsfs"
         maskClassName="backdrop-blur"
       >
-        <div>
+        <div className="w-full h-full rounded-lg bg-metallic-brown p-2 xs:p-3 sm:p-4">
           {state.polygons?.map((polygon, index) => (
-            <div className="mt-2" key={index}>
+            <div className="mb-2" key={index}>
               <Panel
                 className="annotationPanel w-full mb-1"
                 collapsed={true}

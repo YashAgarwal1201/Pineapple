@@ -1,14 +1,16 @@
 import React, { startTransition, useEffect, useRef, useState } from "react";
+
 import { Button } from "primereact/button";
 // import { Panel } from "primereact/panel";
 // import { Dropdown } from "primereact/dropdown";
 // import { InputText } from "primereact/inputtext";
 import { useNavigate } from "react-router-dom";
+
 import { useAppContext } from "../../Services/AppContext";
+import { DEFAULT_LABEL } from "../../Services/constants";
 import { generateRandomColor } from "../../Services/functionServices";
 import "./PolygonDrawer.scss";
 import { Polygon } from "../../Services/interfaces";
-import { DEFAULT_LABEL } from "../../Services/constants";
 
 const PolygonDrawer = ({ setShowListOfPolygons }) => {
   const navigate = useNavigate();

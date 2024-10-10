@@ -1,14 +1,16 @@
 import { startTransition, useEffect, useState } from "react";
-import { useAppContext } from "../../Services/AppContext";
-import PolygonDrawer from "../../Components/PolygonDrawer/PolygonDrawer";
-import Layout from "../../Layout/Layout";
-import { useNavigate } from "react-router-dom";
-import Lottie from "react-lottie-player";
-import loadingDotsAnimation from "./../../assets/Lottie/loadingDotsAnimation.json";
-import { Sidebar } from "primereact/sidebar";
+
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Panel } from "primereact/panel";
+import { Sidebar } from "primereact/sidebar";
+import Lottie from "react-lottie-player";
+import { useNavigate } from "react-router-dom";
+
+import PolygonDrawer from "../../Components/PolygonDrawer/PolygonDrawer";
+import Layout from "../../Layout/Layout";
+import { useAppContext } from "../../Services/AppContext";
+import loadingDotsAnimation from "./../../assets/Lottie/loadingDotsAnimation.json";
 
 import "./DrawPolygon.scss";
 

@@ -1,7 +1,9 @@
 import { startTransition } from "react";
-import Lottie from "react-lottie-player";
-import pageNotFoundErrorAnimation from "./../../assets/Lottie/pageNotFoundErrorAnimation.json";
+
 import { Button } from "primereact/button";
+import Lottie from "react-lottie-player";
+
+import pageNotFoundErrorAnimation from "./../../assets/Lottie/pageNotFoundErrorAnimation.json";
 
 const PageNotFound = () => {
   const goBack = () => {

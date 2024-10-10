@@ -1,9 +1,11 @@
 import { startTransition, useEffect, useState } from "react";
+
+import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
+
 // import "./UploadData.scss";
 import Layout from "../../Layout/Layout";
 import { PROJECT_NAME } from "../../Services/constants";
-import { Button } from "primereact/button";
 
 const LandingScreen = () => {
   const navigate = useNavigate();

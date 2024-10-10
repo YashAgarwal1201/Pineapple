@@ -1,8 +1,10 @@
 import { startTransition, useEffect, useState } from "react";
+
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../../Services/AppContext";
+
 import Layout from "../../Layout/Layout";
+import { useAppContext } from "../../Services/AppContext";
 import { downloadPolygonsData } from "../../Services/functionServices";
 
 const SuccessPage = () => {

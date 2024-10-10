@@ -6,9 +6,9 @@ import {
   Action,
   ActionType,
   AppContextType,
-  State,
-  Rectangle,
   Polygon,
+  Rectangle,
+  State,
 } from "./interfaces";
 
 const initialState: State = sessionStorage.getItem("pineappleState")
