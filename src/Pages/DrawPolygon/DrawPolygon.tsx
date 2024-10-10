@@ -80,12 +80,15 @@ const DrawPolygon = () => {
         onHide={() => setShowListOfPolygons(false)}
         dismissable
         position="left"
-        className="polygon-list-sidebar !w-full md:!w-[768px] rounded-none md:rounded-r-md"
+        className="polygon-list-sidebar w-full md:w-[768px] rounded-none md:rounded-r-md"
         maskClassName="backdrop-blur"
         header={
-          <h3 className="font-heading text-metallic-brown font-xl sm:font-2xl">
+          <h3 className="font-heading text-metallic-brown text-xl sm:text-2xl">
             Polygons
           </h3>
+        }
+        closeIcon={
+          <span className="pi pi-times text-metallic-brown bg-naples-yellow w-10 h-10 flex justify-center items-center"></span>
         }
       >
         <div className="w-full h-full rounded-lg bg-metallic-brown p-2 xs:p-3 sm:p-4">

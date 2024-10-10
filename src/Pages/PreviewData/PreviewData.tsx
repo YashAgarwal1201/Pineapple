@@ -150,7 +150,7 @@ const PreviewData = () => {
                 }
                 icon="pi pi-thumbs-up"
                 label="Continue"
-                className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
+                className="h-10 px-2 md:px-5 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => {
                   startTransition(() => {
                     navigate("/success");
@@ -161,7 +161,7 @@ const PreviewData = () => {
                 icon={"pi pi-list"}
                 label={"Polygons Data"}
                 onClick={() => setShowListOfPolygons(true)}
-                className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+                className="h-10 px-2 md:px-5 text-sm sm:text-base text-naples-yellow border-2 border-naples-yellow bg-transparent"
               />
             </div>
           </div>
@@ -309,13 +309,16 @@ const PreviewData = () => {
         onHide={() => setShowListOfPolygons(false)}
         dismissable
         position="left"
-        className="polygon-list-sidebar w-full sm:w-2/3"
+        className="polygon-list-sidebar w-full md:w-[768px]"
         header={
-          <h3 className="font-heading text-metallic-brown font-xl sm:font-2xl">
+          <h3 className="font-heading text-metallic-brown text-xl sm:text-2xl">
             Polygons
           </h3>
         }
         maskClassName="backdrop-blur"
+        closeIcon={
+          <span className="pi pi-times text-metallic-brown bg-naples-yellow w-10 h-10 flex justify-center items-center"></span>
+        }
       >
         <div className="w-full h-full rounded-lg bg-metallic-brown p-2 xs:p-3 sm:p-4">
           {state.polygons?.map((polygon, index) => (

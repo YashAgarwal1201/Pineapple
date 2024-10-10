@@ -275,7 +275,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                 }
                 icon="pi pi-thumbs-up"
                 label="Save & Continue"
-                className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
+                className="h-10 px-2 md:px-5 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => {
                   // console.log(canvasRef?.current?.getContext("2d"));
                   startTransition(() => {
@@ -288,7 +288,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                   disabled={state.imageSelected.url === ""}
                   icon="pi pi-pencil"
                   label="Add Polygon"
-                  className="h-9 sm:h-10 text-sm sm:text-base px-2 md:px-5 text-naples-yellow border-2 border-naples-yellow bg-transparent"
+                  className="h-10 px-2 md:px-5 text-sm sm:text-base text-naples-yellow border-2 border-naples-yellow bg-transparent"
                   onClick={() => setAddNew(true)}
                 />
               )}
@@ -310,7 +310,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                     : `${state.polygons?.length}`
                 })
                     `}
-                className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+                className="h-10 px-2 md:px-5 text-sm sm:text-base text-naples-yellow border-2 border-naples-yellow bg-transparent"
                 onClick={() => setShowListOfPolygons(true)}
               />
             </div>
