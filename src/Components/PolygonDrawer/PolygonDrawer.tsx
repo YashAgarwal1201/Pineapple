@@ -1,8 +1,8 @@
 import React, { startTransition, useEffect, useRef, useState } from "react";
 import { Button } from "primereact/button";
-import { Panel } from "primereact/panel";
+// import { Panel } from "primereact/panel";
 // import { Dropdown } from "primereact/dropdown";
-import { InputText } from "primereact/inputtext";
+// import { InputText } from "primereact/inputtext";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../Services/AppContext";
 import { generateRandomColor } from "../../Services/functionServices";
@@ -10,7 +10,7 @@ import "./PolygonDrawer.scss";
 import { Polygon } from "../../Services/interfaces";
 import { DEFAULT_LABEL } from "../../Services/constants";
 
-const PolygonDrawer = () => {
+const PolygonDrawer = ({ setShowListOfPolygons }) => {
   const navigate = useNavigate();
   const { state, setPolygons, showToast } = useAppContext();
 
@@ -22,8 +22,8 @@ const PolygonDrawer = () => {
   >([]);
   const [addNew, setAddNew] = useState(false);
   const [scaleFactor, setScaleFactor] = useState<number>(0);
-  const [editLabel, setEditLabel] = useState<number | null>(null);
-  const [editedLabel, setEditedLabel] = useState<string>("");
+  // const [editLabel, setEditLabel] = useState<number | null>(null);
+  // const [editedLabel, setEditedLabel] = useState<string>("");
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
@@ -218,29 +218,29 @@ const PolygonDrawer = () => {
   };
 
   // Delete Polygon
-  const handleDeletePolygon = (index: number) => {
-    const updatedPolygons = [...state.polygons];
-    updatedPolygons.splice(index, 1);
-    setPolygons(updatedPolygons);
-    showToast("warn", "Warning", "Polygon deleted");
-  };
+  // const handleDeletePolygon = (index: number) => {
+  //   const updatedPolygons = [...state.polygons];
+  //   updatedPolygons.splice(index, 1);
+  //   setPolygons(updatedPolygons);
+  //   showToast("warn", "Warning", "Polygon deleted");
+  // };
 
-  // Enable Edit for Polygon Lable
-  const handleEditLabel = (index: number) => {
-    setEditLabel(index);
-    setEditedLabel(state.polygons[index].label);
-  };
+  // // Enable Edit for Polygon Lable
+  // const handleEditLabel = (index: number) => {
+  //   setEditLabel(index);
+  //   setEditedLabel(state.polygons[index].label);
+  // };
 
-  // Save new Polygon Label
-  const handleSaveLabel = () => {
-    if (editLabel !== null && editedLabel.trim() !== "") {
-      const updatedPolygons = [...state.polygons];
-      updatedPolygons[editLabel].label = editedLabel?.trim();
-      setPolygons(updatedPolygons);
-      showToast("success", "Success", "Label Updated");
-    }
-    setEditLabel(null);
-  };
+  // // Save new Polygon Label
+  // const handleSaveLabel = () => {
+  //   if (editLabel !== null && editedLabel.trim() !== "") {
+  //     const updatedPolygons = [...state.polygons];
+  //     updatedPolygons[editLabel].label = editedLabel?.trim();
+  //     setPolygons(updatedPolygons);
+  //     showToast("success", "Success", "Label Updated");
+  //   }
+  //   setEditLabel(null);
+  // };
 
   useEffect(() => {
     setShowContent(true);
@@ -256,7 +256,7 @@ const PolygonDrawer = () => {
         }`}
       >
         <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5 overflow-y-auto">
-          <div className="px-2 md:px-0 flex justify-between items-center">
+          <div className="px-2 md:px-0 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-y-3">
             <div className="flex flex-col gap-1">
               <span className="text-lg md:text-xl font-heading text-naples-yellow">
                 Draw required polygons
@@ -265,13 +265,13 @@ const PolygonDrawer = () => {
                 Identify and select the correct annotations in the image
               </span>
             </div>
-            <div className="hidden md:flex flex-row gap-x-10">
+            <div className="w-full xl:w-auto hidden md:flex flex-row-reverse gap-x-4">
               <Button
                 disabled={
                   state?.imageSelected?.url?.length <= 0 ||
                   state.polygons?.length < 1
                 }
-                icon="pi pi-check"
+                icon="pi pi-thumbs-up"
                 label="Save & Continue"
                 className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => {
@@ -281,12 +281,41 @@ const PolygonDrawer = () => {
                   });
                 }}
               />
+              {!addNew && (
+                <Button
+                  disabled={state.imageSelected.url === ""}
+                  icon="pi pi-pencil"
+                  label="Add Polygon"
+                  className="h-9 sm:h-10 text-sm sm:text-base px-2 md:px-5 text-naples-yellow border-2 border-naples-yellow bg-transparent"
+                  onClick={() => setAddNew(true)}
+                />
+              )}
+              {addNew && (
+                <Button
+                  icon="pi pi-check"
+                  label="Complete Polygon"
+                  onClick={handleCompletePolygon}
+                  className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+                />
+              )}
+
+              <Button
+                icon={"pi pi-list"}
+                label={`Polygons (${
+                  state.polygons?.length < 10
+                    ? `0${state.polygons?.length}`
+                    : `${state.polygons?.length}`
+                })
+                    `}
+                className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+                onClick={() => setShowListOfPolygons(true)}
+              />
             </div>
           </div>
           <div className="w-full h-full flex flex-col md:flex-row gap-2">
-            <div className="w-full md:w-2/4 lg:w-2/5 h-full md:mb-0 mx-auto flex justify-center items-center">
+            <div className="w-full h-full md:mb-0 mx-auto flex justify-center">
               <div
-                className="w-full h-fit m-auto border-2 border-ochre rounded-lg"
+                className="w-full h-fit border-2 border-ochre rounded-lg my-auto"
                 ref={canvasParentRef}
               >
                 <canvas
@@ -298,7 +327,7 @@ const PolygonDrawer = () => {
                 />
               </div>
             </div>
-            <div className="w-full md:w-2/4 lg:w-3/5">
+            {/* <div className="w-full md:w-2/4 lg:w-3/5">
               <div className="w-full p-3 rounded-xl bg-fern-green">
                 <div className="flex justify-between items-center text-base text-blue-900 pb-2">
                   <span className="text-base sm:text-lg text-naples-yellow font-heading font-medium">
@@ -308,7 +337,7 @@ const PolygonDrawer = () => {
                       : `${state.polygons?.length}`}
                     )
                   </span>
-                  <div className="hidden md:block">
+                  <div className="hidden">
                     {!addNew && (
                       <Button
                         disabled={state.imageSelected.url === ""}
@@ -382,7 +411,7 @@ const PolygonDrawer = () => {
                   ))}
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -395,8 +424,8 @@ const PolygonDrawer = () => {
               state?.imageSelected?.url?.length <= 0 ||
               state.polygons?.length < 1
             }
-            icon="pi pi-check"
-            label="Continue"
+            icon="pi pi-thumbs-up"
+            rounded
             className="h-9 sm:h-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
             onClick={() => {
               startTransition(() => {
@@ -407,20 +436,32 @@ const PolygonDrawer = () => {
           {!addNew && (
             <Button
               disabled={state.imageSelected.url === ""}
-              icon="pi pi-plus"
-              label="Add Annotation"
+              icon="pi pi-pencil"
+              rounded
               className="h-9 sm:h-10 text-sm sm:text-base px-2 md:px-5 text-naples-yellow border-2 border-naples-yellow bg-transparent"
               onClick={() => setAddNew(true)}
             />
           )}
           {addNew && (
             <Button
-              icon="pi pi-plus"
-              label="Complete Polygon"
+              icon="pi pi-check"
+              rounded
               onClick={handleCompletePolygon}
-              className="h-9 sm:h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+              className="h-8 sm:h-9 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
             />
           )}
+          <div className="relative">
+            <Button
+              icon={"pi pi-list"}
+              rounded
+              // size="small"
+              className="h-8 sm:h-9 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+              onClick={() => setShowListOfPolygons(true)}
+            />
+            {state.polygons.length > 0 && (
+              <span className="bg-bud-green text-sm w-3 h-3 flex justify-center items-center rounded-full absolute -right-0 top-1"></span>
+            )}
+          </div>
         </div>
       </div>
     </>
