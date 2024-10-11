@@ -1,5 +1,5 @@
 import { Button } from "primereact/button";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const Header = () => {
   const location = useLocation();
@@ -20,14 +20,14 @@ const Header = () => {
         onClick={() => window.history.go(-1)}
       />
 
-      <Link
-        title="check my profile"
-        to={"https://yashagarwal1201.github.io/"}
+      <a
+        title="check developer profile"
+        href={"https://yashagarwal1201.github.io/"}
         target="_blank"
         className="!h-8 !w-8 flex justify-center items-center bg-fern-green text-naples-yellow border-0 rounded-full"
       >
         <span className="pi pi-user text-sm"></span>
-      </Link>
+      </a>
     </div>
   );
 };

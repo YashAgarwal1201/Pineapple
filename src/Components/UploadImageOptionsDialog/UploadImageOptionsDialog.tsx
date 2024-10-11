@@ -39,11 +39,14 @@ const UploadImageOptionsDialog = ({
           Choose options
         </div>
       }
+      resizable={false}
       draggable={false}
+      dismissableMask={true}
       className={`${
         openCamera ? "h-[90dvh] sm:h-auto" : "h-auto"
       } reusableDialog w-full md:w-2/3 lg:w-[500px] absolute bottom-0 md:bottom-auto !m-0`}
       position={isSmallScreen ? "bottom" : "center"}
+      maskClassName="backdrop-blur"
       // contentClassName={`${openCamera ? "px-0" : "bg-black"}`}
     >
       <div className="pt-1 w-full h-full">
@@ -54,7 +57,7 @@ const UploadImageOptionsDialog = ({
               icon="pi pi-upload"
               label="Browse System"
               title="Click to browse system"
-              className="h-9 sm:h-10 text-sm sm:text-base text-naples-yellow bg-fern-green border-fern-green"
+              className="h-9 sm:h-10 px-10 text-sm sm:text-base text-naples-yellow bg-fern-green border-fern-green"
               onClick={() => uploadHandeler()}
             />
             <Button
@@ -62,7 +65,7 @@ const UploadImageOptionsDialog = ({
               icon="pi pi-camera"
               label="Capture Image"
               title="Click to open camera"
-              className="h-9 sm:h-10 text-sm sm:text-base text-naples-yellow bg-fern-green border-fern-green"
+              className="h-9 sm:h-10 px-10 text-sm sm:text-base text-naples-yellow bg-fern-green border-fern-green"
               onClick={() => {
                 if (window.location.protocol !== "https:")
                   onCaptureImageClick();

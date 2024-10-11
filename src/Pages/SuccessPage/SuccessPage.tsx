@@ -106,7 +106,7 @@ const SuccessPage = () => {
             />
             {!loader ? (
               <a
-                title="check my profile"
+                title="check developer profile"
                 href={"https://yashagarwal1201.github.io/"}
                 target="_blank"
                 className="w-12 h-12 flex justify-center items-center text-sm sm:text-base bg-naples-yellow text-metallic-brown border-0 rounded-full"
