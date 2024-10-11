@@ -5,7 +5,7 @@ import { Dialog } from "primereact/dialog";
 
 import { useAppContext } from "../../Services/AppContext";
 import { UploadImageOptionsDialogType } from "../../Services/interfaces";
-import CaptureImageLibrary from "../CaptureImage/CaptureImage";
+//import CaptureImageLibrary from "../CaptureImage/CaptureImage";
 
 const UploadImageOptionsDialog = ({
   showOptions,
