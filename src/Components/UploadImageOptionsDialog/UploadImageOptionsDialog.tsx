@@ -67,7 +67,7 @@ const UploadImageOptionsDialog = ({
             title="Click to open camera"
             className="h-9 sm:h-10 px-10 text-sm sm:text-base text-naples-yellow bg-fern-green border-fern-green"
             onClick={() => {
-              if (window.location.protocol !== "https:") onCaptureImageClick();
+              if (window.location.protocol === "https:") onCaptureImageClick();
               else {
                 showToast(
                   "warn",
