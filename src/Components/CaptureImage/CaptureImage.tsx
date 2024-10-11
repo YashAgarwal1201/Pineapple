@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Button } from "primereact/button";
+import { Image } from "primereact/image";
 import Webcam from "react-webcam";
 
 import { useAppContext } from "../../Services/AppContext";
 
-export default function CaptureImageLibrary({
+const CaptureImageLibrary = ({
   // openCamera,
   exitCamera,
   // acceptType,
@@ -15,11 +16,29 @@ export default function CaptureImageLibrary({
   exitCamera: () => void;
   acceptType?: string;
   onCapture: any;
-}) {
-  const { showToast, setSelectedImage } = useAppContext();
-  // const [showImagePreview, setShowImagePreview] = useState<boolean>(false);
+}) => {
+  const { state, showToast, setSelectedImage } = useAppContext();
+  const [showImagePreview, setShowImagePreview] = useState<boolean>(false);
   const webcamRef = useRef<Webcam>(null);
-  const capture = React.useCallback(async () => {
+  const stream = useRef<MediaStream | null>(null);
+
+  const [videoConstraints, setVideoConstraints] = useState<
+    MediaTrackConstraints | undefined
+  >();
+  const [numberOfCameras, setNumberOfCameras] = useState<number>(0);
+
+  useEffect(() => {
+    const video = document.getElementById("video");
+    // console.log(video?.clientHeight);
+    setVideoConstraints({
+      width: video?.clientWidth || 1920,
+      height: video?.clientHeight || 1080,
+      facingMode: "environment",
+    });
+    calcNumberOfCamera();
+  }, []);
+
+  const capture = useCallback(async () => {
     try {
       if (webcamRef.current) {
         const imageSrc = webcamRef.current.getScreenshot();
@@ -29,24 +48,17 @@ export default function CaptureImageLibrary({
           imageSrc as string, //URL.createObjectURL(imageSrc),
           webcamRef?.current?.props?.screenshotFormat //selectedFile.type
         );
-        exitCamera();
+        // exitCamera();
         onCapture(false);
         showToast("success", "Success", "Image captured and added");
         // }
-        // setShowImagePreview(true);
+        setShowImagePreview(true);
       }
     } catch (error) {
       console.log(error);
       showToast("error", "Error", "OOPS an error has occured with this method");
     }
   }, [webcamRef]);
-
-  const stream = useRef<MediaStream | null>(null);
-
-  const [videoConstraints, setVideoConstraints] = useState<
-    MediaTrackConstraints | undefined
-  >();
-  const [numberOfCameras, setNumberOfCameras] = useState<number>(0);
 
   const onBackButtonClick = () => {
     if (stream?.current) {
@@ -60,19 +72,8 @@ export default function CaptureImageLibrary({
     // onCapture();
   };
 
-  useEffect(() => {
-    const video = document.getElementById("video");
-    console.log(video?.clientWidth);
-    setVideoConstraints({
-      width: video?.clientWidth || 1920,
-      height: video?.clientHeight || 1080,
-      facingMode: "environment",
-    });
-    calcNumberOfCamera();
-  }, []);
-
   const flipCamera = () => {
-    console.log(videoConstraints);
+    // console.log(videoConstraints);
     if (videoConstraints) {
       if (videoConstraints?.facingMode === "user") {
         setVideoConstraints({
@@ -97,9 +98,10 @@ export default function CaptureImageLibrary({
         setNumberOfCameras(r?.filter((i) => i.kind === "videoinput")?.length)
       );
   };
+
   return (
     <div className="w-full h-full flex flex-col items-center gap-3">
-      <div className="h-[80%] flex relative w-full rounded-lg" id="video">
+      <div className="h-full flex relative w-full rounded-lg" id="video">
         <Webcam
           onLoad={() =>
             showToast(
@@ -109,24 +111,36 @@ export default function CaptureImageLibrary({
             )
           }
           style={{
-            // border: "2px solid #3C5164",
+            border: "3px solid #A14712",
             borderRadius: "8px",
             width: "100%",
             height: "100%",
+            objectFit: "cover",
           }}
           audio={false}
           ref={webcamRef}
-          screenshotFormat="image/jpeg"
+          screenshotFormat="image/png"
           videoConstraints={videoConstraints}
           mirrored={videoConstraints?.facingMode === "user"}
         />
       </div>
-      <div className="h-[20%] w-full flex justify-center items-center gap-10">
+      <div className="h-fit w-full flex justify-center items-center gap-x-3 md:gap-x-5">
+        {showImagePreview || state.imageSelected.url !== "" ? (
+          <Image
+            src={state.imageSelected.url}
+            alt={"capture"}
+            className="w-12 h-12 rounded-full *:w-full *:h-full *:rounded-full mr-auto"
+            preview
+          />
+        ) : (
+          ""
+        )}
         <Button
           className="border-0 bg-fern-green text-naples-yellow"
           icon="pi pi-arrow-left"
           title="Go back"
           id="back-button"
+          rounded
           onClick={() => onBackButtonClick()}
         />
         <Button
@@ -134,6 +148,7 @@ export default function CaptureImageLibrary({
           icon="pi pi-camera"
           title="Take photo"
           id="click-photo"
+          rounded
           onClick={() => capture()}
         />
         <Button
@@ -141,10 +156,13 @@ export default function CaptureImageLibrary({
           icon="pi pi-sync"
           title="Flip camera"
           id="flip-camera"
+          rounded
           onClick={() => flipCamera()}
           disabled={numberOfCameras <= 1}
         />
       </div>
     </div>
   );
-}
+};
+
+export default CaptureImageLibrary;

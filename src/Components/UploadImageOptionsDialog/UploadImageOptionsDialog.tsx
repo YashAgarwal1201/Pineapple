@@ -50,44 +50,43 @@ const UploadImageOptionsDialog = ({
       // contentClassName={`${openCamera ? "px-0" : "bg-black"}`}
     >
       <div className="pt-1 w-full h-full">
-        {!openCamera ? (
-          <div className="w-full flex flex-row flex-wrap justify-center lg:justify-around items-center gap-x-2 gap-y-2 font-content">
-            <Button
-              type="button"
-              icon="pi pi-upload"
-              label="Browse System"
-              title="Click to browse system"
-              className="h-9 sm:h-10 px-10 text-sm sm:text-base text-naples-yellow bg-fern-green border-fern-green"
-              onClick={() => uploadHandeler()}
-            />
-            <Button
-              type="button"
-              icon="pi pi-camera"
-              label="Capture Image"
-              title="Click to open camera"
-              className="h-9 sm:h-10 px-10 text-sm sm:text-base text-naples-yellow bg-fern-green border-fern-green"
-              onClick={() => {
-                if (window.location.protocol !== "https:")
-                  onCaptureImageClick();
-                else {
-                  showToast(
-                    "warn",
-                    "Warning",
-                    "Please use different method to attach file. Camera access is denied according to browser protocols in HTTP",
-                    5000
-                  );
-                }
-              }}
-            />
-          </div>
-        ) : (
+        {/* {!openCamera ? ( */}
+        <div className="w-full flex flex-row flex-wrap justify-center lg:justify-around items-center gap-x-2 gap-y-2 font-content">
+          <Button
+            type="button"
+            icon="pi pi-upload"
+            label="Browse System"
+            title="Click to browse system"
+            className="h-9 sm:h-10 px-10 text-sm sm:text-base text-naples-yellow bg-fern-green border-fern-green"
+            onClick={() => uploadHandeler()}
+          />
+          <Button
+            type="button"
+            icon="pi pi-camera"
+            label="Capture Image"
+            title="Click to open camera"
+            className="h-9 sm:h-10 px-10 text-sm sm:text-base text-naples-yellow bg-fern-green border-fern-green"
+            onClick={() => {
+              if (window.location.protocol !== "https:") onCaptureImageClick();
+              else {
+                showToast(
+                  "warn",
+                  "Warning",
+                  "Please use different method to attach file. Camera access is denied according to browser protocols in HTTP",
+                  5000
+                );
+              }
+            }}
+          />
+        </div>
+        {/* ) : (
           <CaptureImageLibrary
             openCamera={openCamera}
             onCapture={() => setShowOptions(true)}
             exitCamera={() => setOpenCamera(false)}
             // acceptType={state?.isOptionSelected}
           />
-        )}
+        )} */}
       </div>
     </Dialog>
   );

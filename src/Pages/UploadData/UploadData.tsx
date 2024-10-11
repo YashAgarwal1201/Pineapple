@@ -7,6 +7,8 @@ import UploadImageOptionsDialog from "../../Components/UploadImageOptionsDialog/
 import Layout from "../../Layout/Layout";
 import { useAppContext } from "../../Services/AppContext";
 import "./UploadData.scss";
+import { Sidebar } from "primereact/sidebar";
+import CaptureImageLibrary from "../../Components/CaptureImage/CaptureImage";
 
 const UploadData = () => {
   const navigate = useNavigate();
@@ -184,6 +186,29 @@ const UploadData = () => {
         uploadHandeler={uploadHandeler}
         onCaptureImageClick={onCaptureImageClick}
       />
+
+      <Sidebar
+        visible={openCamera}
+        onHide={() => setOpenCamera(false)}
+        dismissable={true}
+        maskClassName="backdrop-blur"
+        position="right"
+        closeIcon={
+          <span className="pi pi-times text-metallic-brown bg-naples-yellow w-10 h-10 flex justify-center items-center"></span>
+        }
+        className="polygon-list-sidebar w-full md:w-[768px] bg-ochre rounded-none md:rounded-l-md"
+        header={
+          <h3 className="font-heading text-metallic-brown text-xl sm:text-2xl">
+            Capture Image
+          </h3>
+        }
+      >
+        <CaptureImageLibrary
+          openCamera={openCamera}
+          onCapture={() => setShowOptions(true)}
+          exitCamera={() => setOpenCamera(false)}
+        />
+      </Sidebar>
     </Layout>
   );
 };
