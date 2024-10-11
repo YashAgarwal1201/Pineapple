@@ -463,7 +463,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               onClick={() => setShowListOfPolygons(true)}
             />
             {state.polygons.length > 0 && (
-              <span className="bg-bud-green text-sm w-3 h-3 flex justify-center items-center rounded-full absolute -right-0 top-1"></span>
+              <span className="bg-bud-green text-sm w-3 h-3 flex justify-center items-center rounded-full absolute -right-0 top-1 animate-pulse"></span>
             )}
           </div>
         </div>

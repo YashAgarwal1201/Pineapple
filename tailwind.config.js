@@ -25,6 +25,22 @@ export default {
         xl: "1280px",
         mdl: "896px",
       },
+      animation: {
+        spin: "spin 5s linear infinite",
+        "bounce-right": "bounce-right 5s infinite",
+      },
+      keyframes: {
+        "bounce-right": {
+          "0%, 100%": { transform: "translateX(0)" },
+          "50%": { transform: "translateX(20px)" }, // Adjust the distance as needed
+        },
+      },
+      transitionDuration: {
+        2000: "2000ms",
+        3000: "3000ms",
+        5000: "5000ms",
+        // Add more custom durations if needed
+      },
     },
   },
   plugins: [],
