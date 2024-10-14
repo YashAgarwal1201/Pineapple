@@ -35,9 +35,9 @@ const UploadImageOptionsDialog = ({
         setOpenCamera(false);
       }}
       header={
-        <div className="text-base md:text-lg lg:text-xl font-heading">
+        <h2 className="text-lg sm:text-xl md:text-2xl font-heading">
           Choose options
-        </div>
+        </h2>
       }
       resizable={false}
       draggable={false}

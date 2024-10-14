@@ -135,12 +135,12 @@ const PreviewData = () => {
         <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5 overflow-y-auto">
           <div className="px-2 md:px-0 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-y-3">
             <div className="flex flex-col gap-1">
-              <span className="text-lg md:text-xl font-heading text-naples-yellow">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-heading text-naples-yellow">
                 Preview Data
-              </span>
-              <span className="text-sm md:text-base text-bud-green font-content font-medium">
+              </h1>
+              <p className="text-base sm:text-lg md:text-xl text-bud-green font-content font-medium">
                 Preview the data before proceeding
-              </span>
+              </p>
             </div>
             <div className="w-full xl:w-auto hidden md:flex flex-row-reverse gap-x-4">
               <Button
@@ -161,7 +161,7 @@ const PreviewData = () => {
                 icon={"pi pi-list"}
                 label={"Polygons Data"}
                 onClick={() => setShowListOfPolygons(true)}
-                className="h-10 px-2 md:px-5 text-sm sm:text-base text-naples-yellow border-2 border-naples-yellow bg-transparent"
+                className="h-10 px-2 md:px-5 text-sm sm:text-base text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
               />
             </div>
           </div>
@@ -278,7 +278,7 @@ const PreviewData = () => {
             : "translate-y-full opacity-0"
         }`}
       >
-        <div className="flex flex-row gap-x-5 font-content">
+        <div className="flex flex-row-reverse gap-x-5 font-content">
           <Button
             disabled={
               state?.imageSelected?.url?.length <= 0 ||
@@ -299,7 +299,7 @@ const PreviewData = () => {
             icon={"pi pi-list"}
             rounded
             onClick={() => setShowListOfPolygons(true)}
-            className="text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+            className="text-xs sm:text-sm text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
           />
         </div>
       </div>
@@ -311,9 +311,9 @@ const PreviewData = () => {
         position="left"
         className="polygon-list-sidebar w-full md:w-[768px]"
         header={
-          <h3 className="font-heading text-metallic-brown text-xl sm:text-2xl">
+          <h2 className="font-heading text-naples-yellow text-lg sm:text-xl md:text-2xl">
             Polygons
-          </h3>
+          </h2>
         }
         maskClassName="backdrop-blur"
         closeIcon={

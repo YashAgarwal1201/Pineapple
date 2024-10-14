@@ -1,9 +1,6 @@
 import React, { startTransition, useEffect, useRef, useState } from "react";
 
 import { Button } from "primereact/button";
-// import { Panel } from "primereact/panel";
-// import { Dropdown } from "primereact/dropdown";
-// import { InputText } from "primereact/inputtext";
 import { useNavigate } from "react-router-dom";
 
 import { useAppContext } from "../../Services/AppContext";
@@ -24,8 +21,6 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
   >([]);
   const [addNew, setAddNew] = useState(false);
   const [scaleFactor, setScaleFactor] = useState<number>(0);
-  // const [editLabel, setEditLabel] = useState<number | null>(null);
-  // const [editedLabel, setEditedLabel] = useState<string>("");
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
@@ -219,31 +214,6 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
     }
   };
 
-  // Delete Polygon
-  // const handleDeletePolygon = (index: number) => {
-  //   const updatedPolygons = [...state.polygons];
-  //   updatedPolygons.splice(index, 1);
-  //   setPolygons(updatedPolygons);
-  //   showToast("warn", "Warning", "Polygon deleted");
-  // };
-
-  // // Enable Edit for Polygon Lable
-  // const handleEditLabel = (index: number) => {
-  //   setEditLabel(index);
-  //   setEditedLabel(state.polygons[index].label);
-  // };
-
-  // // Save new Polygon Label
-  // const handleSaveLabel = () => {
-  //   if (editLabel !== null && editedLabel.trim() !== "") {
-  //     const updatedPolygons = [...state.polygons];
-  //     updatedPolygons[editLabel].label = editedLabel?.trim();
-  //     setPolygons(updatedPolygons);
-  //     showToast("success", "Success", "Label Updated");
-  //   }
-  //   setEditLabel(null);
-  // };
-
   useEffect(() => {
     setShowContent(true);
   }, []);
@@ -260,12 +230,12 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
         <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5 overflow-y-auto">
           <div className="px-2 md:px-0 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-y-3">
             <div className="flex flex-col gap-1">
-              <span className="text-lg md:text-xl font-heading text-naples-yellow">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-heading text-naples-yellow">
                 Draw required polygons
-              </span>
-              <span className="text-sm md:text-base text-bud-green font-content font-medium">
+              </h1>
+              <p className="text-base sm:text-lg md:text-xl text-bud-green font-content font-medium">
                 Identify and select the correct annotations in the image
-              </span>
+              </p>
             </div>
             <div className="w-full xl:w-auto hidden md:flex flex-row-reverse gap-x-4">
               <Button
@@ -288,7 +258,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                   disabled={state.imageSelected.url === ""}
                   icon="pi pi-pencil"
                   label="Add Polygon"
-                  className="h-10 px-2 md:px-5 text-sm sm:text-base text-naples-yellow border-2 border-naples-yellow bg-transparent"
+                  className="h-10 px-2 md:px-5 text-sm sm:text-base text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
                   onClick={() => setAddNew(true)}
                 />
               )}
@@ -297,7 +267,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                   icon="pi pi-check"
                   label="Complete Polygon"
                   onClick={handleCompletePolygon}
-                  className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+                  className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
                 />
               )}
 
@@ -330,98 +300,13 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                 />
               </div>
             </div>
-            {/* <div className="w-full md:w-2/4 lg:w-3/5">
-              <div className="w-full p-3 rounded-xl bg-fern-green">
-                <div className="flex justify-between items-center text-base text-blue-900 pb-2">
-                  <span className="text-base sm:text-lg text-naples-yellow font-heading font-medium">
-                    Polygon (
-                    {state.polygons?.length < 10
-                      ? `0${state.polygons?.length}`
-                      : `${state.polygons?.length}`}
-                    )
-                  </span>
-                  <div className="hidden">
-                    {!addNew && (
-                      <Button
-                        disabled={state.imageSelected.url === ""}
-                        icon="pi pi-plus"
-                        label="Add Polygon"
-                        className="h-9 sm:h-10 text-sm sm:text-base px-2 md:px-5 text-naples-yellow border-2 border-naples-yellow bg-transparent"
-                        onClick={() => setAddNew(true)}
-                      />
-                    )}
-                    {addNew && (
-                      <Button
-                        icon="pi pi-plus"
-                        label="Complete Polygon"
-                        onClick={handleCompletePolygon}
-                        className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
-                      />
-                    )}
-                  </div>
-                </div>
-                <div>
-                  {state.polygons?.map((polygon, index) => (
-                    <div className="mt-2" key={index}>
-                      <Panel
-                        className="annotationPanel w-full mb-1"
-                        collapsed={true}
-                        header={
-                          <div className="w-full h-full flex justify-between items-center">
-                            <span className="text-base sm:text-lg text-metallic-brown">
-                              {polygon?.label}
-                            </span>
-                            <Button
-                              icon="pi pi-trash"
-                              onClick={() => handleDeletePolygon(index)}
-                              className="p-2 text-sm bg-transparent text-metallic-brown border-0 rounded-full"
-                            />
-                          </div>
-                        }
-                        toggleable
-                      >
-                        <div className="w-full flex items-center gap-4">
-                          <div className="w-full h-fit xs:h-9 sm:h-10 text-sm sm:text-base flex flex-col justify-center xs:flex-row items-end xs:items-center gap-4">
-                            <InputText
-                              value={
-                                editLabel !== index
-                                  ? polygon?.label
-                                  : editedLabel
-                              }
-                              readOnly={editLabel !== index}
-                              className="h-full w-full xs:w-3/4 bg-naples-yellow border-2 border-bud-green text-metallic-brown"
-                              onChange={(e) => setEditedLabel(e.target?.value)}
-                            />
-                            {editLabel === index ? (
-                              <Button
-                                icon="pi pi-check"
-                                label="Save Label"
-                                className="w-fit xs:w-1/4 h-full bg-fern-green text-naples-yellow border-fern-green"
-                                onClick={handleSaveLabel}
-                              />
-                            ) : (
-                              <Button
-                                icon="pi pi-pencil"
-                                label="Edit Label"
-                                className="w-fit xs:w-1/4 h-full bg-fern-green text-naples-yellow border-fern-green"
-                                onClick={() => handleEditLabel(index)}
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </Panel>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div> */}
           </div>
         </div>
       </div>
       <div
         className={`w-full p-2 block md:hidden sticky bottom-0 left-0 right-0 bg-metallic-brown rounded-t-3xl text-xs`}
       >
-        <div className="flex justify-center items-center flex-row gap-x-5 font-content">
+        <div className="flex justify-center items-center flex-row-reverse gap-x-5 font-content">
           <Button
             disabled={
               state?.imageSelected?.url?.length <= 0 ||
@@ -441,7 +326,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               disabled={state.imageSelected.url === ""}
               icon="pi pi-pencil"
               rounded
-              className=" text-sm sm:text-base px-2 md:px-5 text-naples-yellow border-2 border-naples-yellow bg-transparent"
+              className=" text-sm sm:text-base px-2 md:px-5 text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
               onClick={() => setAddNew(true)}
             />
           )}
@@ -450,7 +335,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               icon="pi pi-check"
               rounded
               onClick={handleCompletePolygon}
-              className=" text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+              className=" text-xs sm:text-sm text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
             />
           )}
           <div className="relative">
@@ -459,7 +344,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               icon={"pi pi-list"}
               rounded
               // size="small"
-              className=" text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+              className=" text-xs sm:text-sm text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
               onClick={() => setShowListOfPolygons(true)}
             />
             {state.polygons.length > 0 && (

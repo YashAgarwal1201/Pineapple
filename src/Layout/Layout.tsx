@@ -17,9 +17,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           ""
         )}
       </div>
-      {/* <div className="block md:hidden">
-        <Header />
-      </div> */}
       {children}
     </div>
   );
