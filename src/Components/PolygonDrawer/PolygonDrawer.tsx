@@ -260,12 +260,12 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
         <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5 overflow-y-auto">
           <div className="px-2 md:px-0 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-y-3">
             <div className="flex flex-col gap-1">
-              <span className="text-lg md:text-xl font-heading text-naples-yellow">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-heading text-naples-yellow">
                 Draw required polygons
-              </span>
-              <span className="text-sm md:text-base text-bud-green font-content font-medium">
+              </h1>
+              <p className="text-base sm:text-lg md:text-xl text-bud-green font-content font-medium">
                 Identify and select the correct annotations in the image
-              </span>
+              </p>
             </div>
             <div className="w-full xl:w-auto hidden md:flex flex-row-reverse gap-x-4">
               <Button
@@ -288,7 +288,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                   disabled={state.imageSelected.url === ""}
                   icon="pi pi-pencil"
                   label="Add Polygon"
-                  className="h-10 px-2 md:px-5 text-sm sm:text-base text-naples-yellow border-2 border-naples-yellow bg-transparent"
+                  className="h-10 px-2 md:px-5 text-sm sm:text-base text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
                   onClick={() => setAddNew(true)}
                 />
               )}
@@ -297,7 +297,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                   icon="pi pi-check"
                   label="Complete Polygon"
                   onClick={handleCompletePolygon}
-                  className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+                  className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
                 />
               )}
 
@@ -421,7 +421,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
       <div
         className={`w-full p-2 block md:hidden sticky bottom-0 left-0 right-0 bg-metallic-brown rounded-t-3xl text-xs`}
       >
-        <div className="flex justify-center items-center flex-row gap-x-5 font-content">
+        <div className="flex justify-center items-center flex-row-reverse gap-x-5 font-content">
           <Button
             disabled={
               state?.imageSelected?.url?.length <= 0 ||
@@ -441,7 +441,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               disabled={state.imageSelected.url === ""}
               icon="pi pi-pencil"
               rounded
-              className=" text-sm sm:text-base px-2 md:px-5 text-naples-yellow border-2 border-naples-yellow bg-transparent"
+              className=" text-sm sm:text-base px-2 md:px-5 text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
               onClick={() => setAddNew(true)}
             />
           )}
@@ -450,7 +450,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               icon="pi pi-check"
               rounded
               onClick={handleCompletePolygon}
-              className=" text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+              className=" text-xs sm:text-sm text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
             />
           )}
           <div className="relative">
@@ -459,7 +459,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               icon={"pi pi-list"}
               rounded
               // size="small"
-              className=" text-xs sm:text-sm text-naples-yellow border-2 border-naples-yellow bg-transparent"
+              className=" text-xs sm:text-sm text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
               onClick={() => setShowListOfPolygons(true)}
             />
             {state.polygons.length > 0 && (

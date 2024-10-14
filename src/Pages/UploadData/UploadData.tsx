@@ -1,27 +1,34 @@
 import { startTransition, useEffect, useState } from "react";
 
 import { Button } from "primereact/button";
+import { Sidebar } from "primereact/sidebar";
 import { useNavigate } from "react-router-dom";
 
+import CaptureImageLibrary from "../../Components/CaptureImage/CaptureImage";
 import UploadImageOptionsDialog from "../../Components/UploadImageOptionsDialog/UploadImageOptionsDialog";
 import Layout from "../../Layout/Layout";
 import { useAppContext } from "../../Services/AppContext";
 import "./UploadData.scss";
-import { Sidebar } from "primereact/sidebar";
-import CaptureImageLibrary from "../../Components/CaptureImage/CaptureImage";
 
 const UploadData = () => {
   const navigate = useNavigate();
+
   const { state, showToast, setSelectedImage, setPolygons } = useAppContext();
-  const [showOptions, setShowOptions] = useState(false);
+
+  const [showOptions, setShowOptions] = useState<boolean>(false);
   const [openCamera, setOpenCamera] = useState<boolean>(false);
-  const [showContent, setShowContent] = useState(false);
+  const [showContent, setShowContent] = useState<boolean>(false);
+
+  useEffect(() => {
+    setShowContent(true);
+  }, []);
 
   const uploadHandeler = () => {
     const input = document.createElement("input");
 
     input.setAttribute("accept", "image/*");
     input.type = "file";
+
     input.onchange = async () => {
       if (input.files && input.files[0]) {
         const selectedFile = input.files[0];
@@ -85,10 +92,6 @@ const UploadData = () => {
     setOpenCamera(true);
   };
 
-  useEffect(() => {
-    setShowContent(true);
-  }, []);
-
   return (
     <Layout>
       <div
@@ -101,12 +104,12 @@ const UploadData = () => {
         <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5">
           <div className="px-2 md:px-0 flex justify-between items-center">
             <div className="flex flex-col gap-1">
-              <span className="text-lg md:text-xl font-heading text-naples-yellow">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-heading text-naples-yellow">
                 Upload an image
-              </span>
-              <span className="text-sm md:text-base text-bud-green font-content font-medium">
+              </h1>
+              <p className="text-base sm:text-lg md:text-xl text-bud-green font-content font-medium">
                 Choose an image of size less than 1MB
-              </span>
+              </p>
             </div>
           </div>
 
@@ -118,15 +121,15 @@ const UploadData = () => {
               }}
             >
               <div className="w-full h-full flex flex-col justify-center items-center gap-y-4 bg-naples-yellow rounded-md">
-                <div className="h-2/5 flex flex-col justify-center items-center">
+                <div className="h-2/5 flex flex-col justify-center items-center gap-y-2">
                   {state.imageSelected.url === "" && (
                     <span className="w-fit pi pi-image p-4 text-4xl text-metallic-brown bg-bud-green rounded-md"></span>
                   )}
-                  <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-metallic-brown font-heading">
+                  <h2 className="text-lg sm:text-xl md:text-2xl text-metallic-brown font-heading">
                     {state.imageSelected?.url === ""
                       ? "Upload Image"
                       : "Selected Image"}
-                  </span>
+                  </h2>
                 </div>
                 {state.imageSelected?.url !== "" && (
                   <div className="h-3/5 p-2 relative">
@@ -138,7 +141,7 @@ const UploadData = () => {
                     <Button
                       icon="pi pi-sync"
                       rounded
-                      className="absolute top-0.5 right-0.5 !w-[16px] !h-[16px] !p-[12px] bg-metallic-brown text-naples-yellow !text-xs border-2 border-naples-yellow font-content"
+                      className="absolute top-0.5 right-0.5 !w-[16px] !h-[16px] !p-[12px] bg-metallic-brown text-naples-yellow !text-xs border xs:border-2 border-naples-yellow font-content"
                       type="button"
                       title="Click to change the image"
                       onClick={() => {
@@ -156,7 +159,7 @@ const UploadData = () => {
                 icon="pi pi-trash"
                 label="Remove Image"
                 title="Click to remove the selected image"
-                className="w-full sm:w-auto h-9 sm:h-10 px-10 text-sm sm:text-base text-naples-yellow bg-metallic-brown border-2 border-naples-yellow"
+                className="w-full sm:w-auto h-9 sm:h-10 px-10 text-sm sm:text-base text-naples-yellow bg-metallic-brown border xs:border-2 border-naples-yellow"
                 onClick={() => removeHandeler()}
               />
               <Button
@@ -198,9 +201,9 @@ const UploadData = () => {
         }
         className="polygon-list-sidebar w-full md:w-[768px] bg-ochre rounded-none md:rounded-l-md"
         header={
-          <h3 className="font-heading text-metallic-brown text-xl sm:text-2xl">
+          <h2 className="font-heading text-metallic-brown text-lg sm:text-xl md:text-2xl">
             Capture Image
-          </h3>
+          </h2>
         }
       >
         <CaptureImageLibrary

@@ -1,7 +1,11 @@
+import { startTransition } from "react";
+
 import { Button } from "primereact/button";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Header = () => {
+  const navigate = useNavigate();
+
   const location = useLocation();
   const { pathname } = location;
 
@@ -17,7 +21,34 @@ const Header = () => {
             ? "text-transparent bg-transparent"
             : "text-naples-yellow bg-fern-green"
         } border-0`}
-        onClick={() => window.history.go(-1)}
+        // onClick={() => {
+        //   if (pathname.includes("/upload-image")) {
+        //     startTransition(() => {
+        //       navigate("/");
+        //     });
+        //   } else if (pathname.includes("/draw")) {
+        //     startTransition(() => {
+        //       navigate("/upload-image");
+        //     });
+        //   } else if (pathname.includes("/preview")) {
+        //     startTransition(() => {
+        //       navigate("/draw");
+        //     });
+        //   } else if (pathname.includes("/cropped-data")) {
+        //     startTransition(() => {
+        //       navigate("/preview");
+        //     });
+        //   } else if (pathname.includes("/success")) {
+        //     startTransition(() => {
+        //       navigate("/preview");
+        //     });
+        //   } else {
+        //     startTransition(() => {
+        //       navigate("/");
+        //     });
+        //   }
+        // }}
+        onClick={() => startTransition(() => navigate("./../"))}
       />
 
       <a

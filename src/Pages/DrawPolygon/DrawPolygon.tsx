@@ -16,7 +16,7 @@ import "./DrawPolygon.scss";
 
 const DrawPolygon = () => {
   const navigate = useNavigate();
-  // const { state } = useAppContext();
+
   const { state, setPolygons, showToast } = useAppContext();
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -83,9 +83,9 @@ const DrawPolygon = () => {
         className="polygon-list-sidebar w-full md:w-[768px] rounded-none md:rounded-r-md"
         maskClassName="backdrop-blur"
         header={
-          <h3 className="font-heading text-metallic-brown text-xl sm:text-2xl">
+          <h2 className="font-heading text-naples-yellow text-lg sm:text-xl md:text-2xl">
             Polygons
-          </h3>
+          </h2>
         }
         closeIcon={
           <span className="pi pi-times text-metallic-brown bg-naples-yellow w-10 h-10 flex justify-center items-center"></span>
@@ -131,7 +131,7 @@ const DrawPolygon = () => {
                     <InputText
                       value={editLabel !== index ? polygon?.label : editedLabel}
                       readOnly={editLabel !== index}
-                      className="h-10 w-full xs:w-[calc(100%-2.5rem)] px-2 font-content bg-naples-yellow border-2 border-bud-green text-metallic-brown"
+                      className="h-10 w-full xs:w-[calc(100%-2.5rem)] px-2 font-content bg-naples-yellow border xs:border-2 border-bud-green text-metallic-brown"
                       onChange={(e) => setEditedLabel(e.target?.value)}
                     />
                     {editLabel === index ? (
