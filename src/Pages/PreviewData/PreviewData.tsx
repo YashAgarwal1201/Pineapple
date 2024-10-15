@@ -265,53 +265,61 @@ const PreviewData = () => {
         }
       >
         <div className="w-full h-full rounded-lg bg-metallic-brown p-2 xs:p-3 sm:p-4">
-          {state.polygons?.map((polygon, index) => (
-            <div className="mb-2" key={index}>
-              <Panel
-                className="annotationPanel w-full mb-1"
-                collapsed={true}
-                header={
-                  <div className="w-full h-full flex justify-between items-center">
-                    <span className="text-base sm:text-lg text-metallic-brown font-heading">
-                      {polygon?.label}
-                    </span>
-                  </div>
-                }
-                collapseIcon={
-                  <span className="p-2 pi pi-angle-up text-metallic-brown"></span>
-                }
-                expandIcon={
-                  <span className="p-2 pi pi-angle-down text-metallic-brown"></span>
-                }
-                toggleable
-              >
-                <div className="w-full flex flex-col gap-y-1 font-content">
-                  <p className="w-full p-2 bg-fern-green text-naples-yellow font-medium rounded-lg">
-                    Coordinates -{" "}
-                  </p>
-                  {polygon.points?.map((values, key) => (
-                    <p
-                      className="w-full flex flex-row items-center gap-x-1 text-sm sm:text-base"
-                      key={key}
-                    >
-                      <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
-                        X:
+          {state.polygons.length > 0 ? (
+            state.polygons?.map((polygon, index) => (
+              <div className="mb-2" key={index}>
+                <Panel
+                  className="annotationPanel w-full mb-1"
+                  collapsed={true}
+                  header={
+                    <div className="w-full h-full flex justify-between items-center">
+                      <span className="text-base sm:text-lg text-metallic-brown font-heading">
+                        {polygon?.label}
                       </span>
-                      <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
-                        {Math.round(values.x)}
-                      </span>
-                      <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
-                        Y:
-                      </span>
-                      <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
-                        {Math.round(values.y)}
-                      </span>
+                    </div>
+                  }
+                  collapseIcon={
+                    <span className="p-2 pi pi-angle-up text-metallic-brown"></span>
+                  }
+                  expandIcon={
+                    <span className="p-2 pi pi-angle-down text-metallic-brown"></span>
+                  }
+                  toggleable
+                >
+                  <div className="w-full flex flex-col gap-y-1 font-content">
+                    <p className="w-full p-2 bg-fern-green text-naples-yellow font-medium rounded-lg">
+                      Coordinates -{" "}
                     </p>
-                  ))}
-                </div>
-              </Panel>
+                    {polygon.points?.map((values, key) => (
+                      <p
+                        className="w-full flex flex-row items-center gap-x-1 text-sm sm:text-base"
+                        key={key}
+                      >
+                        <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
+                          X:
+                        </span>
+                        <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
+                          {Math.round(values.x)}
+                        </span>
+                        <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
+                          Y:
+                        </span>
+                        <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
+                          {Math.round(values.y)}
+                        </span>
+                      </p>
+                    ))}
+                  </div>
+                </Panel>
+              </div>
+            ))
+          ) : (
+            <div className="w-full h-full flex justify-center items-center">
+              <p className="text-center h-[40px] text-naples-yellow font-content text-base xs:text-lg md:text-xl  my-auto">
+                No data to display
+              </p>
             </div>
-          ))}
+          )}
         </div>
       </Sidebar>
     </Layout>
