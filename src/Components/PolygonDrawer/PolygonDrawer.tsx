@@ -27,9 +27,9 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
   const [clickedPoints, setClickedPoints] = useState<
     { x: number; y: number }[]
   >([]);
-  const [addNew, setAddNew] = useState(false);
+  const [addNew, setAddNew] = useState<boolean>(false);
   const [scaleFactor, setScaleFactor] = useState({ x: 1, y: 1 });
-  const [showContent, setShowContent] = useState(false);
+  const [showContent, setShowContent] = useState<boolean>(false);
 
   const updateCanvasSize = useCallback((img: HTMLImageElement) => {
     const canvas = canvasRef.current;

@@ -1,6 +1,7 @@
 import { startTransition, useEffect, useState } from "react";
 
 import { Button } from "primereact/button";
+import { Image } from "primereact/image";
 import { Sidebar } from "primereact/sidebar";
 import { useNavigate } from "react-router-dom";
 
@@ -8,6 +9,7 @@ import CaptureImageLibrary from "../../Components/CaptureImage/CaptureImage";
 import UploadImageOptionsDialog from "../../Components/UploadImageOptionsDialog/UploadImageOptionsDialog";
 import Layout from "../../Layout/Layout";
 import { useAppContext } from "../../Services/AppContext";
+
 import "./UploadData.scss";
 
 const UploadData = () => {
@@ -133,10 +135,11 @@ const UploadData = () => {
                 </div>
                 {state.imageSelected?.url !== "" && (
                   <div className="h-3/5 p-2 relative">
-                    <img
+                    <Image
                       src={state.imageSelected.url}
                       alt="selected file"
-                      className="max-h-[200px] h-full object-cover rounded-md shadow-md"
+                      preview
+                      className="max-h-[200px] h-full object-cover rounded-md shadow-md *:h-full"
                     />
                     <Button
                       icon="pi pi-sync"

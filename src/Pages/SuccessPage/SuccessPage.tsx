@@ -1,7 +1,6 @@
 import { startTransition, useEffect, useState } from "react";
 
 import { Button } from "primereact/button";
-// import { useNavigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 import Layout from "../../Layout/Layout";
@@ -12,11 +11,12 @@ import "./SuccessPage.scss";
 
 const SuccessPage = () => {
   const navigate = useNavigate();
+
   const { state, showToast, setSelectedImage, setPolygons, dispatch } =
     useAppContext();
 
-  const [loader, setLoader] = useState(false);
-  const [showContent, setShowContent] = useState(false);
+  const [loader, setLoader] = useState<boolean>(false);
+  const [showContent, setShowContent] = useState<boolean>(false);
 
   const clearSessionStorageAndNavigate = async () => {
     try {

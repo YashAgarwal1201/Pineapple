@@ -6,8 +6,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 const Header = () => {
   const navigate = useNavigate();
 
-  const location = useLocation();
-  const { pathname } = location;
+  // const location = useLocation();
+  const { pathname } = useLocation();
 
   return (
     <div className="w-full p-4 flex justify-between items-center bg-metallic-brown rounded-b-2xl shadow-md">
