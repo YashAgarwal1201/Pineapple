@@ -1,218 +1,219 @@
-import React, { startTransition, useEffect, useRef, useState } from "react";
+import React, {
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 
 import { useAppContext } from "../../Services/AppContext";
-import { DEFAULT_LABEL } from "../../Services/constants";
 import { generateRandomColor } from "../../Services/functionServices";
 import "./PolygonDrawer.scss";
 import { Polygon } from "../../Services/interfaces";
 
 const PolygonDrawer = ({ setShowListOfPolygons }) => {
   const navigate = useNavigate();
+
   const { state, setPolygons, showToast } = useAppContext();
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasParentRef = useRef<HTMLDivElement | null>(null);
+  const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [currentPolygon, setCurrentPolygon] = useState<Polygon | null>(null);
   const [clickedPoints, setClickedPoints] = useState<
     { x: number; y: number }[]
   >([]);
   const [addNew, setAddNew] = useState(false);
-  const [scaleFactor, setScaleFactor] = useState<number>(0);
+  const [scaleFactor, setScaleFactor] = useState({ x: 1, y: 1 });
   const [showContent, setShowContent] = useState(false);
 
-  useEffect(() => {
-    const updateCanvasSize = () => {
-      if (canvasRef.current && canvasParentRef.current) {
-        const canvasParentWidth = canvasParentRef.current.clientWidth;
-        canvasRef.current.width = canvasParentWidth;
-        // Optionally update canvas height here if needed
+  const updateCanvasSize = useCallback((img: HTMLImageElement) => {
+    const canvas = canvasRef.current;
+    const parent = canvasParentRef.current;
+
+    if (canvas && parent) {
+      const parentWidth = parent.clientWidth;
+      const parentHeight = parent.clientHeight;
+
+      // Calculate the aspect ratio of the image
+      const imageAspectRatio = img.width / img.height;
+
+      // Determine the new canvas dimensions while maintaining the image's aspect ratio
+      let newCanvasWidth, newCanvasHeight;
+
+      if (parentWidth / parentHeight > imageAspectRatio) {
+        // Parent is wider than the image's aspect ratio, fit by height
+        newCanvasHeight = parentHeight;
+        newCanvasWidth = newCanvasHeight * imageAspectRatio;
+      } else {
+        // Parent is taller than the image's aspect ratio, fit by width
+        newCanvasWidth = parentWidth;
+        newCanvasHeight = newCanvasWidth / imageAspectRatio;
       }
-    };
 
-    updateCanvasSize(); // Update canvas size initially
-    window.addEventListener("resize", updateCanvasSize); // Add listener for window resize
+      canvas.width = newCanvasWidth;
+      canvas.height = newCanvasHeight;
 
-    return () => {
-      window.removeEventListener("resize", updateCanvasSize); // Remove listener on component unmount
-    };
+      // Calculate the scaling factors for rendering polygons and points
+      const scaleX = newCanvasWidth / img.width;
+      const scaleY = newCanvasHeight / img.height;
+      setScaleFactor({ x: scaleX, y: scaleY });
+    }
   }, []);
 
+  // Memoize the image loading and scaling
   useEffect(() => {
-    const canvas = canvasRef.current as HTMLCanvasElement;
-    const ctx = canvas?.getContext("2d");
+    if (!state.imageSelected?.url) return;
 
-    if (ctx) {
-      ctx.clearRect(0, 0, canvas?.width as number, canvas?.height as number);
-      ctx.imageSmoothingEnabled = false;
+    const img = new Image();
+    img.src = state.imageSelected.url;
+    img.onload = () => {
+      setImage(img);
+      updateCanvasSize(img); // Calculate scaling factor based on image size
+    };
+  }, [state.imageSelected?.url, updateCanvasSize]);
 
-      const img = new Image();
-      img.src = state?.imageSelected?.url; //images;
+  useEffect(() => {
+    window.addEventListener("resize", () => image && updateCanvasSize(image));
+    return () =>
+      window.removeEventListener(
+        "resize",
+        () => image && updateCanvasSize(image)
+      );
+  }, [image, updateCanvasSize]);
 
-      img.onload = () => {
-        const imgWidth = img.width;
-        const imgHeight = img.height;
-        const canvasWidth = canvas.width; // Get the current canvas width
-        const canvasHeight = (imgHeight / imgWidth) * canvasWidth; // Calculate canvas height to maintain aspect ratio
-        // console.log(canvasHeight, canvasWidth);
-        canvas.width = canvasWidth; // Set canvas width
-        canvas.height = canvasHeight; // Set canvas height
+  // Memoize scaled polygons to avoid recalculating on every render
+  const scaledPolygons = useMemo(() => {
+    if (!image) return [];
+    return state.polygons.map((polygon) => ({
+      ...polygon,
+      points: polygon.points.map((p) => ({
+        x: p.x * scaleFactor.x,
+        y: p.y * scaleFactor.y,
+      })),
+    }));
+  }, [state.polygons, scaleFactor, image]);
 
-        const widthScaleFactor = imgWidth / canvasWidth; //canvasWidth / imgWidth;
-        // const heightScaleFactor = canvasHeight / imgHeight;
-        setScaleFactor(widthScaleFactor);
-        // console.log(widthScaleFactor, heightScaleFactor);
+  const drawImageAndPolygons = useCallback(
+    (ctx: CanvasRenderingContext2D) => {
+      if (image) {
+        ctx.clearRect(
+          0,
+          0,
+          canvasRef.current!.width,
+          canvasRef.current!.height
+        );
+        ctx.drawImage(
+          image,
+          0,
+          0,
+          image.width * scaleFactor.x,
+          image.height * scaleFactor.y
+        );
 
-        // Clear canvas and draw the image with zoom
-        ctx?.clearRect(0, 0, canvasWidth, canvasHeight);
-        ctx?.drawImage(img, 0, 0, canvasWidth, canvasHeight);
-
-        // polygons.forEach((polygon) => {
-        state.polygons?.forEach((polygon) => {
-          const path = new Path2D();
-          const [startPoint, ...restPoints] = polygon.points;
-          path.moveTo(startPoint.x, startPoint.y);
-
-          restPoints.forEach((point) => {
-            path.lineTo(point.x, point.y);
-          });
-
-          path.closePath();
-
-          ctx.strokeStyle = polygon.color;
-          ctx.lineWidth = 2;
-
-          ctx.fillStyle = `${polygon.color}60`;
-          ctx.fill(path);
-
-          const labelX =
-            polygon.points.reduce((sum, point) => sum + point.x, 0) /
-            polygon.points.length;
-          const labelY =
-            polygon.points.reduce((sum, point) => sum + point.y, 0) /
-            polygon.points.length;
-
-          ctx.fillStyle = "white";
-          const padding = 10;
-          const labelWidth =
-            ctx.measureText(polygon.label.substring(0, 10))?.width + 8;
-          const labelHeight = 14;
-          ctx.fillRect(
-            labelX - labelWidth / 2 - padding,
-            labelY - labelHeight / 2 - padding,
-            labelWidth + 2 * padding,
-            labelHeight + 1.7 * padding
-          );
-
-          ctx.fillStyle = "black";
-          ctx.font = "14px 'Verdana'";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText(polygon.label.substring(0, 10), labelX, labelY);
-
-          ctx.stroke(path);
+        // Draw memoized polygons
+        scaledPolygons.forEach((polygon) => {
+          drawPolygon(ctx, polygon);
         });
 
         // Draw clicked points
         clickedPoints.forEach((point) => {
           ctx.beginPath();
-          ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
+          ctx.arc(
+            point.x * scaleFactor.x,
+            point.y * scaleFactor.y,
+            5,
+            0,
+            2 * Math.PI
+          );
           ctx.fillStyle = "blue";
           ctx.fill();
         });
-      };
+      }
+    },
+    [image, clickedPoints, scaledPolygons, scaleFactor]
+  );
+
+  useEffect(() => {
+    if (canvasRef.current && image) {
+      const ctx = canvasRef.current.getContext("2d");
+      if (ctx) drawImageAndPolygons(ctx);
     }
-  }, [state.polygons, clickedPoints, state?.imageSelected?.url]);
-  // }, [polygons, clickedPoints]);
+  }, [image, drawImageAndPolygons]);
 
-  const handleCanvasClick = (
-    event: React.MouseEvent<HTMLCanvasElement, MouseEvent>
-  ) => {
-    const canvas = canvasRef.current;
-    const rect = canvas?.getBoundingClientRect();
-    const clickX = event.clientX - rect!.left;
-    const clickY = event.clientY - rect!.top;
+  const drawPolygon = useCallback(
+    (ctx: CanvasRenderingContext2D, polygon: Polygon) => {
+      ctx.beginPath();
+      ctx.strokeStyle = polygon.color;
+      ctx.lineWidth = 2;
+      ctx.fillStyle = `${polygon.color}60`;
 
-    if (!currentPolygon) {
-      setClickedPoints([{ x: clickX, y: clickY }]); // Set the first point
-      setCurrentPolygon({
-        color: generateRandomColor(),
-        // label: `${DEFAULT_LABEL} ${polygons.length + 1}`,
-        label: `${DEFAULT_LABEL} ${state.polygons?.length + 1}`,
-        points: [{ x: clickX, y: clickY }],
-        units: 0,
-        bbox: [
-          clickX * scaleFactor,
-          clickY * scaleFactor,
-          clickX * scaleFactor,
-          clickY * scaleFactor,
-        ],
+      const points = polygon.points;
+      ctx.moveTo(points[0].x, points[0].y);
+      points.forEach((point) => {
+        ctx.lineTo(point.x, point.y);
       });
-    } else {
-      const updatedClickedPoints = [
-        ...currentPolygon.points,
-        { x: clickX, y: clickY },
-      ];
-      setCurrentPolygon({
-        ...currentPolygon,
-        points: updatedClickedPoints,
-        bbox: calculateBoundingBox(updatedClickedPoints),
-      });
-      setClickedPoints([...clickedPoints, { x: clickX, y: clickY }]);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
 
-      // if (updatedClickedPoints.length === 4) {
-      //   handleCompletePolygon();
-      // }
-    }
-  };
+      // Draw label in the center
+      const centerX = points.reduce((sum, p) => sum + p.x, 0) / points.length;
+      const centerY = points.reduce((sum, p) => sum + p.y, 0) / points.length;
 
-  // Calculate BBox
-  const calculateBoundingBox = (points: string | any[], padding = 20) => {
-    if (points.length === 0) {
-      return [0, 0, 0, 0]; // Return an empty bounding box if there are no points
-    }
+      ctx.fillStyle = "white";
+      ctx.font = "14px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText(polygon.label, centerX, centerY);
+    },
+    []
+  );
 
-    let minX = points[0].x;
-    let minY = points[0].y;
-    let maxX = points[0].x;
-    let maxY = points[0].y;
+  // Memoize the canvas click handler
+  const handleCanvasClick = useCallback(
+    (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+      if (!canvasRef.current || !image) return;
 
-    for (let i = 1; i < points.length; i++) {
-      const { x, y } = points[i];
-      minX = Math.min(minX, x);
-      minY = Math.min(minY, y);
-      maxX = Math.max(maxX, x);
-      maxY = Math.max(maxY, y);
-    }
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
 
-    // Apply padding to the bounding box
-    minX -= padding;
-    minY -= padding;
-    maxX += padding;
-    maxY += padding;
+      const clickX = (event.clientX - rect.left) / scaleFactor.x;
+      const clickY = (event.clientY - rect.top) / scaleFactor.y;
 
-    return [minX, minY, maxX, maxY];
-  };
+      const newPoint = { x: clickX, y: clickY };
 
-  const handleCompletePolygon = () => {
+      if (!currentPolygon) {
+        setCurrentPolygon({
+          color: generateRandomColor(),
+          label: `Polygon ${state.polygons.length + 1}`,
+          points: [newPoint],
+          bbox: [clickX, clickY, clickX, clickY],
+          units: 0,
+        });
+        setClickedPoints([newPoint]);
+      } else {
+        const updatedPoints = [...currentPolygon.points, newPoint];
+        setCurrentPolygon({ ...currentPolygon, points: updatedPoints });
+        setClickedPoints(updatedPoints);
+      }
+    },
+    [currentPolygon, scaleFactor, image, state.polygons.length]
+  );
+
+  const handleCompletePolygon = useCallback(() => {
     if (currentPolygon && currentPolygon.points.length >= 3) {
-      // const updatedPolygons = [...polygons, currentPolygon];
-      const updatedPolygons = [...state.polygons, currentPolygon];
-      setPolygons(updatedPolygons);
+      setPolygons([...state.polygons, currentPolygon]);
       setCurrentPolygon(null);
       setClickedPoints([]);
-      setAddNew(false);
-      showToast("success", "Success", "Polygon added succesfully");
+      showToast("success", "Success", "Polygon successfully added.");
     } else {
-      showToast(
-        "warn",
-        "Warning",
-        "A polygon must have at least 3 points to be completed."
-      );
+      showToast("warn", "Warning", "A polygon needs at least 3 points.");
     }
-  };
+  }, [currentPolygon, state.polygons, setPolygons, showToast]);
 
   useEffect(() => {
     setShowContent(true);
@@ -285,14 +286,14 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               />
             </div>
           </div>
-          <div className="w-full h-full flex flex-col md:flex-row gap-2">
+          <div className="w-full h-[calc(100%-150px)] flex flex-col md:flex-row gap-2">
             <div className="w-full h-full md:mb-0 mx-auto flex justify-center">
               <div
-                className="w-full h-fit border-2 border-ochre rounded-lg my-auto"
+                className="w-full h-full max-w-full  my-auto"
                 ref={canvasParentRef}
               >
                 <canvas
-                  className="mx-auto rounded-lg"
+                  className="mx-auto border-2 border-ochre rounded-lg"
                   ref={canvasRef}
                   onClick={(e) => (addNew ? handleCanvasClick(e) : "")}
                   // width={canvasParentRef?.current?.clientWidth}

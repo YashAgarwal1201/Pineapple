@@ -92,68 +92,78 @@ const DrawPolygon = () => {
         }
       >
         <div className="w-full h-full rounded-lg bg-metallic-brown p-2 xs:p-3 sm:p-4">
-          {state.polygons?.map((polygon, index) => (
-            <div className="mb-2" key={index}>
-              <Panel
-                className="annotationPanel w-full mb-1"
-                collapsed={true}
-                header={
-                  <div className="w-full h-full flex justify-between items-center">
-                    <span className="text-base sm:text-lg text-metallic-brown font-heading">
-                      {polygon?.label}
-                    </span>
-                    <Button
-                      icon="pi pi-trash"
-                      onClick={() => handleDeletePolygon(index)}
-                      className="p-2 text-sm bg-transparent text-metallic-brown border-0 rounded-full"
-                    />
-                  </div>
-                }
-                collapseIcon={
-                  <span className="pi pi-chevron-up p-2 text-sm bg-transparent text-metallic-brown border-0 rounded-full"></span>
-                }
-                expandIcon={
-                  <span className="pi pi-chevron-down p-2 text-sm bg-transparent text-metallic-brown border-0 rounded-full"></span>
-                }
-                toggleable
-              >
-                <div className="w-full flex flex-col gap-4 font-content">
-                  {editLabel === index ? (
-                    <p className="text-fern-green">
-                      Enter new label for the polygon
-                    </p>
-                  ) : (
-                    <p className="text-fern-green font-medium">
-                      Change the label of polygon
-                    </p>
-                  )}
-                  <div className="w-full h-fit text-sm sm:text-base flex flex-col justify-center xs:flex-row items-end xs:items-center gap-4">
-                    <InputText
-                      value={editLabel !== index ? polygon?.label : editedLabel}
-                      readOnly={editLabel !== index}
-                      className="h-10 w-full xs:w-[calc(100%-2.5rem)] px-2 font-content bg-naples-yellow border xs:border-2 border-bud-green text-metallic-brown"
-                      onChange={(e) => setEditedLabel(e.target?.value)}
-                    />
+          {state.polygons.length > 0 ? (
+            state.polygons?.map((polygon, index) => (
+              <div className="mb-2" key={index}>
+                <Panel
+                  className="annotationPanel w-full mb-1"
+                  collapsed={true}
+                  header={
+                    <div className="w-full h-full flex justify-between items-center">
+                      <span className="text-base sm:text-lg text-metallic-brown font-heading">
+                        {polygon?.label}
+                      </span>
+                      <Button
+                        icon="pi pi-trash"
+                        onClick={() => handleDeletePolygon(index)}
+                        className="p-2 text-sm bg-transparent text-metallic-brown border-0 rounded-full"
+                      />
+                    </div>
+                  }
+                  collapseIcon={
+                    <span className="pi pi-chevron-up p-2 text-sm bg-transparent text-metallic-brown border-0 rounded-full"></span>
+                  }
+                  expandIcon={
+                    <span className="pi pi-chevron-down p-2 text-sm bg-transparent text-metallic-brown border-0 rounded-full"></span>
+                  }
+                  toggleable
+                >
+                  <div className="w-full flex flex-col gap-4 font-content">
                     {editLabel === index ? (
-                      <Button
-                        icon="pi pi-check"
-                        // label="Save Label"
-                        className="w-10 h-10 bg-fern-green text-naples-yellow border-fern-green"
-                        onClick={handleSaveLabel}
-                      />
+                      <p className="text-fern-green">
+                        Enter new label for the polygon
+                      </p>
                     ) : (
-                      <Button
-                        icon="pi pi-pencil"
-                        // label="Edit Label"
-                        className="w-10 h-10 bg-fern-green text-naples-yellow border-fern-green"
-                        onClick={() => handleEditLabel(index)}
-                      />
+                      <p className="text-fern-green font-medium">
+                        Change the label of polygon
+                      </p>
                     )}
+                    <div className="w-full h-fit text-sm sm:text-base flex flex-col justify-center xs:flex-row items-end xs:items-center gap-4">
+                      <InputText
+                        value={
+                          editLabel !== index ? polygon?.label : editedLabel
+                        }
+                        readOnly={editLabel !== index}
+                        className="h-10 w-full xs:w-[calc(100%-2.5rem)] px-2 font-content bg-naples-yellow border xs:border-2 border-bud-green text-metallic-brown"
+                        onChange={(e) => setEditedLabel(e.target?.value)}
+                      />
+                      {editLabel === index ? (
+                        <Button
+                          icon="pi pi-check"
+                          // label="Save Label"
+                          className="w-10 h-10 bg-fern-green text-naples-yellow border-fern-green"
+                          onClick={handleSaveLabel}
+                        />
+                      ) : (
+                        <Button
+                          icon="pi pi-pencil"
+                          // label="Edit Label"
+                          className="w-10 h-10 bg-fern-green text-naples-yellow border-fern-green"
+                          onClick={() => handleEditLabel(index)}
+                        />
+                      )}
+                    </div>
                   </div>
-                </div>
-              </Panel>
+                </Panel>
+              </div>
+            ))
+          ) : (
+            <div className="w-full h-full flex justify-center items-center">
+              <p className="text-center h-[40px] text-naples-yellow font-content text-base xs:text-lg md:text-xl  my-auto">
+                No data to display
+              </p>
             </div>
-          ))}
+          )}
         </div>
       </Sidebar>
     </Layout>

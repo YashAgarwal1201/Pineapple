@@ -5,7 +5,6 @@ import { Dialog } from "primereact/dialog";
 
 import { useAppContext } from "../../Services/AppContext";
 import { UploadImageOptionsDialogType } from "../../Services/interfaces";
-//import CaptureImageLibrary from "../CaptureImage/CaptureImage";
 
 const UploadImageOptionsDialog = ({
   showOptions,
@@ -47,10 +46,8 @@ const UploadImageOptionsDialog = ({
       } reusableDialog w-full md:w-2/3 lg:w-[500px] absolute bottom-0 md:bottom-auto !m-0`}
       position={isSmallScreen ? "bottom" : "center"}
       maskClassName="backdrop-blur"
-      // contentClassName={`${openCamera ? "px-0" : "bg-black"}`}
     >
       <div className="pt-1 w-full h-full">
-        {/* {!openCamera ? ( */}
         <div className="w-full flex flex-row flex-wrap justify-center lg:justify-around items-center gap-x-2 gap-y-2 font-content">
           <Button
             type="button"
@@ -67,7 +64,11 @@ const UploadImageOptionsDialog = ({
             title="Click to open camera"
             className="h-9 sm:h-10 px-10 text-sm sm:text-base text-naples-yellow bg-fern-green border-fern-green"
             onClick={() => {
-              if (window.location.protocol === "https:") onCaptureImageClick();
+              if (
+                window?.location?.protocol === "https:" ||
+                window?.location?.origin?.toLowerCase()?.includes("localhost")
+              )
+                onCaptureImageClick();
               else {
                 showToast(
                   "warn",
@@ -79,14 +80,6 @@ const UploadImageOptionsDialog = ({
             }}
           />
         </div>
-        {/* ) : (
-          <CaptureImageLibrary
-            openCamera={openCamera}
-            onCapture={() => setShowOptions(true)}
-            exitCamera={() => setOpenCamera(false)}
-            // acceptType={state?.isOptionSelected}
-          />
-        )} */}
       </div>
     </Dialog>
   );
