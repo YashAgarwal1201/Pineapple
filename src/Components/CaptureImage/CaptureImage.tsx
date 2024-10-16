@@ -6,19 +6,9 @@ import Webcam from "react-webcam";
 
 import { useAppContext } from "../../Services/AppContext";
 
-const CaptureImageLibrary = ({
-  // openCamera,
-  exitCamera,
-  // acceptType,
-  onCapture,
-}: {
-  openCamera: boolean;
-  exitCamera: () => void;
-  acceptType?: string;
-  onCapture: any;
-}) => {
+const CaptureImageLibrary = ({ exitCamera, onCapture }) => {
   const { state, showToast, setSelectedImage } = useAppContext();
-  const [showImagePreview, setShowImagePreview] = useState<boolean>(false);
+
   const webcamRef = useRef<Webcam>(null);
   const stream = useRef<MediaStream | null>(null);
 
@@ -26,6 +16,7 @@ const CaptureImageLibrary = ({
     MediaTrackConstraints | undefined
   >();
   const [numberOfCameras, setNumberOfCameras] = useState<number>(0);
+  const [showImagePreview, setShowImagePreview] = useState<boolean>(false);
 
   useEffect(() => {
     const video = document.getElementById("video");

@@ -11,7 +11,6 @@ import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 
 import { useAppContext } from "../../Services/AppContext";
-// import { DEFAULT_LABEL } from "../../Services/constants";
 import { generateRandomColor } from "../../Services/functionServices";
 import "./PolygonDrawer.scss";
 import { Polygon } from "../../Services/interfaces";

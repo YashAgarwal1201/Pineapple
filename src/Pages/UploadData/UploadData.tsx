@@ -173,12 +173,6 @@ const UploadData = () => {
             </div>
           </div>
         </div>
-
-        {/* <div className="w-full mdl:w-1/2 h-1/3 mdl:h-full px-2 flex flex-col justify-center items-center gap-y-10">
-          <h1 className="text-center font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-naples-yellow select-none">
-            Welcome to Project {PROJECT_NAME}
-          </h1>
-        </div> */}
       </div>
 
       <UploadImageOptionsDialog
@@ -207,7 +201,6 @@ const UploadData = () => {
         }
       >
         <CaptureImageLibrary
-          openCamera={openCamera}
           onCapture={() => setShowOptions(true)}
           exitCamera={() => setOpenCamera(false)}
         />
