@@ -9,7 +9,8 @@ import { PROJECT_NAME } from "../../Services/constants";
 
 const LandingScreen = () => {
   const navigate = useNavigate();
-  const [showContent, setShowContent] = useState(false);
+
+  const [showContent, setShowContent] = useState<boolean>(false);
 
   useEffect(() => {
     setShowContent(true);

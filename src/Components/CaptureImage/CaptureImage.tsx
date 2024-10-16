@@ -10,6 +10,7 @@ const CaptureImageLibrary = ({ exitCamera, onCapture }) => {
   const { state, showToast, setSelectedImage } = useAppContext();
 
   const webcamRef = useRef<Webcam>(null);
+  const webcamRefParent = useRef<HTMLDivElement | null>(null);
   const stream = useRef<MediaStream | null>(null);
 
   const [videoConstraints, setVideoConstraints] = useState<
@@ -19,7 +20,8 @@ const CaptureImageLibrary = ({ exitCamera, onCapture }) => {
   const [showImagePreview, setShowImagePreview] = useState<boolean>(false);
 
   useEffect(() => {
-    const video = document.getElementById("video");
+    // const video = document.getElementById("video");
+    const video = webcamRefParent.current;
     // console.log(video?.clientHeight);
     setVideoConstraints({
       width: video?.clientWidth || 1920,
@@ -27,6 +29,10 @@ const CaptureImageLibrary = ({ exitCamera, onCapture }) => {
       facingMode: "environment",
     });
     calcNumberOfCamera();
+
+    if (webcamRef.current) {
+      webcamRef.current.video?.play();
+    }
   }, []);
 
   const capture = useCallback(async () => {
@@ -92,7 +98,11 @@ const CaptureImageLibrary = ({ exitCamera, onCapture }) => {
 
   return (
     <div className="w-full h-full flex flex-col items-center gap-3">
-      <div className="h-full flex relative w-full rounded-lg" id="video">
+      <div
+        className="h-full flex relative w-full rounded-lg"
+        id="video"
+        ref={webcamRefParent}
+      >
         <Webcam
           onLoad={() =>
             showToast(
@@ -124,7 +134,7 @@ const CaptureImageLibrary = ({ exitCamera, onCapture }) => {
             preview
           />
         ) : (
-          ""
+          <div className="w-12 h-12 block mr-auto"></div>
         )}
         <Button
           className="border-0 bg-fern-green text-naples-yellow"

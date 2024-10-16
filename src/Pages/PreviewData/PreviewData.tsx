@@ -19,6 +19,7 @@ import { Polygon } from "../../Services/interfaces";
 
 const PreviewData = () => {
   const navigate = useNavigate();
+
   const { state } = useAppContext();
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -27,7 +28,7 @@ const PreviewData = () => {
   const [showListOfPolygons, setShowListOfPolygons] = useState<boolean>(false);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [scaleFactor, setScaleFactor] = useState({ x: 1, y: 1 });
-  const [showContent, setShowContent] = useState(false);
+  const [showContent, setShowContent] = useState<boolean>(false);
 
   const updateCanvasSize = useCallback((img: HTMLImageElement) => {
     const canvas = canvasRef.current;
