@@ -46,7 +46,7 @@ const SuccessPage = () => {
   return (
     <Layout>
       <div
-        className={`h-full p-3 m-3 flex flex-col md:flex-row justify-center items-center gap-y-10 md:gap-y-auto text-naples-yellow bg-metallic-brown rounded-lg shadow-md transition-all duration-1000 transform ${
+        className={`h-full p-3 flex flex-col md:flex-row justify-center items-center gap-y-10 md:gap-y-auto text-naples-yellow bg-metallic-brown rounded-lg shadow-md transition-all duration-1000 transform ${
           showContent
             ? "translate-y-0 md:translate-x-0 opacity-100"
             : "-translate-y-0 md:-translate-x-full opacity-0"

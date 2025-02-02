@@ -10,7 +10,7 @@ const Header = () => {
   const { pathname } = useLocation();
 
   return (
-    <div className="w-full p-4 flex justify-between items-center bg-metallic-brown rounded-b-2xl shadow-md">
+    <div className="w-full h-full p-4 flex flex-row md:flex-col justify-between items-center bg-metallic-brown rounded-br-lg rounded-bl-lg md:rounded-bl-none rounded-tr-none md:rounded-tr-lg shadow-md">
       <Button
         disabled={pathname === "/"}
         icon="pi pi-angle-left"

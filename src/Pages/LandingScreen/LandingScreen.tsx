@@ -19,7 +19,7 @@ const LandingScreen = () => {
   return (
     <Layout>
       <div
-        className={`h-full p-2 sm:p-3 m-3 grid grid-cols-1 mdl:grid-cols-2 bg-metallic-brown rounded-lg shadow-md transition-all duration-1000 transform overflow-auto ${
+        className={`h-full p-2 sm:p-3 grid grid-cols-1 mdl:grid-cols-2 bg-metallic-brown rounded-lg shadow-md transition-all duration-1000 transform overflow-auto ${
           showContent
             ? "translate-y-0 opacity-100"
             : "-translate-y-full opacity-0"
