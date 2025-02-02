@@ -97,7 +97,7 @@ const UploadData = () => {
   return (
     <Layout>
       <div
-        className={`h-full p-2 sm:p-3 my-3 mx-0 sm:mx-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md transition-all duration-1000 transform ${
+        className={`h-full p-2 sm:p-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md transition-all duration-1000 transform ${
           showContent
             ? "translate-y-0 opacity-100"
             : "-translate-y-full opacity-0"
