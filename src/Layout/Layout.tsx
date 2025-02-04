@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { useLocation } from "react-router";
 
 import Header from "../Components/Header/Header";
+import MainSidebar from "../Components/Sidebar/Sidebar";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
+
+  const [showSidebar, setShowSidebar] = useState(false);
 
   return (
     <div className="w-screen h-[100dvh] relative flex flex-col md:flex-row bg-ochre">
@@ -13,7 +16,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         {location.pathname !== "/" &&
         !location.pathname.includes("/success") ? (
           <div className="w-full md:w-[70px] h-[60px] md:h-full">
-            <Header />
+            <Header setShowSidebar={setShowSidebar} />
           </div>
         ) : (
           ""
@@ -28,6 +31,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       >
         {children}
       </div>
+      <MainSidebar
+        showMenuDialog={showSidebar}
+        setShowMenuDialog={setShowSidebar}
+      />
     </div>
   );
 };

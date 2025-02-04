@@ -3,23 +3,26 @@ import { startTransition } from "react";
 import { Button } from "primereact/button";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const Header = () => {
+const Header = ({
+  setShowSidebar,
+}: {
+  setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const navigate = useNavigate();
 
   // const location = useLocation();
   const { pathname } = useLocation();
 
   return (
-    <div className="w-full h-full p-4 flex flex-row md:flex-col justify-between items-center bg-metallic-brown rounded-br-lg rounded-bl-lg md:rounded-bl-none rounded-tr-none md:rounded-tr-lg shadow-md">
+    <div className="w-full h-full p-1 flex flex-row md:flex-col justify-between items-center bg-metallic-brown rounded-br-lg rounded-bl-lg md:rounded-bl-none rounded-tr-none md:rounded-tr-lg shadow-md">
       <Button
         disabled={pathname === "/"}
         icon="pi pi-angle-left"
         title="go back"
-        rounded
-        className={`!w-8 !h-8 ${
+        className={`w-auto md:w-full h-full md:h-auto aspect-square rounded-2xl md:rounded-3xl ${
           pathname === "/"
             ? "text-transparent bg-transparent"
-            : "text-naples-yellow bg-fern-green"
+            : "text-naples-yellow "
         } border-0`}
         // onClick={() => {
         //   if (pathname.includes("/upload-image")) {
@@ -51,14 +54,19 @@ const Header = () => {
         onClick={() => startTransition(() => navigate("./../"))}
       />
 
-      <a
+      <Button
+        icon="pi pi-ellipsis-v"
+        className="w-auto md:w-full h-full md:h-auto aspect-square rounded-2xl md:rounded-3xl text-naples-yellow "
+        onClick={() => setShowSidebar(true)}
+      />
+      {/* <a
         title="check developer profile"
         href={"https://yashagarwal1201.github.io/"}
         target="_blank"
         className="!h-8 !w-8 flex justify-center items-center bg-fern-green text-naples-yellow border-0 rounded-full"
       >
         <span className="pi pi-user text-sm"></span>
-      </a>
+      </a> */}
     </div>
   );
 };
