@@ -222,7 +222,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
   return (
     <>
       <div
-        className={`customScrollbar h-full py-3 px-1 sm:px-3 my-3 mx-0 sm:mx-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md overflow-y-auto transition-all duration-1000 transform ${
+        className={`customScrollbar h-full p-2 sm:p-4 flex flex-col justify-around items-center bg-metallic-brown rounded-2xl sm:rounded-3xl shadow-md overflow-y-auto transition-all duration-1000 transform ${
           showContent
             ? "translate-y-0 opacity-100"
             : "-translate-y-full opacity-0"
@@ -246,7 +246,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                 }
                 icon="pi pi-thumbs-up"
                 label="Save & Continue"
-                className="h-10 px-2 md:px-5 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
+                className="h-10 px-2 md:px-5 text-sm sm:text-base  flex items-center gap-2 rounded-2xl text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => {
                   // console.log(canvasRef?.current?.getContext("2d"));
                   startTransition(() => {
@@ -259,7 +259,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                   disabled={state.imageSelected.url === ""}
                   icon="pi pi-pencil"
                   label="Add Polygon"
-                  className="h-10 px-2 md:px-5 text-sm sm:text-base text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
+                  className="h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 rounded-2xl text-naples-yellow border border-naples-yellow bg-transparent"
                   onClick={() => setAddNew(true)}
                 />
               )}
@@ -268,7 +268,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                   icon="pi pi-check"
                   label="Complete Polygon"
                   onClick={handleCompletePolygon}
-                  className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
+                  className="h-10 px-2 md:px-5 text-xs sm:text-sm flex items-center gap-2 rounded-2xl text-naples-yellow border border-naples-yellow bg-transparent"
                 />
               )}
 
@@ -281,7 +281,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                     : `${state.polygons?.length}`
                 })
                     `}
-                className="h-10 px-2 md:px-5 text-sm sm:text-base text-naples-yellow border-2 border-naples-yellow bg-transparent"
+                className="h-10 px-2 md:px-5 flex items-center gap-2 rounded-2xl text-sm sm:text-base text-naples-yellow border border-naples-yellow bg-transparent"
                 onClick={() => setShowListOfPolygons(true)}
               />
             </div>

@@ -162,7 +162,7 @@ const PreviewData = () => {
   return (
     <Layout>
       <div
-        className={`customScrollbar h-full py-3 px-1 sm:px-3 my-3 mx-0 sm:mx-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md overflow-y-auto transition-all duration-1000 transform ${
+        className={`customScrollbar h-full p-2 sm:p-4 flex flex-col justify-around items-center bg-metallic-brown rounded-2xl sm:rounded-3xl shadow-md overflow-y-auto transition-all duration-1000 transform ${
           showContent
             ? "translate-y-0 opacity-100"
             : "-translate-y-full opacity-0"
@@ -186,7 +186,7 @@ const PreviewData = () => {
                 }
                 icon="pi pi-thumbs-up"
                 label="Continue"
-                className="h-10 px-2 md:px-5 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
+                className="h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 rounded-2xl text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => {
                   startTransition(() => {
                     navigate("/success");
@@ -197,7 +197,7 @@ const PreviewData = () => {
                 icon={"pi pi-list"}
                 label={"Polygons Data"}
                 onClick={() => setShowListOfPolygons(true)}
-                className="h-10 px-2 md:px-5 text-sm sm:text-base text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
+                className="h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 rounded-2xl text-naples-yellow border border-naples-yellow bg-transparent"
               />
             </div>
           </div>

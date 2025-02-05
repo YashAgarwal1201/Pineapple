@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { Camera, Upload } from "lucide-react";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 
@@ -52,18 +53,18 @@ const UploadImageOptionsDialog = ({
         <div className="w-full flex flex-row flex-wrap justify-center lg:justify-around items-center gap-x-2 gap-y-2 font-content">
           <Button
             type="button"
-            icon="pi pi-upload"
+            icon={<Upload size={16} />}
             label="Browse System"
             title="Click to browse system"
-            className="h-9 sm:h-10 px-10 text-sm sm:text-base text-naples-yellow bg-fern-green border-fern-green"
+            className="h-9 sm:h-10 px-10 text-sm sm:text-base flex items-center rounded-xl gap-2 text-naples-yellow bg-fern-green border-fern-green"
             onClick={() => uploadHandeler()}
           />
           <Button
             type="button"
-            icon="pi pi-camera"
+            icon={<Camera size={16} />}
             label="Capture Image"
             title="Click to open camera"
-            className="h-9 sm:h-10 px-10 text-sm sm:text-base text-naples-yellow bg-fern-green border-fern-green"
+            className="h-9 sm:h-10 px-10 text-sm sm:text-base flex items-center rounded-xl gap-2 text-naples-yellow bg-fern-green border-fern-green"
             onClick={() => {
               if (
                 window?.location?.protocol === "https:" ||

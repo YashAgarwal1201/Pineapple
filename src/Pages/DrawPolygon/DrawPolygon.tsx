@@ -1,5 +1,6 @@
 import { startTransition, useEffect, useState } from "react";
 
+import { Delete } from "lucide-react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Panel } from "primereact/panel";
@@ -104,9 +105,9 @@ const DrawPolygon = () => {
                         {polygon?.label}
                       </span>
                       <Button
-                        icon="pi pi-trash"
+                        icon={<Delete size={16} />}
                         onClick={() => handleDeletePolygon(index)}
-                        className="p-2 text-sm bg-transparent text-metallic-brown border-0 rounded-full"
+                        className="p-2 text-sm  flex items-center gap-2 bg-transparent text-metallic-brown border-0 rounded-full"
                       />
                     </div>
                   }

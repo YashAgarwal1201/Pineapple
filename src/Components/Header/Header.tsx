@@ -1,5 +1,6 @@
 import { startTransition } from "react";
 
+import { ArrowLeft, Menu } from "lucide-react";
 import { Button } from "primereact/button";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -14,10 +15,10 @@ const Header = ({
   const { pathname } = useLocation();
 
   return (
-    <div className="w-full h-full p-1 flex flex-row md:flex-col justify-between items-center bg-metallic-brown rounded-br-lg rounded-bl-lg md:rounded-bl-none rounded-tr-none md:rounded-tr-lg shadow-md">
+    <div className="w-full h-full p-1 flex flex-row md:flex-col justify-between items-center bg-metallic-brown rounded-br-2xl rounded-bl-2xl md:rounded-bl-none rounded-tr-none md:rounded-tr-2xl shadow-md">
       <Button
         disabled={pathname === "/"}
-        icon="pi pi-angle-left"
+        icon={<ArrowLeft size={20} />}
         title="go back"
         className={`w-auto md:w-full h-full md:h-auto aspect-square rounded-2xl md:rounded-3xl ${
           pathname === "/"
@@ -55,7 +56,7 @@ const Header = ({
       />
 
       <Button
-        icon="pi pi-ellipsis-v"
+        icon={<Menu size={20} />}
         className="w-auto md:w-full h-full md:h-auto aspect-square rounded-2xl md:rounded-3xl text-naples-yellow "
         onClick={() => setShowSidebar(true)}
       />
