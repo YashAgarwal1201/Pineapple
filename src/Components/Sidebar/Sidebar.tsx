@@ -54,7 +54,7 @@ const MainSidebar = ({
       dismissable
       draggable={false}
       header={
-        <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-naples-yellow">
           More Options
         </h2>
       }

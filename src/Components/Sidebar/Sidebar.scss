@@ -1,3 +1,29 @@
+.side-menu {
+  .p-sidebar-content {
+    .p-accordion {
+      .p-accordion-tab {
+        border-radius: 1rem;
+
+        .p-accordion-tab-header-link {
+          border-radius: 1rem;
+        }
+      }
+    }
+  }
+
+  .p-panel {
+    .p-panel-header {
+      background-color: transparent;
+      padding-block: 1rem;
+      padding-inline: 0.5rem;
+    }
+    .p-panel-content {
+      background-color: transparent;
+      padding-top: 1rem;
+    }
+  }
+}
+
 .p-selectbutton {
   .p-button {
     padding: 4px 8px !important;
