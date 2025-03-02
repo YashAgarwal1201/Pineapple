@@ -1,5 +1,6 @@
 import React from "react";
 
+import { X } from "lucide-react";
 import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
 import { Sidebar } from "primereact/sidebar";
@@ -16,10 +17,8 @@ import {
   WhatsappShareButton,
 } from "react-share";
 
-// import { themes } from "../../Data/Data";
 import { useAppContext } from "../../Services/AppContext";
-// import { useMsgAppContext } from "../../Services/MessagesContextAndInterfaces/MessagesContext";
-// import KeyboardShortcuts from "../KeyboardShortcuts/KeyboardShortcuts";
+
 import "./Sidebar.scss";
 
 type MenuDialogProps = {
@@ -58,41 +57,29 @@ const MainSidebar = ({
           More Options
         </h2>
       }
-      className="side-menu aboutDialog min-w-fit w-full lg:w-1/2 h-full"
+      className="side-menu rounded-none md:rounded-l-3xl bg-metallic-brown aboutDialog w-full md:w-[768px]"
       position="right"
+      closeIcon={
+        <span className=" text-naples-yellow">
+          <X size={16} />
+        </span>
+      }
+      maskClassName="backdrop-blur"
     >
-      <div className="w-full px-4 py-4 text-color5 bg-color2 rounded-3xl overflow-y-auto">
-        {/* Resume Download Panel */}
-        <Panel
-          headerTemplate={(options) => {
-            const togglePanel = (event: React.MouseEvent<HTMLElement>) => {
-              options.onTogglerClick!(event); // Trigger expand/collapse behavior
-            };
-
-            return (
-              <div
-                className="cursor-pointer custom-panel-header w-full flex justify-between items-center px-2 py-4 rounded-xl"
-                onClick={togglePanel}
-              >
-                <h3 className="font-subheading font-medium text-lg sm:text-xl text-color5 flex items-center">
-                  <span className="pi pi-id-card mr-4"></span>
-                  View My Resume
-                </h3>
-              </div>
-            );
-          }}
-          className="bg-transparent rounded-2xl"
-          toggleable
-          // collapsed={openMenuPanel !== 3}
-          // onToggle={() => handlePanelToggle(3)}
+      <div className="w-full px-4 py-4 text-fern-green bg-naples-yellow rounded-3xl overflow-y-auto">
+        <a
+          href="https://yashagarwal1201.github.io/"
+          target="_blank"
+          rel="noopener"
+          className="!w-full block py-4 px-2 bg-transparent font-subcontent  text-base sm:text-lg text-color6 rounded-xl not-italic"
         >
-          <div className="flex justify-between">
-            <span>Download my resume:</span>
-            <Button icon="pi pi-download" label="Download" />
-          </div>
-        </Panel>
+          <h3 className="font-content font-medium flex items-center">
+            <span className="pi pi-github mr-4"></span>
+            Developer Profile
+          </h3>
+        </a>
 
-        <div className="mx-2 my-1 p-0 max-w-full h-[1.5px] bg-color4" />
+        <div className="mx-2 my-1 p-0 max-w-full h-[1.5px] bg-ochre" />
 
         {/* Share Page Panel */}
         <Panel
@@ -106,7 +93,7 @@ const MainSidebar = ({
                 className="cursor-pointer custom-panel-header w-full flex justify-between items-center px-2 py-4 rounded-xl"
                 onClick={togglePanel}
               >
-                <h3 className="font-subheading font-medium text-lg sm:text-xl text-color5 flex items-center">
+                <h3 className="font-content font-medium text-color5 flex items-center">
                   <span className="pi pi-share-alt mr-4"></span>
                   Share
                 </h3>
@@ -115,8 +102,7 @@ const MainSidebar = ({
           }}
           className="bg-transparent rounded-2xl"
           toggleable
-          // collapsed={openMenuPanel !== 5}
-          // onToggle={() => handlePanelToggle(5)}
+          collapsed
         >
           <div className="flex justify-center items-center gap-4">
             {/* WhatsApp */}
@@ -150,7 +136,7 @@ const MainSidebar = ({
           </div>
         </Panel>
 
-        <div className="mx-2 my-1 p-0 max-w-full h-[1.5px] bg-color4" />
+        <div className="mx-2 my-1 p-0 max-w-full h-[1.5px] bg-ochre" />
 
         {/* Clear Data Panel */}
         <Panel
@@ -164,7 +150,7 @@ const MainSidebar = ({
                 className="cursor-pointer custom-panel-header w-full flex justify-between items-center px-2 py-4 rounded-xl"
                 onClick={togglePanel}
               >
-                <h3 className="font-subheading font-medium text-lg sm:text-xl text-color5 flex items-center">
+                <h3 className="font-content font-medium text-color5 flex items-center">
                   <span className="pi pi-trash mr-4"></span>
                   Clear Data
                 </h3>
@@ -173,18 +159,21 @@ const MainSidebar = ({
           }}
           className="bg-transparent rounded-2xl"
           toggleable
-          // collapsed={openMenuPanel !== 5}
-          // onToggle={() => handlePanelToggle(5)}
+          collapsed
         >
-          <Button
-            icon="pi pi-trash"
-            label="Clear Data"
-            onClick={() => {
-              localStorage.clear();
-              sessionStorage.clear();
-              showToast("info", "Info", "All data has been cleared");
-            }}
-          />
+          <div className="flex justify-between flex-wrap items-center gap-3">
+            <p>Do you want to clear your data?</p>
+            <Button
+              icon="pi pi-trash"
+              label="Clear Data"
+              className="rounded-full py-2 px-4 flex justify-center items-center gap-x-2 bg-ochre text-naples-yellow"
+              onClick={() => {
+                localStorage.clear();
+                sessionStorage.clear();
+                showToast("info", "Info", "All data has been cleared");
+              }}
+            />
+          </div>
         </Panel>
       </div>
     </Sidebar>

@@ -1,6 +1,6 @@
 import { startTransition, useEffect, useState } from "react";
 
-import { Delete } from "lucide-react";
+import { Trash, X } from "lucide-react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Panel } from "primereact/panel";
@@ -13,7 +13,7 @@ import Layout from "../../Layout/Layout";
 import { useAppContext } from "../../Services/AppContext";
 import loadingDotsAnimation from "./../../assets/Lottie/loadingDotsAnimation.json";
 
-import "./DrawPolygon.scss";
+// import "./DrawPolygon.scss";
 
 const DrawPolygon = () => {
   const navigate = useNavigate();
@@ -80,46 +80,54 @@ const DrawPolygon = () => {
         visible={showListOfPolygons}
         onHide={() => setShowListOfPolygons(false)}
         dismissable
-        position="left"
-        className="polygon-list-sidebar w-full md:w-[768px] rounded-none md:rounded-r-md"
-        maskClassName="backdrop-blur"
         header={
-          <h2 className="font-heading text-naples-yellow text-lg sm:text-xl md:text-2xl">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-naples-yellow">
             Polygons
           </h2>
         }
+        className="polygon-list-sidebar side-menu rounded-none md:rounded-r-3xl bg-metallic-brown aboutDialog w-full md:w-[768px]"
+        position="left"
         closeIcon={
-          <span className="pi pi-times text-metallic-brown bg-naples-yellow w-10 h-10 flex justify-center items-center"></span>
+          <span className=" text-naples-yellow">
+            <X size={16} />
+          </span>
         }
+        maskClassName="backdrop-blur"
       >
-        <div className="w-full h-full rounded-lg bg-metallic-brown p-2 xs:p-3 sm:p-4">
+        <div className="w-full px-4 py-4 text-fern-green bg-naples-yellow rounded-3xl overflow-y-auto">
           {state.polygons.length > 0 ? (
             state.polygons?.map((polygon, index) => (
               <div className="mb-2" key={index}>
                 <Panel
-                  className="annotationPanel w-full mb-1"
+                  className="w-full bg-transparent rounded-2xl"
                   collapsed={true}
-                  header={
-                    <div className="w-full h-full flex justify-between items-center">
-                      <span className="text-base sm:text-lg text-metallic-brown font-heading">
-                        {polygon?.label}
-                      </span>
-                      <Button
-                        icon={<Delete size={16} />}
-                        onClick={() => handleDeletePolygon(index)}
-                        className="p-2 text-sm  flex items-center gap-2 bg-transparent text-metallic-brown border-0 rounded-full"
-                      />
-                    </div>
-                  }
-                  collapseIcon={
-                    <span className="pi pi-chevron-up p-2 text-sm bg-transparent text-metallic-brown border-0 rounded-full"></span>
-                  }
-                  expandIcon={
-                    <span className="pi pi-chevron-down p-2 text-sm bg-transparent text-metallic-brown border-0 rounded-full"></span>
-                  }
+                  headerTemplate={(options) => {
+                    const togglePanel = (
+                      event: React.MouseEvent<HTMLElement>
+                    ) => {
+                      options.onTogglerClick!(event); // Trigger expand/collapse behavior
+                    };
+
+                    return (
+                      <div
+                        className="cursor-pointer custom-panel-header w-full flex justify-between items-center px-2 py-4 rounded-xl"
+                        onClick={togglePanel}
+                      >
+                        <span className="text-base sm:text-lg font-heading">
+                          {polygon?.label}
+                        </span>
+                        <Button
+                          onClick={() => handleDeletePolygon(index)}
+                          className="p-2 text-sm flex items-center justify-center gap-2 bg-fern-green text-naples-yellow aspect-square border-0 rounded-full"
+                        >
+                          <Trash size={16} />
+                        </Button>
+                      </div>
+                    );
+                  }}
                   toggleable
                 >
-                  <div className="w-full flex flex-col gap-4 font-content">
+                  <div className="w-full flex flex-col gap-3 font-content">
                     {editLabel === index ? (
                       <p className="text-fern-green">
                         Enter new label for the polygon
@@ -135,27 +143,31 @@ const DrawPolygon = () => {
                           editLabel !== index ? polygon?.label : editedLabel
                         }
                         readOnly={editLabel !== index}
-                        className="h-10 w-full xs:w-[calc(100%-2.5rem)] px-2 font-content bg-naples-yellow border xs:border-2 border-bud-green text-metallic-brown"
+                        className="h-10 w-full xs:w-[calc(100%-2.5rem)] rounded-full px-4 py-2 font-content bg-naples-yellow border xs:border-2 border-fern-green focus-visible:border-bud-green text-metallic-brown"
                         onChange={(e) => setEditedLabel(e.target?.value)}
                       />
                       {editLabel === index ? (
                         <Button
                           icon="pi pi-check"
                           // label="Save Label"
-                          className="w-10 h-10 bg-fern-green text-naples-yellow border-fern-green"
+                          className="w-10 h-10 rounded-full bg-fern-green text-naples-yellow border-fern-green"
                           onClick={handleSaveLabel}
                         />
                       ) : (
                         <Button
                           icon="pi pi-pencil"
                           // label="Edit Label"
-                          className="w-10 h-10 bg-fern-green text-naples-yellow border-fern-green"
+                          className="w-10 h-10 rounded-full bg-fern-green text-naples-yellow border-fern-green"
                           onClick={() => handleEditLabel(index)}
                         />
                       )}
                     </div>
                   </div>
                 </Panel>
+
+                {index !== state.polygons?.length - 1 && (
+                  <div className="mx-2 my-1 p-0 max-w-full h-[1.5px] bg-ochre" />
+                )}
               </div>
             ))
           ) : (

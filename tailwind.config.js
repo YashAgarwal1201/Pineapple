@@ -13,7 +13,7 @@ export default {
         "metallic-brown": "#A14712",
         ochre: "#C27815",
         "naples-yellow": "#FFD964",
-        "fern-green": "#557B3F",
+        "fern-green": "#3D5A2C", //"#557B3F",
         "bud-green": "#7CB35C",
       },
       fontFamily: {

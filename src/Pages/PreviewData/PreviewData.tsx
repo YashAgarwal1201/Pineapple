@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 
+import { X } from "lucide-react";
 import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
 import { Sidebar } from "primereact/sidebar";
@@ -208,7 +209,7 @@ const PreviewData = () => {
                 ref={canvasParentRef}
               >
                 <canvas
-                  className="mx-auto border-2 border-ochre rounded-lg"
+                  className="mx-auto border-2 border-ochre rounded-2xl md:rounded-3xl"
                   ref={canvasRef}
                 />
               </div>
@@ -253,38 +254,45 @@ const PreviewData = () => {
         visible={showListOfPolygons}
         onHide={() => setShowListOfPolygons(false)}
         dismissable
-        position="left"
-        className="polygon-list-sidebar w-full md:w-[768px]"
         header={
-          <h2 className="font-heading text-naples-yellow text-lg sm:text-xl md:text-2xl">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-naples-yellow">
             Polygons
           </h2>
         }
-        maskClassName="backdrop-blur"
+        className="polygon-list-sidebar side-menu rounded-none md:rounded-r-3xl bg-metallic-brown aboutDialog w-full md:w-[768px]"
+        position="left"
         closeIcon={
-          <span className="pi pi-times text-metallic-brown bg-naples-yellow w-10 h-10 flex justify-center items-center"></span>
+          <span className=" text-naples-yellow">
+            <X size={16} />
+          </span>
         }
+        maskClassName="backdrop-blur"
       >
-        <div className="w-full h-full rounded-lg bg-metallic-brown p-2 xs:p-3 sm:p-4">
+        <div className="w-full px-4 py-4 text-fern-green bg-naples-yellow rounded-3xl overflow-y-auto">
           {state.polygons.length > 0 ? (
             state.polygons?.map((polygon, index) => (
               <div className="mb-2" key={index}>
                 <Panel
-                  className="annotationPanel w-full mb-1"
+                  className="w-full bg-transparent rounded-2xl"
                   collapsed={true}
-                  header={
-                    <div className="w-full h-full flex justify-between items-center">
-                      <span className="text-base sm:text-lg text-metallic-brown font-heading">
-                        {polygon?.label}
-                      </span>
-                    </div>
-                  }
-                  collapseIcon={
-                    <span className="p-2 pi pi-angle-up text-metallic-brown"></span>
-                  }
-                  expandIcon={
-                    <span className="p-2 pi pi-angle-down text-metallic-brown"></span>
-                  }
+                  headerTemplate={(options) => {
+                    const togglePanel = (
+                      event: React.MouseEvent<HTMLElement>
+                    ) => {
+                      options.onTogglerClick!(event); // Trigger expand/collapse behavior
+                    };
+
+                    return (
+                      <div
+                        className="cursor-pointer custom-panel-header w-full flex justify-between items-center px-2 py-4 rounded-xl"
+                        onClick={togglePanel}
+                      >
+                        <span className="text-base sm:text-lg font-heading">
+                          {polygon?.label}
+                        </span>
+                      </div>
+                    );
+                  }}
                   toggleable
                 >
                   <div className="w-full flex flex-col gap-y-1 font-content">
@@ -312,6 +320,10 @@ const PreviewData = () => {
                     ))}
                   </div>
                 </Panel>
+
+                {index !== state.polygons?.length - 1 && (
+                  <div className="mx-2 my-1 p-0 max-w-full h-[1.5px] bg-ochre" />
+                )}
               </div>
             ))
           ) : (

@@ -27,7 +27,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           location.pathname !== "/" && !location.pathname.includes("/success")
             ? "md:w-[calc(100%-70px)] h-[calc(100%-60px)] md:h-full"
             : "w-full h-full"
-        } p-2 md:p-3`}
+        } p-2 md:p-3 relative`}
       >
         {children}
       </div>
