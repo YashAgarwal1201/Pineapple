@@ -1,5 +1,6 @@
 import { startTransition, useEffect, useState } from "react";
 
+import { ArrowLeft } from "lucide-react";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 
@@ -53,10 +54,9 @@ const SuccessPage = () => {
         } relative`}
       >
         <Button
-          icon="pi pi-angle-left"
+          icon={<ArrowLeft size={20} />}
           title="go back button"
-          rounded
-          className={` absolute top-3 left-3 text-naples-yellow bg-fern-green border-0`}
+          className={` aspect-square absolute top-3 left-3 text-naples-yellow bg-fern-green border-0 rounded-3xl`}
           onClick={() => window.history.go(-1)}
         />
         <div className="w-full md:w-1/2 h-auto md:h-full flex justify-center items-center">

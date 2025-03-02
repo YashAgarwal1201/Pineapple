@@ -1,5 +1,6 @@
 import { startTransition, useEffect, useState } from "react";
 
+import { Check, Trash } from "lucide-react";
 import { Button } from "primereact/button";
 import { Image } from "primereact/image";
 import { Sidebar } from "primereact/sidebar";
@@ -97,7 +98,7 @@ const UploadData = () => {
   return (
     <Layout>
       <div
-        className={`h-full p-2 sm:p-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md transition-all duration-1000 transform ${
+        className={`h-full p-2 sm:p-4 flex flex-col justify-around items-center bg-metallic-brown rounded-xl sm:rounded-2xl shadow-md transition-all duration-1000 transform ${
           showContent
             ? "translate-y-0 opacity-100"
             : "-translate-y-full opacity-0"
@@ -117,12 +118,12 @@ const UploadData = () => {
 
           <div className="w-full flex flex-col items-center gap-y-10 my-auto">
             <div
-              className="w-60 sm:w-64 md:w-72 lg:w-96 aspect-square p-3 border-2 border-dashed border-naples-yellow rounded-lg cursor-pointer"
+              className="w-60 sm:w-64 md:w-72 lg:w-96 aspect-square p-3 border-2 border-dashed border-naples-yellow rounded-3xl cursor-pointer"
               onClick={() => {
                 if (state.imageSelected?.url === "") setShowOptions(true);
               }}
             >
-              <div className="w-full h-full flex flex-col justify-center items-center gap-y-4 bg-naples-yellow rounded-md">
+              <div className="w-full h-full flex flex-col justify-center items-center gap-y-4 bg-naples-yellow rounded-2xl">
                 <div className="h-2/5 flex flex-col justify-center items-center gap-y-2">
                   {state.imageSelected.url === "" && (
                     <span className="w-fit pi pi-image p-4 text-4xl text-metallic-brown bg-bud-green rounded-md"></span>
@@ -159,18 +160,18 @@ const UploadData = () => {
             <div className="w-full grid sm:flex flex-col xs:flex-row flex-wrap justify-center items-center gap-x-0 xs:gap-x-3 lg:gap-x-5 gap-y-2 font-content">
               <Button
                 disabled={state.imageSelected?.url === ""}
-                icon="pi pi-trash"
+                icon={<Trash size={16} />}
                 label="Remove Image"
                 title="Click to remove the selected image"
-                className="w-full sm:w-auto h-9 sm:h-10 px-10 text-sm sm:text-base text-naples-yellow bg-metallic-brown border xs:border-2 border-naples-yellow"
+                className="w-full sm:w-auto h-9 sm:h-10 px-10 flex items-center gap-2 rounded-2xl text-sm sm:text-base text-naples-yellow bg-metallic-brown border xs:border-2 border-naples-yellow"
                 onClick={() => removeHandeler()}
               />
               <Button
                 disabled={state.imageSelected?.url === ""}
-                icon="pi pi-check"
+                icon={<Check size={16} />}
                 label="Save & Continue"
                 title="Click to save and continue"
-                className="w-full sm:w-auto h-9 sm:h-10 px-10 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
+                className="w-full sm:w-auto h-9 sm:h-10 px-10 flex items-center gap-2 rounded-2xl text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => saveAndContinueHandeler()}
               />
             </div>

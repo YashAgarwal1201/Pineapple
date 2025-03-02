@@ -7,7 +7,9 @@ import React, {
   useState,
 } from "react";
 
+import { Menu } from "lucide-react";
 import { Button } from "primereact/button";
+import { SpeedDial } from "primereact/speeddial";
 import { useNavigate } from "react-router-dom";
 
 import { useAppContext } from "../../Services/AppContext";
@@ -219,10 +221,58 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
     setShowContent(true);
   }, []);
 
+  const actions = [
+    {
+      label: "Navigate to Preview",
+      icon: "pi pi-thumbs-up",
+      command: () => {
+        startTransition(() => {
+          navigate("/preview");
+        });
+      },
+      disabled:
+        state?.imageSelected?.url?.length <= 0 || state.polygons?.length < 1,
+      className:
+        "bg-naples-yellow text-metallic-brown border-naples-yellow hover:bg-yellow-500",
+    },
+    {
+      label: addNew ? "Complete Polygon" : "Edit Polygon",
+      icon: addNew ? "pi pi-check" : "pi pi-pencil",
+      command: () => (addNew ? handleCompletePolygon() : setAddNew(true)),
+      disabled: !addNew && state.imageSelected.url === "",
+      className:
+        "bg-transparent text-naples-yellow border-2 border-naples-yellow hover:bg-naples-yellow hover:text-metallic-brown",
+    },
+    {
+      label: "Show Polygons List",
+      icon: "pi pi-list",
+      command: () => setShowListOfPolygons(true),
+      disabled: state.polygons.length < 1,
+      className:
+        "bg-transparent text-naples-yellow border-2 border-naples-yellow hover:bg-naples-yellow hover:text-metallic-brown",
+      // template: (item, options) => (
+      //   <Button
+      //     {...options}
+      //     className={`bg-transparent text-naples-yellow border-2 border-naples-yellow hover:bg-naples-yellow hover:text-metallic-brown relative`}
+      //   >
+      //     <i className={item.icon}></i>
+      //     {state.polygons.length > 0 && (
+      //       <span
+      //         // value={state.polygons.length}
+      //         className="bg-bud-green text-xs w-5 h-5 flex justify-center items-center rounded-full absolute -right-2 top-0 animate-pulse"
+      //       >
+      //         {state.polygons.length}
+      //       </span>
+      //     )}
+      //   </Button>
+      // ),
+    },
+  ];
+
   return (
     <>
       <div
-        className={`customScrollbar h-full py-3 px-1 sm:px-3 my-3 mx-0 sm:mx-3 flex flex-col justify-around items-center bg-metallic-brown rounded-lg shadow-md overflow-y-auto transition-all duration-1000 transform ${
+        className={`customScrollbar h-full p-2 sm:p-4 flex flex-col justify-around items-center bg-metallic-brown rounded-2xl sm:rounded-3xl shadow-md overflow-y-auto transition-all duration-1000 transform ${
           showContent
             ? "translate-y-0 opacity-100"
             : "-translate-y-full opacity-0"
@@ -246,7 +296,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                 }
                 icon="pi pi-thumbs-up"
                 label="Save & Continue"
-                className="h-10 px-2 md:px-5 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
+                className="h-10 px-2 md:px-5 text-sm sm:text-base  flex items-center gap-2 rounded-2xl text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => {
                   // console.log(canvasRef?.current?.getContext("2d"));
                   startTransition(() => {
@@ -259,7 +309,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                   disabled={state.imageSelected.url === ""}
                   icon="pi pi-pencil"
                   label="Add Polygon"
-                  className="h-10 px-2 md:px-5 text-sm sm:text-base text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
+                  className="h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 rounded-2xl text-naples-yellow border border-naples-yellow bg-transparent"
                   onClick={() => setAddNew(true)}
                 />
               )}
@@ -268,7 +318,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                   icon="pi pi-check"
                   label="Complete Polygon"
                   onClick={handleCompletePolygon}
-                  className="h-10 px-2 md:px-5 text-xs sm:text-sm text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
+                  className="h-10 px-2 md:px-5 text-xs sm:text-sm flex items-center gap-2 rounded-2xl text-naples-yellow border border-naples-yellow bg-transparent"
                 />
               )}
 
@@ -281,7 +331,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                     : `${state.polygons?.length}`
                 })
                     `}
-                className="h-10 px-2 md:px-5 text-sm sm:text-base text-naples-yellow border-2 border-naples-yellow bg-transparent"
+                className="h-10 px-2 md:px-5 flex items-center gap-2 rounded-2xl text-sm sm:text-base text-naples-yellow border border-naples-yellow bg-transparent"
                 onClick={() => setShowListOfPolygons(true)}
               />
             </div>
@@ -293,7 +343,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                 ref={canvasParentRef}
               >
                 <canvas
-                  className="mx-auto border-2 border-ochre rounded-lg"
+                  className="mx-auto border-2 border-ochre rounded-2xl md:rounded-3xl"
                   ref={canvasRef}
                   onClick={(e) => (addNew ? handleCanvasClick(e) : "")}
                   // width={canvasParentRef?.current?.clientWidth}
@@ -304,55 +354,23 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
           </div>
         </div>
       </div>
-      <div
-        className={`w-full p-2 block md:hidden sticky bottom-0 left-0 right-0 bg-metallic-brown rounded-t-3xl text-xs`}
-      >
-        <div className="flex justify-center items-center flex-row-reverse gap-x-5 font-content">
-          <Button
-            disabled={
-              state?.imageSelected?.url?.length <= 0 ||
-              state.polygons?.length < 1
-            }
-            icon="pi pi-thumbs-up"
-            rounded
-            className=" text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
-            onClick={() => {
-              startTransition(() => {
-                navigate("/preview");
-              });
-            }}
-          />
-          {!addNew && (
+      <div className="block md:hidden">
+        <SpeedDial
+          model={actions}
+          direction="up"
+          buttonClassName="bg-metallic-brown text-naples-yellow border-naples-yellow"
+          showIcon="pi pi-bars"
+          hideIcon="pi pi-times"
+          className="p-speeddial absolute bottom-5 right-2"
+          buttonTemplate={(options) => (
             <Button
-              disabled={state.imageSelected.url === ""}
-              icon="pi pi-pencil"
+              onClick={options.onClick}
+              className="bg-ochre size-10"
+              icon={<Menu size={16} />}
               rounded
-              className=" text-sm sm:text-base px-2 md:px-5 text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
-              onClick={() => setAddNew(true)}
             />
           )}
-          {addNew && (
-            <Button
-              icon="pi pi-check"
-              rounded
-              onClick={handleCompletePolygon}
-              className=" text-xs sm:text-sm text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
-            />
-          )}
-          <div className="relative">
-            <Button
-              disabled={state.polygons.length < 1}
-              icon={"pi pi-list"}
-              rounded
-              // size="small"
-              className=" text-xs sm:text-sm text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
-              onClick={() => setShowListOfPolygons(true)}
-            />
-            {state.polygons.length > 0 && (
-              <span className="bg-bud-green text-sm w-3 h-3 flex justify-center items-center rounded-full absolute -right-0 top-1 animate-pulse"></span>
-            )}
-          </div>
-        </div>
+        />
       </div>
     </>
   );
