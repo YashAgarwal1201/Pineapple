@@ -4,10 +4,13 @@ import { Button } from "primereact/button";
 import { Image } from "primereact/image";
 import Webcam from "react-webcam";
 
-import { useAppContext } from "../../Services/AppContext";
+// import { useAppContext } from "../../Services/AppContext";
+import { usePineappleStore } from "../../Services/zustand";
 
 const CaptureImageLibrary = ({ exitCamera, onCapture }) => {
-  const { state, showToast, setSelectedImage } = useAppContext();
+  // const { state, showToast, setSelectedImage } = useAppContext();
+  const state = usePineappleStore();
+  const { showToast, setSelectedImage } = state;
 
   const webcamRef = useRef<Webcam>(null);
   const webcamRefParent = useRef<HTMLDivElement | null>(null);

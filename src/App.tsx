@@ -3,27 +3,24 @@ import { useEffect, useRef } from "react";
 import { Toast } from "primereact/toast";
 import { Outlet } from "react-router-dom";
 
-import { useAppContext } from "./Services/AppContext";
+// import { useAppContext } from "./Services/AppContext";
 import "./App.scss";
+import { usePineappleStore } from "./Services/zustand";
 
 export function App() {
-  const { state, dispatch } = useAppContext();
-  const myToast = useRef<Toast>(null);
+  const toastRef = useRef<Toast>(null);
+
+  const setToastRef = usePineappleStore((state) => state.setToastRef);
 
   useEffect(() => {
-    dispatch?.({
-      type: "SET_TOAST_REF",
-      payload: myToast.current as Toast,
-    });
-  }, []);
-
-  useEffect(() => {
-    sessionStorage.setItem("pineappleState", JSON.stringify(state));
-  }, [state]);
+    if (toastRef.current) {
+      setToastRef(toastRef.current);
+    }
+  }, [setToastRef]);
 
   return (
     <div className="w-screen h-[100dvh]">
-      <Toast ref={myToast} />
+      <Toast ref={toastRef} />
       <Outlet />
     </div>
   );

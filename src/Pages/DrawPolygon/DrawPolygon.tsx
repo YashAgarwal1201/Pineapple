@@ -10,7 +10,8 @@ import { useNavigate } from "react-router-dom";
 
 import PolygonDrawer from "../../Components/PolygonDrawer/PolygonDrawer";
 import Layout from "../../Layout/Layout";
-import { useAppContext } from "../../Services/AppContext";
+// import { useAppContext } from "../../Services/AppContext";
+import { usePineappleStore } from "../../Services/zustand";
 import loadingDotsAnimation from "./../../assets/Lottie/loadingDotsAnimation.json";
 
 // import "./DrawPolygon.scss";
@@ -18,7 +19,9 @@ import loadingDotsAnimation from "./../../assets/Lottie/loadingDotsAnimation.jso
 const DrawPolygon = () => {
   const navigate = useNavigate();
 
-  const { state, setPolygons, showToast } = useAppContext();
+  // const { state, setPolygons, showToast } = useAppContext();
+  const state = usePineappleStore();
+  const { setPolygons, showToast } = state;
 
   const [loading, setLoading] = useState<boolean>(false);
   const [showListOfPolygons, setShowListOfPolygons] = useState<boolean>(false);
