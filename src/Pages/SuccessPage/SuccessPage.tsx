@@ -16,7 +16,8 @@ const SuccessPage = () => {
   // const { state, showToast, setSelectedImage, setPolygons, dispatch } =
   //   useAppContext();
 
-  const { polygons, setPolygons, showToast } = usePineappleStore();
+  const { polygons, setPolygons, setSelectedImage, showToast } =
+    usePineappleStore();
   const [loader, setLoader] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<boolean>(false);
 
@@ -29,6 +30,7 @@ const SuccessPage = () => {
       // dispatch({ type: "SET_PROCESSED_IMAGE_URL", payload: "" });
       // dispatch({ type: "SET_JSON_FILE_DOWNLOAD_URL", payload: "" });
 
+      setSelectedImage("", "", "");
       setPolygons([]);
 
       sessionStorage.removeItem("pineappleState");
