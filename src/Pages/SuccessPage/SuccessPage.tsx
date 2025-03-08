@@ -16,8 +16,15 @@ const SuccessPage = () => {
   // const { state, showToast, setSelectedImage, setPolygons, dispatch } =
   //   useAppContext();
 
-  const { polygons, setPolygons, setSelectedImage, showToast } =
-    usePineappleStore();
+  const {
+    annotatedCanvasImage,
+    polygons,
+    setAnnotatedCanvasImage,
+    setPolygons,
+    setSelectedImage,
+    showToast,
+  } = usePineappleStore();
+
   const [loader, setLoader] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<boolean>(false);
 
@@ -30,6 +37,7 @@ const SuccessPage = () => {
       // dispatch({ type: "SET_PROCESSED_IMAGE_URL", payload: "" });
       // dispatch({ type: "SET_JSON_FILE_DOWNLOAD_URL", payload: "" });
 
+      setAnnotatedCanvasImage(null);
       setSelectedImage("", "", "");
       setPolygons([]);
 
@@ -112,7 +120,10 @@ const SuccessPage = () => {
               title="Download data"
               rounded
               className=" text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
-              onClick={() => downloadPolygonsData(polygons)}
+              onClick={() => {
+                console.log("Download data", polygons, annotatedCanvasImage);
+                downloadPolygonsData(polygons, annotatedCanvasImage, showToast);
+              }}
             />
             {!loader ? (
               <a

@@ -1,6 +1,6 @@
 import { Toast } from "primereact/toast/toast";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 import { Polygon, Rectangle } from "./interfaces";
 
@@ -15,6 +15,7 @@ interface AppState {
   toast: Toast | null;
   rectangles: Rectangle[];
   polygons: Polygon[];
+  annotatedCanvasImage: string | null;
 
   // Actions
   setToastRef: (toast: Toast) => void;
@@ -22,6 +23,7 @@ interface AppState {
   setSelectedImage: (title: string, url: string, type: string) => void;
   setRectangles: (rectangles: Rectangle[]) => void;
   setPolygons: (polygons: Polygon[]) => void;
+  setAnnotatedCanvasImage: (dataUrl: string | null) => void;
   showToast: (
     severity: "success" | "info" | "warn" | "error" | undefined,
     summary: "Success" | "Info" | "Warning" | "Error",
@@ -44,6 +46,7 @@ export const usePineappleStore = create<AppState>()(
       toast: null,
       rectangles: [],
       polygons: [],
+      annotatedCanvasImage: null,
 
       // Actions
       setToastRef: (toast: Toast) => set({ toast }),
@@ -64,6 +67,9 @@ export const usePineappleStore = create<AppState>()(
 
       setPolygons: (polygons: Polygon[]) => set({ polygons }),
 
+      setAnnotatedCanvasImage: (dataUrl: string | null) =>
+        set({ annotatedCanvasImage: dataUrl }),
+
       showToast: (
         severity: "success" | "info" | "warn" | "error" | undefined,
         summary: "Success" | "Info" | "Warning" | "Error",
@@ -76,7 +82,7 @@ export const usePineappleStore = create<AppState>()(
     }),
     {
       name: "pineapple-storage", // storage key
-      // You can customize storage options here if needed
+      storage: createJSONStorage(() => sessionStorage),
     }
   )
 );

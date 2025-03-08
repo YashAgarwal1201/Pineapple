@@ -15,15 +15,12 @@ import { SpeedDial } from "primereact/speeddial";
 import { useNavigate } from "react-router-dom";
 
 import Layout from "../../Layout/Layout";
-// import { useAppContext } from "../../Services/AppContext";
 import "./PreviewData.scss";
 import { Polygon } from "../../Services/interfaces";
 import { usePineappleStore } from "../../Services/zustand";
 
 const PreviewData = () => {
   const navigate = useNavigate();
-
-  // const { state } = useAppContext();
 
   const state = usePineappleStore();
 
@@ -164,6 +161,21 @@ const PreviewData = () => {
     setShowContent(true);
   }, []);
 
+  // When saving annotations from canvas
+  const saveAnnotatedImage = () => {
+    // Get canvas reference
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    // Convert canvas to data URL
+    const dataUrl = canvas.toDataURL("image/png"); //canvas.toDataURL('image/webp', 0.8)
+
+    state.setAnnotatedCanvasImage(dataUrl);
+
+    // Show success message
+    state.showToast("success", "Success", "Annotated image saved");
+  };
+
   const actions = [
     {
       label: "Save & Continue",
@@ -172,6 +184,8 @@ const PreviewData = () => {
         startTransition(() => {
           navigate("/success");
         });
+
+        saveAnnotatedImage();
       },
       disabled:
         state?.imageSelected?.url?.length <= 0 || state.polygons?.length < 1,
@@ -219,6 +233,8 @@ const PreviewData = () => {
                   startTransition(() => {
                     navigate("/success");
                   });
+
+                  saveAnnotatedImage();
                 }}
               />
               <Button
