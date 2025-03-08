@@ -4,8 +4,9 @@ import { Camera, Upload } from "lucide-react";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 
-import { useAppContext } from "../../Services/AppContext";
+// import { useAppContext } from "../../Services/AppContext";
 import { UploadImageOptionsDialogType } from "../../Services/interfaces";
+import { usePineappleStore } from "../../Services/zustand";
 
 const UploadImageOptionsDialog = ({
   showOptions,
@@ -15,7 +16,8 @@ const UploadImageOptionsDialog = ({
   uploadHandeler,
   onCaptureImageClick,
 }: UploadImageOptionsDialogType) => {
-  const { showToast } = useAppContext();
+  // const { showToast } = useAppContext();
+  const { showToast } = usePineappleStore();
 
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false);
 

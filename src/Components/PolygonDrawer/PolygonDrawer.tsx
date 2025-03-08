@@ -12,15 +12,18 @@ import { Button } from "primereact/button";
 import { SpeedDial } from "primereact/speeddial";
 import { useNavigate } from "react-router-dom";
 
-import { useAppContext } from "../../Services/AppContext";
+// import { useAppContext } from "../../Services/AppContext";
 import { generateRandomColor } from "../../Services/functionServices";
 import "./PolygonDrawer.scss";
 import { Polygon } from "../../Services/interfaces";
+import { usePineappleStore } from "../../Services/zustand";
 
 const PolygonDrawer = ({ setShowListOfPolygons }) => {
   const navigate = useNavigate();
 
-  const { state, setPolygons, showToast } = useAppContext();
+  // const { state, setPolygons, showToast } = useAppContext();
+  const state = usePineappleStore();
+  const { setPolygons, showToast } = state;
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasParentRef = useRef<HTMLDivElement | null>(null);
@@ -284,7 +287,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               <h1 className="text-xl sm:text-2xl md:text-3xl font-heading text-naples-yellow">
                 Draw required polygons
               </h1>
-              <p className="text-base sm:text-lg md:text-xl text-bud-green font-content font-medium">
+              <p className="text-sm sm:text-base md:text-lg text-bud-green font-content font-medium">
                 Identify and select the correct annotations in the image
               </p>
             </div>

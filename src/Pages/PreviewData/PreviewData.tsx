@@ -7,21 +7,22 @@ import {
   useState,
 } from "react";
 
-import { X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
 import { Sidebar } from "primereact/sidebar";
+import { SpeedDial } from "primereact/speeddial";
 import { useNavigate } from "react-router-dom";
 
 import Layout from "../../Layout/Layout";
-import { useAppContext } from "../../Services/AppContext";
 import "./PreviewData.scss";
 import { Polygon } from "../../Services/interfaces";
+import { usePineappleStore } from "../../Services/zustand";
 
 const PreviewData = () => {
   const navigate = useNavigate();
 
-  const { state } = useAppContext();
+  const state = usePineappleStore();
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasParentRef = useRef<HTMLDivElement | null>(null);
@@ -160,6 +161,46 @@ const PreviewData = () => {
     setShowContent(true);
   }, []);
 
+  // When saving annotations from canvas
+  const saveAnnotatedImage = () => {
+    // Get canvas reference
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    // Convert canvas to data URL
+    const dataUrl = canvas.toDataURL("image/png"); //canvas.toDataURL('image/webp', 0.8)
+
+    state.setAnnotatedCanvasImage(dataUrl);
+
+    // Show success message
+    state.showToast("success", "Success", "Annotated image saved");
+  };
+
+  const actions = [
+    {
+      label: "Save & Continue",
+      icon: "pi pi-thumbs-up",
+      command: () => {
+        startTransition(() => {
+          navigate("/success");
+        });
+
+        saveAnnotatedImage();
+      },
+      disabled:
+        state?.imageSelected?.url?.length <= 0 || state.polygons?.length < 1,
+      className:
+        "bg-naples-yellow text-metallic-brown border-naples-yellow hover:bg-yellow-500",
+    },
+    {
+      label: "Show Polygons Data",
+      icon: "pi pi-list",
+      command: () => setShowListOfPolygons(true),
+      className:
+        "bg-transparent text-naples-yellow border-2 border-naples-yellow hover:bg-naples-yellow hover:text-metallic-brown",
+    },
+  ];
+
   return (
     <Layout>
       <div
@@ -175,7 +216,7 @@ const PreviewData = () => {
               <h1 className="text-xl sm:text-2xl md:text-3xl font-heading text-naples-yellow">
                 Preview Data
               </h1>
-              <p className="text-base sm:text-lg md:text-xl text-bud-green font-content font-medium">
+              <p className="text-sm sm:text-base md:text-lg text-bud-green font-content font-medium">
                 Preview the data before proceeding
               </p>
             </div>
@@ -192,6 +233,8 @@ const PreviewData = () => {
                   startTransition(() => {
                     navigate("/success");
                   });
+
+                  saveAnnotatedImage();
                 }}
               />
               <Button
@@ -217,37 +260,24 @@ const PreviewData = () => {
           </div>
         </div>
       </div>
-      <div
-        className={`w-full p-2 flex md:hidden flex-col items-center sticky bottom-0 left-0 right-0 bg-metallic-brown rounded-t-3xl transition-all duration-1000 transform ${
-          showContent
-            ? "translate-y-0 opacity-100"
-            : "translate-y-full opacity-0"
-        }`}
-      >
-        <div className="flex flex-row-reverse gap-x-5 font-content">
-          <Button
-            disabled={
-              state?.imageSelected?.url?.length <= 0 ||
-              state.polygons?.length < 1
-            }
-            title="Save & Conitnue"
-            icon="pi pi-thumbs-up"
-            rounded
-            className="text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
-            onClick={() => {
-              startTransition(() => {
-                navigate("/success");
-              });
-            }}
-          />
-          <Button
-            title="Show Polygons Data"
-            icon={"pi pi-list"}
-            rounded
-            onClick={() => setShowListOfPolygons(true)}
-            className="text-xs sm:text-sm text-naples-yellow border xs:border-2 border-naples-yellow bg-transparent"
-          />
-        </div>
+
+      <div className="block md:hidden">
+        <SpeedDial
+          model={actions}
+          direction="up"
+          buttonClassName="bg-metallic-brown text-naples-yellow border-naples-yellow"
+          showIcon="pi pi-bars"
+          hideIcon="pi pi-times"
+          className="p-speeddial absolute bottom-5 right-2"
+          buttonTemplate={(options) => (
+            <Button
+              onClick={options.onClick}
+              className="bg-ochre size-10"
+              icon={<Menu size={16} />}
+              rounded
+            />
+          )}
+        />
       </div>
 
       <Sidebar

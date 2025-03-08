@@ -5,16 +5,25 @@ import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 
 import Layout from "../../Layout/Layout";
-import { useAppContext } from "../../Services/AppContext";
+// import { useAppContext } from "../../Services/AppContext";
 import { downloadPolygonsData } from "../../Services/functionServices";
-
 import "./SuccessPage.scss";
+import { usePineappleStore } from "../../Services/zustand";
 
 const SuccessPage = () => {
   const navigate = useNavigate();
 
-  const { state, showToast, setSelectedImage, setPolygons, dispatch } =
-    useAppContext();
+  // const { state, showToast, setSelectedImage, setPolygons, dispatch } =
+  //   useAppContext();
+
+  const {
+    annotatedCanvasImage,
+    polygons,
+    setAnnotatedCanvasImage,
+    setPolygons,
+    setSelectedImage,
+    showToast,
+  } = usePineappleStore();
 
   const [loader, setLoader] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<boolean>(false);
@@ -22,11 +31,15 @@ const SuccessPage = () => {
   const clearSessionStorageAndNavigate = async () => {
     try {
       setPolygons([]);
+      // setSelectedImage("", "", "");
+      // dispatch({ type: "SET_CHANGE_ANNOTATION_OPTION", payload: "" });
+      // dispatch({ type: "SET_APPROVED_IMAGE_URL", payload: "" });
+      // dispatch({ type: "SET_PROCESSED_IMAGE_URL", payload: "" });
+      // dispatch({ type: "SET_JSON_FILE_DOWNLOAD_URL", payload: "" });
+
+      setAnnotatedCanvasImage(null);
       setSelectedImage("", "", "");
-      dispatch({ type: "SET_CHANGE_ANNOTATION_OPTION", payload: "" });
-      dispatch({ type: "SET_APPROVED_IMAGE_URL", payload: "" });
-      dispatch({ type: "SET_PROCESSED_IMAGE_URL", payload: "" });
-      dispatch({ type: "SET_JSON_FILE_DOWNLOAD_URL", payload: "" });
+      setPolygons([]);
 
       sessionStorage.removeItem("pineappleState");
       showToast("info", "Info", "Redirecting you to the home page");
@@ -102,12 +115,15 @@ const SuccessPage = () => {
               }}
             />
             <Button
-              disabled={state.polygons.length < 1 || loader}
+              disabled={polygons.length < 1 || loader}
               icon="pi pi-download"
               title="Download data"
               rounded
               className=" text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
-              onClick={() => downloadPolygonsData(state.polygons)}
+              onClick={() => {
+                console.log("Download data", polygons, annotatedCanvasImage);
+                downloadPolygonsData(polygons, annotatedCanvasImage, showToast);
+              }}
             />
             {!loader ? (
               <a

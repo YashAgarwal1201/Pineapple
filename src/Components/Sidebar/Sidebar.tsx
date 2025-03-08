@@ -1,9 +1,10 @@
-import React from "react";
+import React, { startTransition } from "react";
 
 import { X } from "lucide-react";
 import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
 import { Sidebar } from "primereact/sidebar";
+import { useNavigate } from "react-router-dom";
 import {
   EmailIcon,
   EmailShareButton,
@@ -17,31 +18,59 @@ import {
   WhatsappShareButton,
 } from "react-share";
 
-import { useAppContext } from "../../Services/AppContext";
-
 import "./Sidebar.scss";
+import { usePineappleStore } from "../../Services/zustand";
 
 type MenuDialogProps = {
-  // openMenuPanel: number;
-  // setOpenMenuPanel: React.Dispatch<React.SetStateAction<number>>;
   showMenuDialog: boolean;
   setShowMenuDialog: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const MainSidebar = ({
   showMenuDialog,
-  // openMenuPanel,
-  // setOpenMenuPanel,
   setShowMenuDialog,
 }: MenuDialogProps) => {
-  const { showToast } = useAppContext();
+  const navigate = useNavigate();
+
+  const {
+    setAnnotatedCanvasImage,
+    setPolygons,
+    setRectangles,
+    setSelectedImage,
+    showToast,
+  } = usePineappleStore();
 
   const shareUrl = window.location.href;
   const shareText = "Check out this website!";
 
-  // const handlePanelToggle = (index: number) => {
-  //   setOpenMenuPanel((prevIndex) => (prevIndex === index ? -1 : index));
-  // };
+  const deleteAllData = () => {
+    try {
+      // Clear session storage
+      sessionStorage.removeItem("pineapple-storage");
+
+      // Reset all states to their initial values
+      setSelectedImage("", "", "");
+      setRectangles([]);
+      setPolygons([]);
+      setAnnotatedCanvasImage(null);
+
+      // Show success toast
+      showToast("success", "Success", "All data has been deleted successfully");
+
+      startTransition(() => {
+        navigate("/");
+      });
+
+      console.log("All application data has been deleted");
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      showToast(
+        "error",
+        "Error",
+        "Failed to delete data. See console for details"
+      );
+    }
+  };
 
   return (
     <Sidebar
@@ -168,9 +197,7 @@ const MainSidebar = ({
               label="Clear Data"
               className="rounded-full py-2 px-4 flex justify-center items-center gap-x-2 bg-ochre text-naples-yellow"
               onClick={() => {
-                localStorage.clear();
-                sessionStorage.clear();
-                showToast("info", "Info", "All data has been cleared");
+                deleteAllData();
               }}
             />
           </div>
