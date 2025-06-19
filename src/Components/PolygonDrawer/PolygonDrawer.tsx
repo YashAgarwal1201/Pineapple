@@ -179,6 +179,51 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
   );
 
   // Memoize the canvas click handler
+  // const handleCanvasClick = useCallback(
+  //   (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+  //     if (!canvasRef.current || !image) return;
+
+  //     const canvas = canvasRef.current;
+  //     const rect = canvas.getBoundingClientRect();
+
+  //     const clickX = (event.clientX - rect.left) / scaleFactor.x;
+  //     const clickY = (event.clientY - rect.top) / scaleFactor.y;
+
+  //     const newPoint = { x: clickX, y: clickY };
+
+  //     if (!currentPolygon) {
+  //       setCurrentPolygon({
+  //         color: generateRandomColor(),
+  //         label: `Polygon ${state.polygons.length + 1}`,
+  //         points: [newPoint],
+  //         bbox: [clickX, clickY, clickX, clickY],
+  //         units: 0,
+  //       });
+  //       setClickedPoints([newPoint]);
+  //     } else {
+  //       const updatedPoints = [...currentPolygon.points, newPoint];
+  //       setCurrentPolygon({ ...currentPolygon, points: updatedPoints });
+  //       setClickedPoints(updatedPoints);
+  //     }
+  //   },
+  //   [currentPolygon, scaleFactor, image, state.polygons.length]
+  // );
+
+  const calculateBBoxWithPadding = (
+    points: { x: number; y: number }[],
+    padding = 100
+  ): [number, number, number, number] => {
+    const xs = points.map((p) => p.x);
+    const ys = points.map((p) => p.y);
+
+    const minX = Math.max(Math.min(...xs) - padding, 0);
+    const minY = Math.max(Math.min(...ys) - padding, 0);
+    const maxX = Math.max(...xs) + padding;
+    const maxY = Math.max(...ys) + padding;
+
+    return [minX, minY, maxX, maxY];
+  };
+
   const handleCanvasClick = useCallback(
     (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
       if (!canvasRef.current || !image) return;
@@ -192,17 +237,26 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
       const newPoint = { x: clickX, y: clickY };
 
       if (!currentPolygon) {
-        setCurrentPolygon({
+        const newPolygon = {
           color: generateRandomColor(),
           label: `Polygon ${state.polygons.length + 1}`,
           points: [newPoint],
-          bbox: [clickX, clickY, clickX, clickY],
+          bbox: calculateBBoxWithPadding([newPoint]), // Initial bbox with padding
           units: 0,
-        });
+        };
+        setCurrentPolygon(newPolygon);
         setClickedPoints([newPoint]);
       } else {
         const updatedPoints = [...currentPolygon.points, newPoint];
-        setCurrentPolygon({ ...currentPolygon, points: updatedPoints });
+        const updatedBBox = calculateBBoxWithPadding(updatedPoints); // Proper bbox with padding
+
+        const updatedPolygon = {
+          ...currentPolygon,
+          points: updatedPoints,
+          bbox: updatedBBox,
+        };
+
+        setCurrentPolygon(updatedPolygon);
         setClickedPoints(updatedPoints);
       }
     },

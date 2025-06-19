@@ -201,91 +201,92 @@ const PreviewData = () => {
     },
   ];
 
-  const drawMiniPolygon = (ctx: CanvasRenderingContext2D, polygon: Polygon) => {
-    const padding = 5;
-    const width = 100;
-    const height = 100;
+  // const drawMiniPolygon = (ctx: CanvasRenderingContext2D, polygon: Polygon) => {
+  //   const padding = 5;
+  //   const width = 100;
+  //   const height = 100;
 
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
+  //   // Clear canvas
+  //   ctx.clearRect(0, 0, width, height);
 
-    // Get min/max for normalization
-    const xs = polygon.points.map((p) => p.x);
-    const ys = polygon.points.map((p) => p.y);
-    const minX = Math.min(...xs);
-    const maxX = Math.max(...xs);
-    const minY = Math.min(...ys);
-    const maxY = Math.max(...ys);
+  //   // Get min/max for normalization
+  //   const xs = polygon.points.map((p) => p.x);
+  //   const ys = polygon.points.map((p) => p.y);
+  //   const minX = Math.min(...xs);
+  //   const maxX = Math.max(...xs);
+  //   const minY = Math.min(...ys);
+  //   const maxY = Math.max(...ys);
 
-    const rangeX = maxX - minX || 1;
-    const rangeY = maxY - minY || 1;
+  //   const rangeX = maxX - minX || 1;
+  //   const rangeY = maxY - minY || 1;
 
-    // Scale and translate points into 100x100 box with padding
-    const scaledPoints = polygon.points.map((p) => ({
-      x: ((p.x - minX) / rangeX) * (width - 2 * padding) + padding,
-      y: ((p.y - minY) / rangeY) * (height - 2 * padding) + padding,
-    }));
-
-    // Draw polygon
-    ctx.beginPath();
-    ctx.moveTo(scaledPoints[0].x, scaledPoints[0].y);
-    scaledPoints.forEach((p) => ctx.lineTo(p.x, p.y));
-    ctx.closePath();
-
-    ctx.fillStyle = polygon.color + "66";
-    ctx.strokeStyle = polygon.color;
-    ctx.lineWidth = 2;
-    ctx.fill();
-    ctx.stroke();
-  };
-
-  // const drawMiniCroppedPolygon = (
-  //   ctx: CanvasRenderingContext2D,
-  //   polygon: Polygon,
-  //   image: HTMLImageElement
-  // ) => {
-  //   const [x1, y1, x2, y2] = polygon.bbox;
-  //   const cropX = x1;
-  //   const cropY = y1;
-  //   const cropWidth = x2 - x1;
-  //   const cropHeight = y2 - y1;
-
-  //   // Draw cropped image section based on bbox
-  //   ctx.drawImage(
-  //     image,
-  //     cropX,
-  //     cropY,
-  //     cropWidth,
-  //     cropHeight,
-  //     0,
-  //     0,
-  //     ctx.canvas.width,
-  //     ctx.canvas.height
-  //   );
-
-  //   // Scale polygon points relative to bbox and canvas
-  //   const scaleX = ctx.canvas.width / cropWidth;
-  //   const scaleY = ctx.canvas.height / cropHeight;
-
-  //   const adjustedPoints = polygon.points.map((p) => ({
-  //     x: (p.x - cropX) * scaleX,
-  //     y: (p.y - cropY) * scaleY,
+  //   // Scale and translate points into 100x100 box with padding
+  //   const scaledPoints = polygon.points.map((p) => ({
+  //     x: ((p.x - minX) / rangeX) * (width - 2 * padding) + padding,
+  //     y: ((p.y - minY) / rangeY) * (height - 2 * padding) + padding,
   //   }));
 
   //   // Draw polygon
   //   ctx.beginPath();
-  //   ctx.strokeStyle = polygon.color;
-  //   ctx.lineWidth = 1.5;
-  //   ctx.fillStyle = `${polygon.color}60`;
+  //   ctx.moveTo(scaledPoints[0].x, scaledPoints[0].y);
+  //   scaledPoints.forEach((p) => ctx.lineTo(p.x, p.y));
+  //   ctx.closePath();
 
-  //   if (adjustedPoints.length > 0) {
-  //     ctx.moveTo(adjustedPoints[0].x, adjustedPoints[0].y);
-  //     adjustedPoints.forEach((pt) => ctx.lineTo(pt.x, pt.y));
-  //     ctx.closePath();
-  //     ctx.fill();
-  //     ctx.stroke();
-  //   }
+  //   ctx.fillStyle = polygon.color + "66";
+  //   ctx.strokeStyle = polygon.color;
+  //   ctx.lineWidth = 2;
+  //   ctx.fill();
+  //   ctx.stroke();
   // };
+
+  const drawMiniCroppedPolygon = (
+    ctx: CanvasRenderingContext2D,
+    polygon: Polygon,
+    image: HTMLImageElement
+  ) => {
+    const [x1, y1, x2, y2] = polygon.bbox;
+    const cropWidth = x2 - x1;
+    const cropHeight = y2 - y1;
+
+    // Clear previous canvas
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    // Scale ratio between cropped image area and canvas
+    const scaleX = ctx.canvas.width / cropWidth;
+    const scaleY = ctx.canvas.height / cropHeight;
+
+    // Draw the cropped image section
+    ctx.drawImage(
+      image,
+      x1,
+      y1,
+      cropWidth,
+      cropHeight,
+      0,
+      0,
+      ctx.canvas.width,
+      ctx.canvas.height
+    );
+
+    // Transform and draw polygon
+    const adjustedPoints = polygon.points.map((p) => ({
+      x: (p.x - x1) * scaleX,
+      y: (p.y - y1) * scaleY,
+    }));
+
+    ctx.beginPath();
+    if (adjustedPoints.length > 0) {
+      ctx.moveTo(adjustedPoints[0].x, adjustedPoints[0].y);
+      adjustedPoints.forEach((pt) => ctx.lineTo(pt.x, pt.y));
+      ctx.closePath();
+
+      ctx.strokeStyle = polygon.color;
+      ctx.lineWidth = 1.5;
+      ctx.fillStyle = `${polygon.color}60`; // Add some transparency
+      ctx.fill();
+      ctx.stroke();
+    }
+  };
 
   return (
     <Layout>
@@ -358,7 +359,7 @@ const PreviewData = () => {
           buttonTemplate={(options) => (
             <Button
               onClick={options.onClick}
-              className="bg-ochre size-10"
+              className="bg-ochre size-10 text-naples-yellow"
               icon={<Menu size={16} />}
               rounded
             />
@@ -433,13 +434,15 @@ const PreviewData = () => {
                     /> */}
 
                     <canvas
-                      width={100}
-                      height={100}
-                      className="rounded-md border border-bud-green"
+                      width={120}
+                      height={120}
+                      className="rounded-lg border border-ochre mb-3"
                       ref={(el) => {
-                        if (el && polygon.points.length) {
+                        if (el && image) {
                           const ctx = el.getContext("2d");
-                          if (ctx) drawMiniPolygon(ctx, polygon);
+                          if (ctx) {
+                            drawMiniCroppedPolygon(ctx, polygon, image);
+                          }
                         }
                       }}
                     />
