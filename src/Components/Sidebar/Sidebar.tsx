@@ -99,7 +99,7 @@ const MainSidebar = ({
         <a
           href="https://yashagarwal1201.github.io/"
           target="_blank"
-          rel="noopener"
+          rel="noopener noreferrer nofollow"
           className="!w-full block py-4 px-2 bg-transparent font-subcontent  text-base sm:text-lg text-color6 rounded-xl not-italic"
         >
           <h3 className="font-content font-medium flex items-center">
