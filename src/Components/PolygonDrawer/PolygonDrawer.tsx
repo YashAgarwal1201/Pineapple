@@ -214,6 +214,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
       setPolygons([...state.polygons, currentPolygon]);
       setCurrentPolygon(null);
       setClickedPoints([]);
+      setAddNew(false);
       showToast("success", "Success", "Polygon successfully added.");
     } else {
       showToast("warn", "Warning", "A polygon needs at least 3 points.");
@@ -241,7 +242,17 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
     {
       label: addNew ? "Complete Polygon" : "Edit Polygon",
       icon: addNew ? "pi pi-check" : "pi pi-pencil",
-      command: () => (addNew ? handleCompletePolygon() : setAddNew(true)),
+      // command: () => (addNew ? handleCompletePolygon() : setAddNew(true)),
+      command: () => {
+        if (addNew) {
+          handleCompletePolygon();
+        } else {
+          setAddNew(true);
+          setCurrentPolygon(null);
+          setClickedPoints([]);
+        }
+      },
+
       disabled: !addNew && state.imageSelected.url === "",
       className:
         "bg-transparent text-naples-yellow border-2 border-naples-yellow hover:bg-naples-yellow hover:text-metallic-brown",
@@ -368,7 +379,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
           buttonTemplate={(options) => (
             <Button
               onClick={options.onClick}
-              className="bg-ochre size-10"
+              className="bg-ochre size-10 text-naples-yellow"
               icon={<Menu size={16} />}
               rounded
             />

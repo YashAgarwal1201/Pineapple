@@ -201,6 +201,92 @@ const PreviewData = () => {
     },
   ];
 
+  const drawMiniPolygon = (ctx: CanvasRenderingContext2D, polygon: Polygon) => {
+    const padding = 5;
+    const width = 100;
+    const height = 100;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+
+    // Get min/max for normalization
+    const xs = polygon.points.map((p) => p.x);
+    const ys = polygon.points.map((p) => p.y);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+
+    const rangeX = maxX - minX || 1;
+    const rangeY = maxY - minY || 1;
+
+    // Scale and translate points into 100x100 box with padding
+    const scaledPoints = polygon.points.map((p) => ({
+      x: ((p.x - minX) / rangeX) * (width - 2 * padding) + padding,
+      y: ((p.y - minY) / rangeY) * (height - 2 * padding) + padding,
+    }));
+
+    // Draw polygon
+    ctx.beginPath();
+    ctx.moveTo(scaledPoints[0].x, scaledPoints[0].y);
+    scaledPoints.forEach((p) => ctx.lineTo(p.x, p.y));
+    ctx.closePath();
+
+    ctx.fillStyle = polygon.color + "66";
+    ctx.strokeStyle = polygon.color;
+    ctx.lineWidth = 2;
+    ctx.fill();
+    ctx.stroke();
+  };
+
+  // const drawMiniCroppedPolygon = (
+  //   ctx: CanvasRenderingContext2D,
+  //   polygon: Polygon,
+  //   image: HTMLImageElement
+  // ) => {
+  //   const [x1, y1, x2, y2] = polygon.bbox;
+  //   const cropX = x1;
+  //   const cropY = y1;
+  //   const cropWidth = x2 - x1;
+  //   const cropHeight = y2 - y1;
+
+  //   // Draw cropped image section based on bbox
+  //   ctx.drawImage(
+  //     image,
+  //     cropX,
+  //     cropY,
+  //     cropWidth,
+  //     cropHeight,
+  //     0,
+  //     0,
+  //     ctx.canvas.width,
+  //     ctx.canvas.height
+  //   );
+
+  //   // Scale polygon points relative to bbox and canvas
+  //   const scaleX = ctx.canvas.width / cropWidth;
+  //   const scaleY = ctx.canvas.height / cropHeight;
+
+  //   const adjustedPoints = polygon.points.map((p) => ({
+  //     x: (p.x - cropX) * scaleX,
+  //     y: (p.y - cropY) * scaleY,
+  //   }));
+
+  //   // Draw polygon
+  //   ctx.beginPath();
+  //   ctx.strokeStyle = polygon.color;
+  //   ctx.lineWidth = 1.5;
+  //   ctx.fillStyle = `${polygon.color}60`;
+
+  //   if (adjustedPoints.length > 0) {
+  //     ctx.moveTo(adjustedPoints[0].x, adjustedPoints[0].y);
+  //     adjustedPoints.forEach((pt) => ctx.lineTo(pt.x, pt.y));
+  //     ctx.closePath();
+  //     ctx.fill();
+  //     ctx.stroke();
+  //   }
+  // };
+
   return (
     <Layout>
       <div
@@ -286,7 +372,7 @@ const PreviewData = () => {
         dismissable
         header={
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-naples-yellow">
-            Polygons
+            Polygons Data
           </h2>
         }
         className="polygon-list-sidebar side-menu rounded-none md:rounded-r-3xl bg-metallic-brown aboutDialog w-full md:w-[768px]"
@@ -317,33 +403,65 @@ const PreviewData = () => {
                         className="cursor-pointer custom-panel-header w-full flex justify-between items-center px-2 py-4 rounded-xl"
                         onClick={togglePanel}
                       >
-                        <span className="text-base sm:text-lg font-heading">
-                          {polygon?.label}
-                        </span>
+                        <div className="flex items-center gap-x-2">
+                          <span
+                            className="size-2 rounded-full"
+                            style={{ backgroundColor: polygon.color }}
+                          ></span>
+                          <span className="text-base sm:text-lg font-heading">
+                            {polygon?.label}
+                          </span>
+                        </div>
                       </div>
                     );
                   }}
                   toggleable
                 >
                   <div className="w-full flex flex-col gap-y-1 font-content">
-                    <p className="w-full p-2 bg-fern-green text-naples-yellow font-medium rounded-lg">
-                      Coordinates -{" "}
+                    {/* <canvas
+                      width={120}
+                      height={120}
+                      className="rounded-lg border border-ochre mb-3"
+                      ref={(el) => {
+                        if (el && image) {
+                          const ctx = el.getContext("2d");
+                          if (ctx) {
+                            drawMiniCroppedPolygon(ctx, polygon, image);
+                          }
+                        }
+                      }}
+                    /> */}
+
+                    <canvas
+                      width={100}
+                      height={100}
+                      className="rounded-md border border-bud-green"
+                      ref={(el) => {
+                        if (el && polygon.points.length) {
+                          const ctx = el.getContext("2d");
+                          if (ctx) drawMiniPolygon(ctx, polygon);
+                        }
+                      }}
+                    />
+
+                    <p className="w-full text-fern-green font-medium rounded-lg">
+                      Coordinates
                     </p>
                     {polygon.points?.map((values, key) => (
                       <p
                         className="w-full flex flex-row items-center gap-x-1 text-sm sm:text-base"
                         key={key}
                       >
-                        <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
-                          X:
+                        <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-l-lg text-right">
+                          X{key}
                         </span>
-                        <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
+                        <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-r-lg">
                           {Math.round(values.x)}
                         </span>
-                        <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
-                          Y:
+                        <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-l-lg text-right">
+                          Y{key}
                         </span>
-                        <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-lg">
+                        <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-r-lg">
                           {Math.round(values.y)}
                         </span>
                       </p>
