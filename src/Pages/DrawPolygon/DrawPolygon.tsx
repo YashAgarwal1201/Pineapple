@@ -1,9 +1,10 @@
 import { startTransition, useEffect, useState } from "react";
 
-import { Trash, X } from "lucide-react";
+import { ArrowUp, Trash, X } from "lucide-react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Panel } from "primereact/panel";
+import { ScrollTop } from "primereact/scrolltop";
 import { Sidebar } from "primereact/sidebar";
 import Lottie from "react-lottie-player";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +14,6 @@ import Layout from "../../Layout/Layout";
 // import { useAppContext } from "../../Services/AppContext";
 import { usePineappleStore } from "../../Services/zustand";
 import loadingDotsAnimation from "./../../assets/Lottie/loadingDotsAnimation.json";
-
 // import "./DrawPolygon.scss";
 
 const DrawPolygon = () => {
@@ -116,9 +116,16 @@ const DrawPolygon = () => {
                         className="cursor-pointer custom-panel-header w-full flex justify-between items-center px-2 py-4 rounded-xl"
                         onClick={togglePanel}
                       >
-                        <span className="text-base sm:text-lg font-heading">
-                          {polygon?.label}
-                        </span>
+                        <div className="flex items-center gap-x-2">
+                          <span
+                            className="size-2 rounded-full"
+                            style={{ backgroundColor: polygon.color }}
+                          ></span>
+                          <span className="text-base sm:text-lg font-heading">
+                            {polygon?.label}
+                          </span>
+                        </div>
+
                         <Button
                           onClick={() => handleDeletePolygon(index)}
                           className="p-2 text-sm flex items-center justify-center gap-2 bg-fern-green text-naples-yellow aspect-square border-0 rounded-full"
@@ -165,6 +172,31 @@ const DrawPolygon = () => {
                         />
                       )}
                     </div>
+
+                    <div className="w-full flex flex-col gap-y-1 font-content mt-5">
+                      <p className="w-full text-fern-green font-medium rounded-lg">
+                        Coordinates
+                      </p>
+                      {polygon.points?.map((values, key) => (
+                        <p
+                          className="w-full flex flex-row items-center gap-x-1 text-sm sm:text-base"
+                          key={key}
+                        >
+                          <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-l-lg text-right">
+                            X{key}
+                          </span>
+                          <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-r-lg">
+                            {Math.round(values.x)}
+                          </span>
+                          <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-l-lg text-right">
+                            Y{key}
+                          </span>
+                          <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-r-lg">
+                            {Math.round(values.y)}
+                          </span>
+                        </p>
+                      ))}
+                    </div>
                   </div>
                 </Panel>
 
@@ -175,11 +207,18 @@ const DrawPolygon = () => {
             ))
           ) : (
             <div className="w-full h-full flex justify-center items-center">
-              <p className="text-center h-[40px] text-naples-yellow font-content text-base xs:text-lg md:text-xl  my-auto">
+              <p className="text-center h-[40px] text-ochre font-content text-base xs:text-lg md:text-xl  my-auto">
                 No data to display
               </p>
             </div>
           )}
+
+          <ScrollTop
+            target="parent"
+            threshold={100}
+            className="size-8 bg-[#e0e0e0] *:text-[#000] ml-auto shadow-none "
+            icon={<ArrowUp size={16} />}
+          />
         </div>
       </Sidebar>
     </Layout>
