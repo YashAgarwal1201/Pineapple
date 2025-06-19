@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import PolygonDrawer from "../../Components/PolygonDrawer/PolygonDrawer";
 import Layout from "../../Layout/Layout";
 // import { useAppContext } from "../../Services/AppContext";
+import { Polygon } from "../../Services/interfaces";
 import { usePineappleStore } from "../../Services/zustand";
 import loadingDotsAnimation from "./../../assets/Lottie/loadingDotsAnimation.json";
 // import "./DrawPolygon.scss";
@@ -59,6 +60,68 @@ const DrawPolygon = () => {
       showToast("success", "Success", "Label Updated");
     }
     setEditLabel(null);
+  };
+
+  const [image, setImage] = useState<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    if (!state.imageSelected?.url) return;
+
+    const img = new Image();
+    img.src = state.imageSelected.url;
+    img.onload = () => {
+      setImage(img);
+      // updateCanvasSize(img);
+    };
+  }, [state.imageSelected?.url]);
+
+  const drawMiniCroppedPolygon = (
+    ctx: CanvasRenderingContext2D,
+    polygon: Polygon,
+    image: HTMLImageElement
+  ) => {
+    const [x1, y1, x2, y2] = polygon.bbox;
+    const cropWidth = x2 - x1;
+    const cropHeight = y2 - y1;
+
+    // Clear previous canvas
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    // Scale ratio between cropped image area and canvas
+    const scaleX = ctx.canvas.width / cropWidth;
+    const scaleY = ctx.canvas.height / cropHeight;
+
+    // Draw the cropped image section
+    ctx.drawImage(
+      image,
+      x1,
+      y1,
+      cropWidth,
+      cropHeight,
+      0,
+      0,
+      ctx.canvas.width,
+      ctx.canvas.height
+    );
+
+    // Transform and draw polygon
+    const adjustedPoints = polygon.points.map((p) => ({
+      x: (p.x - x1) * scaleX,
+      y: (p.y - y1) * scaleY,
+    }));
+
+    ctx.beginPath();
+    if (adjustedPoints.length > 0) {
+      ctx.moveTo(adjustedPoints[0].x, adjustedPoints[0].y);
+      adjustedPoints.forEach((pt) => ctx.lineTo(pt.x, pt.y));
+      ctx.closePath();
+
+      ctx.strokeStyle = polygon.color;
+      ctx.lineWidth = 1.5;
+      ctx.fillStyle = `${polygon.color}60`; // Add some transparency
+      ctx.fill();
+      ctx.stroke();
+    }
   };
 
   return (
@@ -138,6 +201,20 @@ const DrawPolygon = () => {
                   toggleable
                 >
                   <div className="w-full flex flex-col gap-3 font-content">
+                    <canvas
+                      width={120}
+                      height={120}
+                      className="rounded-lg border border-ochre mb-3"
+                      ref={(el) => {
+                        if (el && image) {
+                          const ctx = el.getContext("2d");
+                          if (ctx) {
+                            drawMiniCroppedPolygon(ctx, polygon, image);
+                          }
+                        }
+                      }}
+                    />
+
                     {editLabel === index ? (
                       <p className="text-fern-green">
                         Enter new label for the polygon
