@@ -5,16 +5,12 @@ import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 
 import Layout from "../../Layout/Layout";
-// import { useAppContext } from "../../Services/AppContext";
 import { downloadPolygonsData } from "../../Services/functionServices";
 import "./SuccessPage.scss";
 import { usePineappleStore } from "../../Services/zustand";
 
 const SuccessPage = () => {
   const navigate = useNavigate();
-
-  // const { state, showToast, setSelectedImage, setPolygons, dispatch } =
-  //   useAppContext();
 
   const {
     annotatedCanvasImage,
@@ -31,12 +27,6 @@ const SuccessPage = () => {
   const clearSessionStorageAndNavigate = async () => {
     try {
       setPolygons([]);
-      // setSelectedImage("", "", "");
-      // dispatch({ type: "SET_CHANGE_ANNOTATION_OPTION", payload: "" });
-      // dispatch({ type: "SET_APPROVED_IMAGE_URL", payload: "" });
-      // dispatch({ type: "SET_PROCESSED_IMAGE_URL", payload: "" });
-      // dispatch({ type: "SET_JSON_FILE_DOWNLOAD_URL", payload: "" });
-
       setAnnotatedCanvasImage(null);
       setSelectedImage("", "", "");
       setPolygons([]);
