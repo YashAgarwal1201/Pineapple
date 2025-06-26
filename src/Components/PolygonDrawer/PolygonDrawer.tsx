@@ -12,7 +12,6 @@ import { Button } from "primereact/button";
 import { SpeedDial } from "primereact/speeddial";
 import { useNavigate } from "react-router-dom";
 
-// import { useAppContext } from "../../Services/AppContext";
 import { generateRandomColor } from "../../Services/functionServices";
 import "./PolygonDrawer.scss";
 import { Polygon } from "../../Services/interfaces";
@@ -21,7 +20,6 @@ import { usePineappleStore } from "../../Services/zustand";
 const PolygonDrawer = ({ setShowListOfPolygons }) => {
   const navigate = useNavigate();
 
-  // const { state, setPolygons, showToast } = useAppContext();
   const state = usePineappleStore();
   const { setPolygons, showToast } = state;
 

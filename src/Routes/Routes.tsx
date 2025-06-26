@@ -41,7 +41,6 @@ const LandingScreen = lazy(
 const UploadPage = lazy(() => import("./../Pages/UploadData/UploadData"));
 const DrawComponent = lazy(() => import("./../Pages/DrawPolygon/DrawPolygon"));
 const PreviewData = lazy(() => import("./../Pages/PreviewData/PreviewData"));
-const CroppedData = lazy(() => import("./../Pages/CroppedData/CroppedData"));
 const SuccessPage = lazy(() => import("../Pages/SuccessPage/SuccessPage"));
 const PageNotFound = lazy(() => import("../Pages/PageNotFound/PageNotFound"));
 
@@ -53,7 +52,6 @@ const Router = createBrowserRouter(
       <Route path="*" element={<PageNotFound />} />
       <Route path="/draw" element={<DrawComponent />} />
       <Route path="/preview" element={<PreviewData />} />
-      <Route path="/cropped-data" element={<CroppedData />} />
       <Route path="/success" element={<SuccessPage />} />
     </Route>
   )

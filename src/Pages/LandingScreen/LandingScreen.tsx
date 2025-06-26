@@ -1,4 +1,4 @@
-import { startTransition, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
@@ -52,7 +52,7 @@ const LandingScreen = () => {
               title="Click to proceed"
               rounded
               className=" bg-fern-green text-naples-yellow border-none animate-bounce-right"
-              onClick={() => startTransition(() => navigate("/upload-image"))}
+              onClick={() => navigate("/upload-image")}
               icon={<span className="pi pi-chevron-right"></span>}
             />
 

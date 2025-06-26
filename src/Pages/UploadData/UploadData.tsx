@@ -9,14 +9,12 @@ import { useNavigate } from "react-router-dom";
 import CaptureImageLibrary from "../../Components/CaptureImage/CaptureImage";
 import UploadImageOptionsDialog from "../../Components/UploadImageOptionsDialog/UploadImageOptionsDialog";
 import Layout from "../../Layout/Layout";
-// import { useAppContext } from "../../Services/AppContext";
 import "./UploadData.scss";
 import { usePineappleStore } from "../../Services/zustand";
 
 const UploadData = () => {
   const navigate = useNavigate();
 
-  // const { state, showToast, setSelectedImage, setPolygons } = useAppContext();
   const state = usePineappleStore();
   const { showToast, setSelectedImage, setPolygons } = state;
 
