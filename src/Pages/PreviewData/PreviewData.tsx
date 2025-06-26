@@ -12,12 +12,14 @@ import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
 import { Sidebar } from "primereact/sidebar";
 import { SpeedDial } from "primereact/speeddial";
+import Lottie from "react-lottie-player";
 import { useNavigate } from "react-router-dom";
 
 import Layout from "../../Layout/Layout";
 import "./PreviewData.scss";
 import { Polygon } from "../../Services/interfaces";
 import { usePineappleStore } from "../../Services/zustand";
+import loadingDotsAnimation from "./../../assets/Lottie/loadingDotsAnimation.json";
 
 const PreviewData = () => {
   const navigate = useNavigate();
@@ -27,10 +29,20 @@ const PreviewData = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasParentRef = useRef<HTMLDivElement | null>(null);
 
+  const [loading, setLoading] = useState<boolean>(false);
   const [showListOfPolygons, setShowListOfPolygons] = useState<boolean>(false);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [scaleFactor, setScaleFactor] = useState({ x: 1, y: 1 });
   const [showContent, setShowContent] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (state.imageSelected.url === "") {
+      setLoading(true);
+      setTimeout(() => navigate("/"), 750);
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
   const updateCanvasSize = useCallback((img: HTMLImageElement) => {
     const canvas = canvasRef.current;
@@ -290,82 +302,97 @@ const PreviewData = () => {
 
   return (
     <Layout>
-      <div
-        className={`customScrollbar h-full p-2 sm:p-4 flex flex-col justify-around items-center bg-metallic-brown rounded-2xl sm:rounded-3xl shadow-md overflow-y-auto transition-all duration-1000 transform ${
-          showContent
-            ? "translate-y-0 opacity-100"
-            : "-translate-y-full opacity-0"
-        }`}
-      >
-        <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5 overflow-y-auto">
-          <div className="px-2 md:px-0 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-y-3">
-            <div className="flex flex-col gap-1">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-heading text-naples-yellow">
-                Preview Data
-              </h1>
-              <p className="text-sm sm:text-base md:text-lg text-bud-green font-content font-medium">
-                Preview the data before proceeding
-              </p>
-            </div>
-            <div className="w-full xl:w-auto hidden md:flex flex-row-reverse gap-x-4">
-              <Button
-                disabled={
-                  state?.imageSelected?.url?.length <= 0 ||
-                  state.polygons?.length < 1
-                }
-                icon="pi pi-thumbs-up"
-                label="Continue"
-                className="h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 rounded-2xl text-metallic-brown bg-naples-yellow border-naples-yellow"
-                onClick={() => {
-                  startTransition(() => {
-                    navigate("/success");
-                  });
+      {loading ? (
+        <div className="w-full h-full p-3 flex flex-col justify-center items-center gap-y-3">
+          <Lottie
+            loop
+            animationData={loadingDotsAnimation}
+            play
+            className="w-1/2 h-fit"
+          />
+          <p className="font-heading text-xl sm:text-2xl text-center text-metallic-brown">
+            No image found. Navigating to home page.
+          </p>
+        </div>
+      ) : (
+        <>
+          <div
+            className={`customScrollbar h-full p-2 sm:p-4 flex flex-col justify-around items-center bg-metallic-brown rounded-2xl sm:rounded-3xl shadow-md overflow-y-auto transition-all duration-1000 transform ${
+              showContent
+                ? "translate-y-0 opacity-100"
+                : "-translate-y-full opacity-0"
+            }`}
+          >
+            <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5 overflow-y-auto">
+              <div className="px-2 md:px-0 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-y-3">
+                <div className="flex flex-col gap-1">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-heading text-naples-yellow">
+                    Preview Data
+                  </h1>
+                  <p className="text-sm sm:text-base md:text-lg text-bud-green font-content font-medium">
+                    Preview the data before proceeding
+                  </p>
+                </div>
+                <div className="w-full xl:w-auto hidden md:flex flex-row-reverse gap-x-4">
+                  <Button
+                    disabled={
+                      state?.imageSelected?.url?.length <= 0 ||
+                      state.polygons?.length < 1
+                    }
+                    icon="pi pi-thumbs-up"
+                    label="Continue"
+                    className="h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 rounded-2xl text-metallic-brown bg-naples-yellow border-naples-yellow"
+                    onClick={() => {
+                      startTransition(() => {
+                        navigate("/success");
+                      });
 
-                  saveAnnotatedImage();
-                }}
-              />
-              <Button
-                icon={"pi pi-list"}
-                label={"Polygons Data"}
-                onClick={() => setShowListOfPolygons(true)}
-                className="h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 rounded-2xl text-naples-yellow border border-naples-yellow bg-transparent"
-              />
-            </div>
-          </div>
-          <div className="w-full h-[calc(100%-150px)] flex flex-col md:flex-row gap-2">
-            <div className="w-full h-full md:mb-0 mx-auto flex justify-center">
-              <div
-                className="w-full h-full max-w-full my-auto"
-                ref={canvasParentRef}
-              >
-                <canvas
-                  className="mx-auto border-2 border-ochre rounded-2xl md:rounded-3xl"
-                  ref={canvasRef}
-                />
+                      saveAnnotatedImage();
+                    }}
+                  />
+                  <Button
+                    icon={"pi pi-list"}
+                    label={"Polygons Data"}
+                    onClick={() => setShowListOfPolygons(true)}
+                    className="h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 rounded-2xl text-naples-yellow border border-naples-yellow bg-transparent"
+                  />
+                </div>
+              </div>
+              <div className="w-full h-[calc(100%-150px)] flex flex-col md:flex-row gap-2">
+                <div className="w-full h-full md:mb-0 mx-auto flex justify-center">
+                  <div
+                    className="w-full h-full max-w-full my-auto"
+                    ref={canvasParentRef}
+                  >
+                    <canvas
+                      className="mx-auto border-2 border-ochre rounded-2xl md:rounded-3xl"
+                      ref={canvasRef}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div className="block md:hidden">
-        <SpeedDial
-          model={actions}
-          direction="up"
-          buttonClassName="bg-metallic-brown text-naples-yellow border-naples-yellow"
-          showIcon="pi pi-bars"
-          hideIcon="pi pi-times"
-          className="p-speeddial absolute bottom-5 right-2"
-          buttonTemplate={(options) => (
-            <Button
-              onClick={options.onClick}
-              className="bg-ochre size-10 text-naples-yellow"
-              icon={<Menu size={16} />}
-              rounded
+          <div className="block md:hidden">
+            <SpeedDial
+              model={actions}
+              direction="up"
+              buttonClassName="bg-metallic-brown text-naples-yellow border-naples-yellow"
+              showIcon="pi pi-bars"
+              hideIcon="pi pi-times"
+              className="p-speeddial absolute bottom-5 right-2"
+              buttonTemplate={(options) => (
+                <Button
+                  onClick={options.onClick}
+                  className="bg-ochre size-10 text-naples-yellow"
+                  icon={<Menu size={16} />}
+                  rounded
+                />
+              )}
             />
-          )}
-        />
-      </div>
+          </div>
+        </>
+      )}
 
       <Sidebar
         visible={showListOfPolygons}

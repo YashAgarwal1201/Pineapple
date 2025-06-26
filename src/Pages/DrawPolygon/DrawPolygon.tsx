@@ -1,4 +1,4 @@
-import { startTransition, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ArrowUp, Trash, X } from "lucide-react";
 import { Button } from "primereact/button";
@@ -11,16 +11,13 @@ import { useNavigate } from "react-router-dom";
 
 import PolygonDrawer from "../../Components/PolygonDrawer/PolygonDrawer";
 import Layout from "../../Layout/Layout";
-// import { useAppContext } from "../../Services/AppContext";
 import { Polygon } from "../../Services/interfaces";
 import { usePineappleStore } from "../../Services/zustand";
 import loadingDotsAnimation from "./../../assets/Lottie/loadingDotsAnimation.json";
-// import "./DrawPolygon.scss";
 
 const DrawPolygon = () => {
   const navigate = useNavigate();
 
-  // const { state, setPolygons, showToast } = useAppContext();
   const state = usePineappleStore();
   const { setPolygons, showToast } = state;
 
@@ -32,7 +29,7 @@ const DrawPolygon = () => {
   useEffect(() => {
     if (state.imageSelected.url === "") {
       setLoading(true);
-      setTimeout(() => startTransition(() => navigate("/")), 750);
+      setTimeout(() => navigate("/"), 750);
     } else {
       setLoading(false);
     }
