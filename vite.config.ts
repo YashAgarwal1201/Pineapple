@@ -10,12 +10,13 @@
 //   base: "/Pineapple/",
 // });
 
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 export default defineConfig(() => {
   const config = {
-    plugins: [react()],
+    plugins: [react(), tailwindcss()],
     base: "/",
     server: {
       port: 5373, // Change this to the desired port

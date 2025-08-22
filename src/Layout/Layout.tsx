@@ -11,7 +11,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const [showSidebar, setShowSidebar] = useState(false);
 
   return (
-    <div className="w-screen h-[100dvh] relative flex flex-col md:flex-row bg-ochre">
+    <div className="w-full h-full relative flex flex-col md:flex-row bg-ochre">
       <div className="block">
         {location.pathname !== "/" &&
         !location.pathname.includes("/success") ? (
