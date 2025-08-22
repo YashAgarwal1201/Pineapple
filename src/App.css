@@ -1,0 +1,84 @@
+@import url(https://fonts.bunny.net/css?family=artifika:400|comfortaa:300,400,500,600,700);
+
+@import "tailwindcss";
+@import "primeicons/primeicons.css";
+@import "primereact/resources/themes/arya-orange/theme.css";
+
+@theme {
+  /* Colors */
+  --color-metallic-brown: #a14712;
+  --color-ochre: #c27815;
+  --color-naples-yellow: #ffd964;
+  --color-fern-green: #3d5a2c;
+  --color-bud-green: #7cb35c;
+
+  /* Fonts (with fallbacks) */
+  --font-heading: "Artifika", serif;
+  --font-content: "Comfortaa", sans-serif;
+
+  /* Screens */
+  --breakpoint-xs: 480px;
+  --breakpoint-mdl: 896px;
+  --breakpoint-xl: 1280px;
+
+  /* Animations */
+  --animate-spin: spin 5s linear infinite;
+  --animate-bounce-right: bounce-right 5s infinite;
+
+  @keyframes bounce-right {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(20px);
+    } /* adjust distance if needed */
+  }
+
+  /* Transition Durations */
+  --duration-2000: 2000ms;
+  --duration-3000: 3000ms;
+  --duration-5000: 5000ms;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+* {
+  scroll-behavior: smooth;
+}
+
+.p-button:focus,
+.p-inputtext:enabled:focus,
+.p-link:focus {
+  box-shadow: none !important;
+  outline: none !important;
+  border-color: #353735;
+  border: 0px;
+}
+
+.p-toast {
+  z-index: 10000;
+}
+
+a:hover,
+.p-button:hover {
+  border-color: none;
+  background-color: unset;
+  color: unset;
+}
+
+@media (hover: hover) {
+  a:hover,
+  .p-button:hover {
+    /* border-color: theme(--color-bud-green) !important;
+    background-color: theme(--color-bud-green) !important;
+    color: theme(--color-naples-yellow) !important; */
+  }
+}
+
+@media only screen and (max-width: 520px) {
+  .p-toast {
+    width: 80%;
+    max-width: 80%;
+  }
+}

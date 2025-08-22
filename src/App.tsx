@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { Toast } from "primereact/toast";
 import { Outlet } from "react-router-dom";
 
-import "./App.scss";
+import "./App.css";
 import { usePineappleStore } from "./Services/zustand";
 
 export function App() {

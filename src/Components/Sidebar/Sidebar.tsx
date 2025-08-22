@@ -86,7 +86,8 @@ const MainSidebar = ({
           More Options
         </h2>
       }
-      className="side-menu rounded-none md:rounded-l-3xl bg-metallic-brown aboutDialog w-full md:w-[768px]"
+      className="side-menu rounded-none md:rounded-l-3xl bg-metallic-brown aboutDialog !w-full md:!w-[768px]"
+      // class="!w-full md:!w-[768px] rounded-none md:!rounded-l-xl bg-stone-50 dark:bg-stone-900 font-content !text-green-700 dark:!text-green-300"
       position="right"
       closeIcon={
         <span className=" text-naples-yellow">
