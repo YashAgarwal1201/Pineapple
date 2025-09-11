@@ -209,7 +209,7 @@ const PreviewData = () => {
       icon: "pi pi-list",
       command: () => setShowListOfPolygons(true),
       className:
-        "bg-transparent text-naples-yellow border-2 border-naples-yellow hover:bg-naples-yellow hover:text-metallic-brown",
+        "bg-transparent text-naples-yellow border border-naples-yellow hover:bg-naples-yellow hover:text-metallic-brown",
     },
   ];
 
@@ -317,7 +317,7 @@ const PreviewData = () => {
       ) : (
         <>
           <div
-            className={`customScrollbar h-full p-2 sm:p-4 flex flex-col justify-around items-center bg-metallic-brown rounded-2xl sm:rounded-3xl shadow-md overflow-y-auto transition-all duration-1000 transform ${
+            className={`customScrollbar h-full p-2 sm:p-4 flex flex-col justify-around items-center bg-amber-50 dark:bg-stone-900 rounded-xl sm:rounded-2xl shadow-md overflow-y-auto transition-all duration-1000 transform ${
               showContent
                 ? "translate-y-0 opacity-100"
                 : "-translate-y-full opacity-0"
@@ -326,10 +326,10 @@ const PreviewData = () => {
             <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5 overflow-y-auto">
               <div className="px-2 md:px-0 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-y-3">
                 <div className="flex flex-col gap-1">
-                  <h1 className="text-xl sm:text-2xl md:text-3xl font-heading text-naples-yellow">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-heading text-amber-700 dark:text-amber-300 font-bold">
                     Preview Data
                   </h1>
-                  <p className="text-sm sm:text-base md:text-lg text-bud-green font-content font-medium">
+                  <p className="text-sm sm:text-base md:text-lg font-content text-amber-600 dark:text-amber-400 font-medium">
                     Preview the data before proceeding
                   </p>
                 </div>
@@ -341,7 +341,7 @@ const PreviewData = () => {
                     }
                     icon="pi pi-thumbs-up"
                     label="Continue"
-                    className="h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 rounded-2xl text-metallic-brown bg-naples-yellow border-naples-yellow"
+                    className="h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-2xl text-metallic-brown bg-naples-yellow border-naples-yellow"
                     onClick={() => {
                       startTransition(() => {
                         navigate("/success");
@@ -354,7 +354,7 @@ const PreviewData = () => {
                     icon={"pi pi-list"}
                     label={"Polygons Data"}
                     onClick={() => setShowListOfPolygons(true)}
-                    className="h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 rounded-2xl text-naples-yellow border border-naples-yellow bg-transparent"
+                    className="h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-2xl text-naples-yellow border border-naples-yellow bg-transparent"
                   />
                 </div>
               </div>
@@ -365,7 +365,7 @@ const PreviewData = () => {
                     ref={canvasParentRef}
                   >
                     <canvas
-                      className="mx-auto border-2 border-ochre rounded-2xl md:rounded-3xl"
+                      className="mx-auto border border-ochre rounded-2xl md:rounded-3xl"
                       ref={canvasRef}
                     />
                   </div>
@@ -399,11 +399,11 @@ const PreviewData = () => {
         onHide={() => setShowListOfPolygons(false)}
         dismissable
         header={
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-naples-yellow">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-lime-700 dark:text-lime-400">
             Polygons Data
           </h2>
         }
-        className="polygon-list-sidebar side-menu rounded-none md:rounded-r-3xl bg-metallic-brown aboutDialog w-full md:w-[768px]"
+        className="polygon-list-sidebar side-menu !rounded-none md:!rounded-r-3xl !bg-white dark:!bg-black aboutDialog !w-full md:!w-[768px]"
         position="left"
         closeIcon={
           <span className=" text-naples-yellow">
@@ -412,7 +412,7 @@ const PreviewData = () => {
         }
         maskClassName="backdrop-blur"
       >
-        <div className="w-full px-4 py-4 text-fern-green bg-naples-yellow rounded-3xl overflow-y-auto">
+        <div className="w-full px-4 py-4 bg-amber-50 dark:bg-stone-900 rounded-3xl overflow-y-auto text-stone-700 dark:text-stone-300 font-content">
           {state.polygons.length > 0 ? (
             state.polygons?.map((polygon, index) => (
               <div className="mb-2" key={index}>
@@ -482,16 +482,16 @@ const PreviewData = () => {
                         className="w-full flex flex-row items-center gap-x-1 text-sm sm:text-base"
                         key={key}
                       >
-                        <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-l-lg text-right">
+                        <span className="w-[20%] p-2 border border-bud-green text-metallic-brown rounded-l-lg text-right">
                           X{key}
                         </span>
-                        <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-r-lg">
+                        <span className="w-[30%] p-2 border border-bud-green text-metallic-brown rounded-r-lg">
                           {Math.round(values.x)}
                         </span>
-                        <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-l-lg text-right">
+                        <span className="w-[20%] p-2 border border-bud-green text-metallic-brown rounded-l-lg text-right">
                           Y{key}
                         </span>
-                        <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-r-lg">
+                        <span className="w-[30%] p-2 border border-bud-green text-metallic-brown rounded-r-lg">
                           {Math.round(values.y)}
                         </span>
                       </p>

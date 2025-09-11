@@ -4,6 +4,8 @@
 @import "primeicons/primeicons.css";
 @import "primereact/resources/themes/arya-orange/theme.css";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Colors */
   --color-metallic-brown: #a14712;
@@ -41,7 +43,8 @@
   --duration-5000: 5000ms;
 }
 
-@custom-variant dark (&:where(.dark, .dark *));
+/* uncomment once theme switcher is implemented */
+/* @custom-variant dark (&:where(.dark, .dark *)); */
 
 * {
   scroll-behavior: smooth;

@@ -16,6 +16,9 @@ interface AppState {
   rectangles: Rectangle[];
   polygons: Polygon[];
   annotatedCanvasImage: string | null;
+  isSideMenuOpen: boolean;
+
+  isFeedbackDialogOpen: boolean;
 
   // Actions
   setToastRef: (toast: Toast) => void;
@@ -30,6 +33,10 @@ interface AppState {
     detail: string,
     life?: number
   ) => void;
+  toggleSideMenu: () => void;
+  closeSideMenu: () => void;
+  openFeedbackDialog: () => void;
+  closeFeedbackDialog: () => void;
 }
 
 // Create the store
@@ -47,6 +54,12 @@ export const usePineappleStore = create<AppState>()(
       rectangles: [],
       polygons: [],
       annotatedCanvasImage: null,
+
+      // State for the side menu (open/close)
+      isSideMenuOpen: false,
+
+      // State for the feedback dialog (open/close)
+      isFeedbackDialogOpen: false,
 
       // Actions
       setToastRef: (toast: Toast) => set({ toast }),
@@ -79,6 +92,13 @@ export const usePineappleStore = create<AppState>()(
         const { toast } = get();
         toast?.show({ severity, summary, detail, life });
       },
+      toggleSideMenu: () =>
+        set((state) => ({
+          isSideMenuOpen: !state.isSideMenuOpen,
+        })),
+      closeSideMenu: () => set({ isSideMenuOpen: false }),
+      openFeedbackDialog: () => set({ isFeedbackDialogOpen: true }),
+      closeFeedbackDialog: () => set({ isFeedbackDialogOpen: false }),
     }),
     {
       name: "pineapple-storage", // storage key

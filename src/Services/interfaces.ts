@@ -99,3 +99,14 @@ export type UploadImageOptionsDialogType = {
   uploadHandeler: () => void;
   onCaptureImageClick: () => void;
 };
+
+export type PortfolioContactFormType = {
+  email: string;
+  name: string;
+  message: string;
+  time?: any;
+};
+
+export type FeedbackFormType = PortfolioContactFormType & {
+  images?: File[];
+};

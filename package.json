@@ -21,6 +21,7 @@
     "primereact": "^10.8.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.62.0",
     "react-lottie-player": "^2.1.0",
     "react-router-dom": "^7.6.2",
     "react-share": "^5.2.0",

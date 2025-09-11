@@ -38,7 +38,7 @@ import App from "./../App";
 const LandingScreen = lazy(
   () => import("./../Pages/LandingScreen/LandingScreen")
 );
-const UploadPage = lazy(() => import("./../Pages/UploadData/UploadData"));
+const UploadPage = lazy(() => import("./../Pages/UploadData/NewUploadImage")); //lazy(() => import("./../Pages/UploadData/UploadData"));
 const DrawComponent = lazy(() => import("./../Pages/DrawPolygon/DrawPolygon"));
 const PreviewData = lazy(() => import("./../Pages/PreviewData/PreviewData"));
 const SuccessPage = lazy(() => import("../Pages/SuccessPage/SuccessPage"));
