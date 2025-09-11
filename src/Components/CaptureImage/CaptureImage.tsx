@@ -301,7 +301,7 @@ const CaptureImageLibrary = ({ exitCamera, onCapture }) => {
           <div className="absolute inset-0 pointer-events-none">
             <div className="w-full h-full flex items-center justify-center">
               <div
-                className="border-2 border-white border-opacity-30 rounded-lg"
+                className="border border-white border-opacity-30 rounded-lg"
                 style={{
                   width: `${getWebcamStyle().width}`,
                   height: `${getWebcamStyle().height}`,

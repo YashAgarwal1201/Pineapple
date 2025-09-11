@@ -144,11 +144,12 @@ const DrawPolygon = () => {
         onHide={() => setShowListOfPolygons(false)}
         dismissable
         header={
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-naples-yellow">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-lime-700 dark:text-lime-400">
             Polygons
           </h2>
         }
-        className="polygon-list-sidebar side-menu rounded-none md:rounded-r-3xl bg-metallic-brown aboutDialog w-full md:w-[768px]"
+        className="polygon-list-sidebar side-menu !rounded-none md:!rounded-r-3xl !bg-white dark:!bg-black aboutDialog !w-full md:!w-[768px]"
+        // className=" side-menu rounded-none md:rounded-r-3xl bg-metallic-brown aboutDialog w-full md:w-[768px]"
         position="left"
         closeIcon={
           <span className=" text-naples-yellow">
@@ -157,7 +158,7 @@ const DrawPolygon = () => {
         }
         maskClassName="backdrop-blur"
       >
-        <div className="w-full px-4 py-4 text-fern-green bg-naples-yellow rounded-3xl overflow-y-auto">
+        <div className="w-full px-4 py-4 bg-amber-50 dark:bg-stone-900 rounded-3xl overflow-y-auto text-stone-700 dark:text-stone-300 font-content">
           {state.polygons.length > 0 ? (
             state.polygons?.map((polygon, index) => (
               <div className="mb-2" key={index}>
@@ -188,7 +189,7 @@ const DrawPolygon = () => {
 
                         <Button
                           onClick={() => handleDeletePolygon(index)}
-                          className="p-2 text-sm flex items-center justify-center gap-2 bg-fern-green text-naples-yellow aspect-square border-0 rounded-full"
+                          className="p-2 text-sm flex items-center justify-center gap-2 bg-fern-green text-naples-yellow aspect-square border-0 !rounded-full"
                         >
                           <Trash size={16} />
                         </Button>
@@ -227,7 +228,7 @@ const DrawPolygon = () => {
                           editLabel !== index ? polygon?.label : editedLabel
                         }
                         readOnly={editLabel !== index}
-                        className="h-10 w-full xs:w-[calc(100%-2.5rem)] rounded-full px-4 py-2 font-content bg-naples-yellow border xs:border-2 border-fern-green focus-visible:border-bud-green text-metallic-brown"
+                        className="h-10 w-full xs:w-[calc(100%-2.5rem)] rounded-full px-4 py-2 font-content bg-naples-yellow border xs:border border-fern-green focus-visible:border-bud-green text-metallic-brown"
                         onChange={(e) => setEditedLabel(e.target?.value)}
                       />
                       {editLabel === index ? (
@@ -256,16 +257,16 @@ const DrawPolygon = () => {
                           className="w-full flex flex-row items-center gap-x-1 text-sm sm:text-base"
                           key={key}
                         >
-                          <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-l-lg text-right">
+                          <span className="w-[20%] p-2 border border-bud-green text-metallic-brown rounded-l-lg text-right">
                             X{key}
                           </span>
-                          <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-r-lg">
+                          <span className="w-[30%] p-2 border border-bud-green text-metallic-brown rounded-r-lg">
                             {Math.round(values.x)}
                           </span>
-                          <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-l-lg text-right">
+                          <span className="w-[20%] p-2 border border-bud-green text-metallic-brown rounded-l-lg text-right">
                             Y{key}
                           </span>
-                          <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-r-lg">
+                          <span className="w-[30%] p-2 border border-bud-green text-metallic-brown rounded-r-lg">
                             {Math.round(values.y)}
                           </span>
                         </p>
