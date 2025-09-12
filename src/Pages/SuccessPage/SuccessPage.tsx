@@ -6,6 +6,10 @@ import Lottie from "react-lottie-player";
 import { useNavigate } from "react-router-dom";
 
 import Layout from "../../Layout/Layout";
+import {
+  AMBER_PRIMARY_BTN_STYLES,
+  LIME_PRIMARY_BTN_STYLES,
+} from "../../Services/constants";
 import { downloadPolygonsData } from "../../Services/functionServices";
 import "./SuccessPage.scss";
 import { usePineappleStore } from "../../Services/zustand";
@@ -97,9 +101,9 @@ const SuccessPage = () => {
               />
               <div className="!absolute right-16 top-28 sm:top-32">
                 <div className="p-5 md:p-7 bg-transparent rounded-full relative">
-                  <span className="success-check pi pi-check w-12 h-12 flex justify-center items-center z-10 text-naples-yellow bg-fern-green rounded-full"></span>
+                  <span className="success-check pi pi-check w-12 h-12 flex justify-center items-center z-10 bg-lime-500 dark:bg-lime-400 rounded-full"></span>
                   <div className="!absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 h-16 border border-dashed border-fern-green rounded-full animate-spin duration-5000"></div>
+                    <div className="w-16 h-16 border border-dashed border-lime-500 dark:border-lime-400 rounded-full animate-spin duration-5000"></div>
                   </div>
                 </div>
               </div>
@@ -107,24 +111,16 @@ const SuccessPage = () => {
           </div>
 
           <div className="w-full md:w-1/2 h-auto md:h-full flex flex-col justify-center items-center gap-y-10">
-            <h1 className="text-center font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-naples-yellow select-none">
-              <span className="text-bud-green">Thank you for using</span>{" "}
+            <h1 className="text-center font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-lime-700 dark:text-lime-400 select-none">
+              <span className="text-amber-700 dark:text-amber-300 ">
+                Thank you for using
+              </span>{" "}
               Project Pineapple
             </h1>
-            <div className="w-full flex flex-row flex-wrap justify-center items-center gap-x-3 lg:gap-x-5 gap-y-2 font-content">
-              {/* <Button
-              icon="pi pi-angle-left"
-              title="go back button"
-              rounded
-              className={` text-naples-yellow bg-fern-green border-0`}
-              onClick={() => window.history.go(-1)}
-            /> */}
+            <div className="w-full flex flex-row flex-wrap justify-center items-center gap-x-1 font-content">
               <Button
                 loading={loader}
-                // icon="pi pi-times"
-                // title="Close & Restart"
-                rounded
-                className="flex-shrink-0 text-sm sm:text-base text-naples-yellow bg-transparent border xs:border flex items-center gap-x-2 border-naples-yellow !font-content"
+                className={`${LIME_PRIMARY_BTN_STYLES} !rounded-l-2xl !rounded-r-sm flex-shrink-0 text-sm sm:text-base flex items-center gap-x-2 !font-content`}
                 onClick={async () => {
                   setLoader(true);
                   await clearSessionStorageAndNavigate();
@@ -135,8 +131,7 @@ const SuccessPage = () => {
               </Button>
               <Button
                 disabled={polygons.length < 1 || loader}
-                rounded
-                className="flex-shrink-0 text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow flex items-center gap-x-2  !font-content"
+                className={`${AMBER_PRIMARY_BTN_STYLES} !rounded-l-sm !rounded-r-2xl flex-shrink-0 text-sm sm:text-base flex items-center gap-x-2  !font-content`}
                 onClick={() => {
                   console.log("Download data", polygons, annotatedCanvasImage);
                   downloadPolygonsData(

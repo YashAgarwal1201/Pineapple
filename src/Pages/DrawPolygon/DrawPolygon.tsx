@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { ArrowUp, Trash, X } from "lucide-react";
+import { ArrowUp, Check, Pencil, Trash, X } from "lucide-react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Panel } from "primereact/panel";
@@ -213,43 +213,53 @@ const DrawPolygon = () => {
                       }}
                     />
 
-                    {editLabel === index ? (
-                      <p className="text-fern-green">
-                        Enter new label for the polygon
-                      </p>
-                    ) : (
-                      <p className="text-fern-green font-medium">
-                        Change the label of polygon
-                      </p>
-                    )}
-                    <div className="w-full h-fit text-sm sm:text-base flex flex-col justify-center xs:flex-row items-end xs:items-center gap-4">
+                    <p className="font-content text-amber-600 dark:text-amber-400">
+                      {editLabel === index
+                        ? "Enter new label for the polygon"
+                        : "Change the label of polygon"}
+                    </p>
+                    <div className="w-full h-fit text-sm sm:text-base flex justify-center flex-col gap-4">
                       <InputText
                         value={
                           editLabel !== index ? polygon?.label : editedLabel
                         }
-                        readOnly={editLabel !== index}
-                        className="h-10 w-full xs:w-[calc(100%-2.5rem)] rounded-full px-4 py-2 font-content bg-naples-yellow border xs:border border-fern-green focus-visible:border-bud-green text-metallic-brown"
+                        disabled={editLabel !== index}
+                        className={`h-10 w-full !rounded-2xl px-4 py-2 font-content bg-naples-yellow border xs:border border-fern-green focus-visible:border-bud-green text-metallic-brown`}
                         onChange={(e) => setEditedLabel(e.target?.value)}
                       />
-                      {editLabel === index ? (
-                        <Button
-                          icon="pi pi-check"
-                          // label="Save Label"
-                          className="w-10 h-10 rounded-full bg-fern-green text-naples-yellow border-fern-green"
-                          onClick={handleSaveLabel}
-                        />
-                      ) : (
-                        <Button
-                          icon="pi pi-pencil"
-                          // label="Edit Label"
-                          className="w-10 h-10 rounded-full bg-fern-green text-naples-yellow border-fern-green"
-                          onClick={() => handleEditLabel(index)}
-                        />
-                      )}
+
+                      <div className="flex items-center gap-1">
+                        {editLabel === index ? (
+                          <>
+                            <Button
+                              className="px-4 py-2 flex items-center gap-x-2 !text-white !bg-lime-600 dark:!bg-lime-700 border !border-lime-600 dark:!border-lime-700 !rounded-l-2xl !rounded-r-sm"
+                              onClick={handleSaveLabel}
+                            >
+                              <Check size={16} />
+                              <span>Save Label</span>
+                            </Button>
+                            <Button
+                              className="px-4 py-2 flex items-center gap-x-2 !bg-transparent !border !border-red-300 !text-red-500 hover:!bg-red-50 hover:!border-red-400 dark:!border-red-600 dark:!text-red-400 !rounded-r-2xl !rounded-l-sm"
+                              onClick={() => handleEditLabel(-1)}
+                            >
+                              <X size={16} />
+                              <span>Cancel</span>
+                            </Button>
+                          </>
+                        ) : (
+                          <Button
+                            className="px-4 py-2 flex items-center gap-x-2 !text-white !bg-amber-600 dark:!bg-amber-700 border !border-amber-600 dark:!border-amber-700 !rounded-2xl"
+                            onClick={() => handleEditLabel(index)}
+                          >
+                            <Pencil size={16} />
+                            <span>Edit label</span>
+                          </Button>
+                        )}
+                      </div>
                     </div>
 
                     <div className="w-full flex flex-col gap-y-1 font-content mt-5">
-                      <p className="w-full text-fern-green font-medium rounded-lg">
+                      <p className="font-content text-amber-600 dark:text-amber-400">
                         Coordinates
                       </p>
                       {polygon.points?.map((values, key) => (

@@ -17,6 +17,10 @@ import { useNavigate } from "react-router-dom";
 
 import Layout from "../../Layout/Layout";
 import "./PreviewData.scss";
+import {
+  AMBER_PRIMARY_BTN_STYLES,
+  LIME_PRIMARY_BTN_STYLES,
+} from "../../Services/constants";
 import { Polygon } from "../../Services/interfaces";
 import { usePineappleStore } from "../../Services/zustand";
 import loadingDotsAnimation from "./../../assets/Lottie/loadingDotsAnimation.json";
@@ -333,7 +337,7 @@ const PreviewData = () => {
                     Preview the data before proceeding
                   </p>
                 </div>
-                <div className="w-full xl:w-auto hidden md:flex flex-row-reverse gap-x-4">
+                <div className="w-full xl:w-auto hidden md:flex flex-row-reverse gap-x-1">
                   <Button
                     disabled={
                       state?.imageSelected?.url?.length <= 0 ||
@@ -341,7 +345,7 @@ const PreviewData = () => {
                     }
                     icon="pi pi-thumbs-up"
                     label="Continue"
-                    className="h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-2xl text-metallic-brown bg-naples-yellow border-naples-yellow"
+                    className={`${LIME_PRIMARY_BTN_STYLES} h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-r-2xl !rounded-l-sm`}
                     onClick={() => {
                       startTransition(() => {
                         navigate("/success");
@@ -354,7 +358,7 @@ const PreviewData = () => {
                     icon={"pi pi-list"}
                     label={"Polygons Data"}
                     onClick={() => setShowListOfPolygons(true)}
-                    className="h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-2xl text-naples-yellow border border-naples-yellow bg-transparent"
+                    className={`${AMBER_PRIMARY_BTN_STYLES} h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-l-2xl !rounded-r-sm`}
                   />
                 </div>
               </div>
@@ -365,7 +369,7 @@ const PreviewData = () => {
                     ref={canvasParentRef}
                   >
                     <canvas
-                      className="mx-auto border border-ochre rounded-2xl md:rounded-3xl"
+                      className="mx-auto border border-ochre rounded-xl lg:rounded-2xl"
                       ref={canvasRef}
                     />
                   </div>
@@ -474,7 +478,7 @@ const PreviewData = () => {
                       }}
                     />
 
-                    <p className="w-full text-fern-green font-medium rounded-lg">
+                    <p className="font-content text-amber-600 dark:text-amber-400">
                       Coordinates
                     </p>
                     {polygon.points?.map((values, key) => (

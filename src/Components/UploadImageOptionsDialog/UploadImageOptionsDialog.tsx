@@ -56,7 +56,7 @@ const UploadImageOptionsDialog = ({
             icon={<Upload size={16} />}
             label="Browse System"
             title="Click to browse system"
-            className="h-9 sm:h-10 px-10 text-sm sm:text-base flex items-center rounded-xl gap-2 text-naples-yellow bg-fern-green border-fern-green"
+            className="h-9 sm:h-10 px-10 text-sm sm:text-base flex items-center !rounded-xl gap-2 text-naples-yellow bg-fern-green border-fern-green"
             onClick={() => uploadHandeler()}
           />
           <Button
@@ -64,7 +64,7 @@ const UploadImageOptionsDialog = ({
             icon={<Camera size={16} />}
             label="Capture Image"
             title="Click to open camera"
-            className="h-9 sm:h-10 px-10 text-sm sm:text-base flex items-center rounded-xl gap-2 text-naples-yellow bg-fern-green border-fern-green"
+            className="h-9 sm:h-10 px-10 text-sm sm:text-base flex items-center !rounded-xl gap-2 text-naples-yellow bg-fern-green border-fern-green"
             onClick={() => {
               if (
                 window?.location?.protocol === "https:" ||

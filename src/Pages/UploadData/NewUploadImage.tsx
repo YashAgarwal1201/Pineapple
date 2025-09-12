@@ -173,7 +173,7 @@ const UploadData = () => {
           <div className="lg:col-span-8 xl:col-span-7 flex flex-col">
             <div
               ref={dropZoneRef}
-              className={`flex-1 relative border border-dashed rounded-2xl lg:rounded-3xl cursor-pointer transition-all duration-300 min-h-[320px] sm:min-h-[400px] lg:min-h-[500px] ${
+              className={`flex-1 relative border border-dashed rounded-xl lg:rounded-2xl cursor-pointer transition-all duration-300 min-h-[320px] sm:min-h-[400px] lg:min-h-[500px] ${
                 isDragOver
                   ? "border-amber-500 bg-gradient-to-br from-amber-100/80 to-orange-100/80 dark:from-amber-900/30 dark:to-orange-900/30 scale-[1.01] shadow-2xl"
                   : hasImage
@@ -203,7 +203,7 @@ const UploadData = () => {
                           className="text-white sm:w-12 sm:h-12 lg:w-16 lg:h-16"
                         />
                       </div>
-                      <div className="absolute -bottom-2 -right-2 lg:-bottom-3 lg:-right-3 w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl lg:rounded-3xl flex items-center justify-center shadow-lg">
+                      <div className="absolute -bottom-2 -right-2 lg:-bottom-3 lg:-right-3 w-12 h-12 lg:w-16 lg:h-16 bg-lime-500 dark:bg-lime-600 rounded-2xl lg:rounded-3xl flex items-center justify-center shadow-lg">
                         <FileImage
                           size={20}
                           className="text-white lg:w-6 lg:h-6"
@@ -225,7 +225,7 @@ const UploadData = () => {
                     <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-heading text-amber-700 dark:text-amber-300 font-bold">
                       {isDragOver ? "Drop it here!" : "Ready to Upload"}
                     </h2>
-                    <p className="text-base sm:text-lg lg:text-xl text-amber-600 dark:text-amber-400 font-medium max-w-md mx-auto">
+                    <p className="font-content text-base md:text-lg xl:text-xl text-amber-600 dark:text-amber-400 font-medium max-w-md mx-auto">
                       {isDragOver
                         ? "Release to start the magic ✨"
                         : "Drag your image here or click to browse files"}
