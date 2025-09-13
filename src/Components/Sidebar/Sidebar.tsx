@@ -1,6 +1,6 @@
 import React, { startTransition } from "react";
 
-import { MessageCircleHeart, Palette, Share2, Trash, X } from "lucide-react";
+import { MessageCircleHeart, Palette, Share2, Trash } from "lucide-react";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { Panel } from "primereact/panel";
@@ -94,11 +94,6 @@ const MainSidebar = () => {
       className="side-menu !rounded-none md:!rounded-l-3xl !bg-white dark:!bg-black aboutDialog !w-full md:!w-[768px]"
       // class="!w-full md:!w-[768px] rounded-none md:!rounded-l-xl bg-stone-50 dark:bg-stone-900 font-content !text-green-700 dark:!text-green-300"
       position="right"
-      closeIcon={
-        <span className=" text-naples-yellow">
-          <X size={16} />
-        </span>
-      }
       maskClassName="backdrop-blur"
     >
       <div className="w-full px-4 py-4 bg-amber-50 dark:bg-stone-900 rounded-3xl overflow-y-auto text-stone-700 dark:text-stone-300 font-content">
@@ -116,8 +111,8 @@ const MainSidebar = () => {
             value={theme}
             options={themeOptions}
             onChange={(e) => setTheme(e.value)}
-            className="w-40 py-1 px-2 bg-transparent border border-stone-200 dark:border-stone-700 *:text-gray-600 dark:*:text-white *:text-sm !rounded-lg"
-            panelClassName="p-2 mt-2 flex flex-col gap-y-2 !rounded-lg"
+            className="w-40 font-content py-1 px-2 !bg-transparent border !border-stone-200 dark:!border-stone-700 *:!text-gray-600 dark:*:!text-white *:text-sm !rounded-lg"
+            panelClassName="p-2 mt-2 flex flex-col gap-y-2 !rounded-lg *:!rounded-lg *:font-content"
           />
         </div>
 
@@ -239,16 +234,17 @@ const MainSidebar = () => {
           toggleable
           collapsed
         >
-          <div className="flex justify-between flex-wrap items-center gap-3">
-            <p>Do you want to clear your data?</p>
+          <div className="flex justify-between flex-wrap items-center gap-3 font-content">
+            <p>Do you want to clear your data? This action is irreversible</p>
             <Button
-              icon="pi pi-trash"
-              label="Clear Data"
-              className="rounded-full py-2 px-4 flex justify-center items-center gap-x-2 bg-ochre text-naples-yellow"
+              className="!rounded-2xl py-2 px-4 flex justify-center items-center gap-x-2 bg-ochre text-naples-yellow"
               onClick={() => {
                 deleteAllData();
               }}
-            />
+            >
+              <Trash size={16} />
+              <span>Clear data</span>
+            </Button>
           </div>
         </Panel>
       </div>

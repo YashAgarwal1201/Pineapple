@@ -8,6 +8,10 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { Sidebar } from "primereact/sidebar";
 import { SubmitHandler, useForm } from "react-hook-form";
 
+import {
+  LIME_PRIMARY_BTN_STYLES,
+  RED_SECONDARY_BTN_STYLES,
+} from "../../Services/constants";
 import { FeedbackFormType } from "../../Services/interfaces";
 import { usePineappleStore } from "../../Services/zustand";
 
@@ -46,7 +50,8 @@ const FeedbackDialog = () => {
       };
 
       const response = await fetch(
-        "/api-services/pineapple/feedback-form-data",
+        import.meta.env.VITE_BASE_API_URL +
+          "api-services/pineapple/feedback-form-data",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -176,12 +181,12 @@ const FeedbackDialog = () => {
             />
           </div>
           <div className="mx-2 my-1 p-0 max-w-full h-[1.5px] bg-stone-200 dark:bg-stone-700" />
-          <div className="w-full py-0 flex flex-row items-center flex-1 gap-2 sm:gap-3 rounded-xl">
+          <div className="w-full py-4 px-2 flex flex-row items-center flex-1 gap-1 rounded-xl">
             <Button
               disabled={loader}
               type="button"
               onClick={() => onDiscard()}
-              className=" flex-1 flex justify-center items-center gap-x-2 py-2 px-4 text-rose-600 dark:text-rose-400 font-content !bg-transparent !rounded-full"
+              className={`${RED_SECONDARY_BTN_STYLES} flex-1 flex justify-center items-center gap-x-2 py-2 px-4 font-content !bg-transparent !rounded-l-2xl !rounded-r-sm`}
             >
               <span className="pi pi-trash mr-4"></span>
               <span>Discard</span>
@@ -190,7 +195,7 @@ const FeedbackDialog = () => {
             <Button
               type="submit"
               disabled={!isValid || loader}
-              className="disabled:opacity-50  flex-1 flex justify-center gap-x-2 items-center py-2 px-4 bg-rose-600 dark:bg-rose-400  !border-none !rounded-full"
+              className={`${LIME_PRIMARY_BTN_STYLES} flex-1 flex justify-center items-center gap-x-2 py-2 px-4 font-content !bg-transparent !rounded-r-2xl !rounded-l-sm`}
             >
               <span className="pi pi-send mr-4"></span>
               <span>{loader ? "Sending..." : "Send"}</span>

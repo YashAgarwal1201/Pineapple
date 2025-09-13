@@ -11,6 +11,7 @@ import {
   Check,
   FileImage,
   Image as ImageIcon,
+  RefreshCcw,
   Sparkles,
   Trash,
   Upload,
@@ -23,7 +24,7 @@ import { useNavigate } from "react-router-dom";
 import CaptureImageLibrary from "../../Components/CaptureImage/CaptureImage";
 import UploadImageOptionsDialog from "../../Components/UploadImageOptionsDialog/UploadImageOptionsDialog";
 import Layout from "../../Layout/Layout";
-import "./UploadData.scss";
+import { RED_SECONDARY_BTN_STYLES } from "../../Services/constants";
 import { usePineappleStore } from "../../Services/zustand";
 
 const UploadData = () => {
@@ -260,7 +261,7 @@ const UploadData = () => {
                         src={state.imageSelected.url}
                         alt="Selected image preview"
                         preview
-                        className="w-full h-full object-cover rounded-2xl lg:rounded-3xl *:w-full *:h-full *:object-cover *:rounded-2xl lg:*:rounded-3xl"
+                        className="w-full h-full object-cover rounded-xl lg:rounded-2xl *:w-full *:h-full *:object-cover *:rounded-xl lg:*:rounded-2xl"
                         onError={handleImageError}
                       />
 
@@ -283,16 +284,16 @@ const UploadData = () => {
 
                       {/* Change image button */}
                       <Button
-                        icon="pi pi-sync"
-                        rounded
-                        className="absolute top-4 lg:top-6 right-4 lg:right-6 !w-12 !h-12 lg:!w-14 lg:!h-14 bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border border-white/30 shadow-xl transition-all duration-200 hover:scale-105 backdrop-blur-sm"
+                        className="!rounded-full !absolute !top-4 lg:!top-6 !right-4 lg:right-6 !w-10 !h-10 lg:!w-12 lg:!h-12 !bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 !text-white !border-0"
                         type="button"
                         title="Change image"
                         onClick={(e) => {
                           e.stopPropagation();
                           setShowOptions(true);
                         }}
-                      />
+                      >
+                        <RefreshCcw size={16} />
+                      </Button>
                     </>
                   ) : (
                     // Error state
@@ -328,7 +329,7 @@ const UploadData = () => {
               <div className="flex flex-col gap-y-1">
                 <Button
                   className="w-full h-9 lg:h-10 flex items-center justify-center gap-3 !rounded-t-2xl !rounded-b-sm text-sm lg:text-base !text-white !bg-amber-800 dark:bg-amber-900 !border-0"
-                  onClick={() => setShowOptions(true)}
+                  onClick={() => uploadHandeler()}
                 >
                   <Upload size={18} />
                   <span>Browse Files</span>
@@ -360,7 +361,7 @@ const UploadData = () => {
                   </Button>
                   <Button
                     title="Remove the selected image"
-                    className="w-full h-9 lg:h-10 flex items-center justify-center gap-3 !rounded-b-2xl !rounded-t-sm text-sm lg:text-base font-semibold !bg-transparent !border !border-red-300 !text-red-500 hover:!bg-red-50 hover:!border-red-400 dark:!border-red-600 dark:!text-red-400 dark:hover:!bg-red-900/20 transition-all duration-200"
+                    className={`"w-full h-9 lg:h-10 flex items-center justify-center gap-3 !rounded-b-2xl !rounded-t-sm text-sm lg:text-base ${RED_SECONDARY_BTN_STYLES}`}
                     onClick={removeHandeler}
                   >
                     <Trash size={16} />
