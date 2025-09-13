@@ -12,6 +12,10 @@ import { Button } from "primereact/button";
 import { SpeedDial } from "primereact/speeddial";
 import { useNavigate } from "react-router-dom";
 
+import {
+  AMBER_PRIMARY_BTN_STYLES,
+  LIME_PRIMARY_BTN_STYLES,
+} from "../../Services/constants";
 import { generateRandomColor } from "../../Services/functionServices";
 import "./PolygonDrawer.scss";
 import { Polygon } from "../../Services/interfaces";
@@ -354,7 +358,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                 Identify and select the correct annotations in the image
               </p>
             </div>
-            <div className="w-full xl:w-auto hidden md:flex flex-row-reverse gap-x-4">
+            <div className="w-full xl:w-auto hidden md:flex flex-row-reverse gap-x-1">
               <Button
                 disabled={
                   state?.imageSelected?.url?.length <= 0 ||
@@ -362,7 +366,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                 }
                 icon="pi pi-thumbs-up"
                 label="Save & Continue"
-                className="h-10 px-2 md:px-5 text-sm sm:text-base  flex items-center gap-2 !rounded-2xl text-metallic-brown bg-naples-yellow border-naples-yellow"
+                className={`${LIME_PRIMARY_BTN_STYLES} h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-r-2xl !rounded-l-sm`}
                 onClick={() => {
                   // console.log(canvasRef?.current?.getContext("2d"));
                   startTransition(() => {
@@ -375,7 +379,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                   disabled={state.imageSelected.url === ""}
                   icon="pi pi-pencil"
                   label="Add Polygon"
-                  className="h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-2xl text-naples-yellow border border-naples-yellow bg-transparent"
+                  className={`${AMBER_PRIMARY_BTN_STYLES} h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-l-sm !rounded-r-sm`}
                   onClick={() => setAddNew(true)}
                 />
               )}
@@ -384,7 +388,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                   icon="pi pi-check"
                   label="Complete Polygon"
                   onClick={handleCompletePolygon}
-                  className="h-10 px-2 md:px-5 text-xs sm:text-sm flex items-center gap-2 !rounded-2xl text-naples-yellow border border-naples-yellow bg-transparent"
+                  className={`${AMBER_PRIMARY_BTN_STYLES} h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-l-sm !rounded-r-sm`}
                 />
               )}
 
@@ -397,7 +401,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                     : `${state.polygons?.length}`
                 })
                     `}
-                className="h-10 px-2 md:px-5 flex items-center gap-2 !rounded-2xl text-sm sm:text-base text-naples-yellow border border-naples-yellow bg-transparent"
+                className={`${AMBER_PRIMARY_BTN_STYLES} h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-l-2xl !rounded-r-sm`}
                 onClick={() => setShowListOfPolygons(true)}
               />
             </div>
@@ -409,7 +413,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                 ref={canvasParentRef}
               >
                 <canvas
-                  className="mx-auto border border-ochre rounded-2xl md:rounded-3xl"
+                  className="mx-auto border border-ochre rounded-xl lg:rounded-2xl"
                   ref={canvasRef}
                   onClick={(e) => (addNew ? handleCanvasClick(e) : "")}
                   // width={canvasParentRef?.current?.clientWidth}
