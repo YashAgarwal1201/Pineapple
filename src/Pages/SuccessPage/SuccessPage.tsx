@@ -110,28 +110,36 @@ const SuccessPage = () => {
             </div>
           </div>
 
-          <div className="w-full md:w-1/2 h-auto md:h-full flex flex-col justify-center items-center gap-y-10">
+          <div className="w-full md:w-1/2 h-auto md:h-full flex flex-col justify-center items-center gap-y-10 p-2">
             <h1 className="text-center font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-lime-700 dark:text-lime-400 select-none">
               <span className="text-amber-700 dark:text-amber-300 ">
                 Thank you for using
               </span>{" "}
               Project Pineapple
             </h1>
-            <div className="w-full flex flex-row flex-wrap justify-center items-center gap-x-1 font-content">
+            <div className="w-full flex flex-col xs:flex-row justify-center items-center gap-1 font-content">
               <Button
                 loading={loader}
-                className={`${LIME_PRIMARY_BTN_STYLES} !rounded-l-2xl !rounded-r-sm flex-shrink-0 text-sm sm:text-base flex items-center gap-x-2 !font-content`}
                 onClick={async () => {
                   setLoader(true);
                   await clearSessionStorageAndNavigate();
                 }}
+                className={`${LIME_PRIMARY_BTN_STYLES}
+      w-full xs:w-auto
+      flex items-center justify-center xs:justify-start gap-x-2
+      text-sm sm:text-base !font-content xs:flex-shrink-0
+  
+      !rounded-tl-2xl !rounded-tr-2xl !rounded-bl-sm !rounded-br-sm
+     
+      xs:!rounded-tl-2xl xs:!rounded-bl-2xl xs:!rounded-tr-sm xs:!rounded-br-sm
+    `}
               >
-                <RefreshCcw size={20} />
+                <RefreshCcw size={16} />
                 <span>Start again</span>
               </Button>
+
               <Button
                 disabled={polygons.length < 1 || loader}
-                className={`${AMBER_PRIMARY_BTN_STYLES} !rounded-l-sm !rounded-r-2xl flex-shrink-0 text-sm sm:text-base flex items-center gap-x-2  !font-content`}
                 onClick={() => {
                   console.log("Download data", polygons, annotatedCanvasImage);
                   downloadPolygonsData(
@@ -140,25 +148,18 @@ const SuccessPage = () => {
                     showToast
                   );
                 }}
+                className={`${AMBER_PRIMARY_BTN_STYLES}
+      w-full xs:w-auto
+      flex items-center justify-center xs:justify-start gap-x-2
+      text-sm sm:text-base !font-content xs:flex-shrink-0
+      
+      !rounded-bl-2xl !rounded-br-2xl !rounded-tl-sm !rounded-tr-sm      
+      xs:!rounded-tr-2xl xs:!rounded-br-2xl xs:!rounded-tl-sm xs:!rounded-bl-sm
+    `}
               >
-                <Download size={20} />
+                <Download size={16} />
                 <span>Download data</span>
               </Button>
-              {/* {!loader ? (
-                <a
-                  title="check developer profile"
-                  href={"https://yashagarwal1201.github.io/"}
-                  rel="noopener noreferrer nofollow"
-                  target="_blank"
-                  className="w-12 h-12 flex justify-center items-center text-sm sm:text-base bg-naples-yellow text-metallic-brown border-0 rounded-full"
-                >
-                  <span className="pi pi-user text-sm"></span>
-                </a>
-              ) : (
-                <div className="w-12 h-12 flex justify-center items-center text-sm sm:text-base bg-naples-yellow text-metallic-brown border-0 rounded-full opacity-50 cursor-not-allowed">
-                  <span className="pi pi-user text-sm"></span>
-                </div>
-              )} */}
             </div>
           </div>
         </div>
