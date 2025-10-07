@@ -12,6 +12,10 @@ import { Button } from "primereact/button";
 import { SpeedDial } from "primereact/speeddial";
 import { useNavigate } from "react-router-dom";
 
+import {
+  AMBER_PRIMARY_BTN_STYLES,
+  LIME_PRIMARY_BTN_STYLES,
+} from "../../Services/constants";
 import { generateRandomColor } from "../../Services/functionServices";
 import "./PolygonDrawer.scss";
 import { Polygon } from "../../Services/interfaces";
@@ -307,7 +311,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
 
       disabled: !addNew && state.imageSelected.url === "",
       className:
-        "bg-transparent text-naples-yellow border-2 border-naples-yellow hover:bg-naples-yellow hover:text-metallic-brown",
+        "bg-transparent text-naples-yellow border border-naples-yellow hover:bg-naples-yellow hover:text-metallic-brown",
     },
     {
       label: "Show Polygons List",
@@ -315,11 +319,11 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
       command: () => setShowListOfPolygons(true),
       disabled: state.polygons.length < 1,
       className:
-        "bg-transparent text-naples-yellow border-2 border-naples-yellow hover:bg-naples-yellow hover:text-metallic-brown",
+        "bg-transparent text-naples-yellow border border-naples-yellow hover:bg-naples-yellow hover:text-metallic-brown",
       // template: (item, options) => (
       //   <Button
       //     {...options}
-      //     className={`bg-transparent text-naples-yellow border-2 border-naples-yellow hover:bg-naples-yellow hover:text-metallic-brown relative`}
+      //     className={`bg-transparent text-naples-yellow border border-naples-yellow hover:bg-naples-yellow hover:text-metallic-brown relative`}
       //   >
       //     <i className={item.icon}></i>
       //     {state.polygons.length > 0 && (
@@ -338,7 +342,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
   return (
     <>
       <div
-        className={`customScrollbar h-full p-2 sm:p-4 flex flex-col justify-around items-center bg-metallic-brown rounded-2xl sm:rounded-3xl shadow-md overflow-y-auto transition-all duration-1000 transform ${
+        className={`customScrollbar h-full p-2 sm:p-4 flex flex-col justify-around items-center bg-amber-50 dark:bg-stone-900 rounded-xl sm:rounded-2xl shadow-md overflow-y-auto transition-all duration-1000 transform ${
           showContent
             ? "translate-y-0 opacity-100"
             : "-translate-y-full opacity-0"
@@ -347,14 +351,14 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
         <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5 overflow-y-auto">
           <div className="px-2 md:px-0 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-y-3">
             <div className="flex flex-col gap-1">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-heading text-naples-yellow">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-heading text-amber-700 dark:text-amber-300 font-bold">
                 Draw required polygons
               </h1>
-              <p className="text-sm sm:text-base md:text-lg text-bud-green font-content font-medium">
+              <p className="text-sm sm:text-base md:text-lg font-content text-amber-600 dark:text-amber-400 font-medium">
                 Identify and select the correct annotations in the image
               </p>
             </div>
-            <div className="w-full xl:w-auto hidden md:flex flex-row-reverse gap-x-4">
+            <div className="w-full xl:w-auto hidden md:flex flex-row-reverse gap-x-1">
               <Button
                 disabled={
                   state?.imageSelected?.url?.length <= 0 ||
@@ -362,7 +366,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                 }
                 icon="pi pi-thumbs-up"
                 label="Save & Continue"
-                className="h-10 px-2 md:px-5 text-sm sm:text-base  flex items-center gap-2 rounded-2xl text-metallic-brown bg-naples-yellow border-naples-yellow"
+                className={`${LIME_PRIMARY_BTN_STYLES} h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-r-2xl !rounded-l-sm`}
                 onClick={() => {
                   // console.log(canvasRef?.current?.getContext("2d"));
                   startTransition(() => {
@@ -375,7 +379,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                   disabled={state.imageSelected.url === ""}
                   icon="pi pi-pencil"
                   label="Add Polygon"
-                  className="h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 rounded-2xl text-naples-yellow border border-naples-yellow bg-transparent"
+                  className={`${AMBER_PRIMARY_BTN_STYLES} h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-l-sm !rounded-r-sm`}
                   onClick={() => setAddNew(true)}
                 />
               )}
@@ -384,7 +388,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                   icon="pi pi-check"
                   label="Complete Polygon"
                   onClick={handleCompletePolygon}
-                  className="h-10 px-2 md:px-5 text-xs sm:text-sm flex items-center gap-2 rounded-2xl text-naples-yellow border border-naples-yellow bg-transparent"
+                  className={`${AMBER_PRIMARY_BTN_STYLES} h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-l-sm !rounded-r-sm`}
                 />
               )}
 
@@ -397,7 +401,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                     : `${state.polygons?.length}`
                 })
                     `}
-                className="h-10 px-2 md:px-5 flex items-center gap-2 rounded-2xl text-sm sm:text-base text-naples-yellow border border-naples-yellow bg-transparent"
+                className={`${AMBER_PRIMARY_BTN_STYLES} h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-l-2xl !rounded-r-sm`}
                 onClick={() => setShowListOfPolygons(true)}
               />
             </div>
@@ -409,7 +413,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                 ref={canvasParentRef}
               >
                 <canvas
-                  className="mx-auto border-2 border-ochre rounded-2xl md:rounded-3xl"
+                  className="mx-auto border border-ochre rounded-xl lg:rounded-2xl"
                   ref={canvasRef}
                   onClick={(e) => (addNew ? handleCanvasClick(e) : "")}
                   // width={canvasParentRef?.current?.clientWidth}

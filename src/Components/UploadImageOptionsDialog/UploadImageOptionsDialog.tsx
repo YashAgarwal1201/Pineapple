@@ -36,7 +36,7 @@ const UploadImageOptionsDialog = ({
         setOpenCamera(false);
       }}
       header={
-        <h2 className="text-lg sm:text-xl md:text-2xl font-heading">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-lime-700 dark:text-lime-400">
           Choose options
         </h2>
       }
@@ -45,26 +45,25 @@ const UploadImageOptionsDialog = ({
       dismissableMask={true}
       className={`${
         openCamera ? "h-[90dvh] sm:h-auto" : "h-auto"
-      } reusableDialog w-full md:w-2/3 lg:w-[500px] absolute bottom-0 md:bottom-auto !m-0`}
+      } w-full max-w-sm absolute bottom-0 md:bottom-auto !m-0 !border-0 !bg-white dark:!bg-black !rounded-3xl overflow-y-auto text-stone-700 dark:text-stone-300`}
       position={isSmallScreen ? "bottom" : "center"}
       maskClassName="backdrop-blur"
     >
-      <div className="pt-1 w-full h-full">
-        <div className="w-full flex flex-row flex-wrap justify-center lg:justify-around items-center gap-x-2 gap-y-2 font-content">
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="w-full xs:max-w-[90%] flex flex-col flex-wrap justify-center items-center gap-y-1 font-content">
           <Button
             type="button"
-            icon={<Upload size={16} />}
-            label="Browse System"
             title="Click to browse system"
-            className="h-9 sm:h-10 px-10 text-sm sm:text-base flex items-center rounded-xl gap-2 text-naples-yellow bg-fern-green border-fern-green"
+            className="w-full h-9 lg:h-10 flex items-center justify-center gap-3 !rounded-t-2xl !rounded-b-sm text-sm lg:text-base !text-white !bg-amber-800 dark:bg-amber-900 !border-0"
             onClick={() => uploadHandeler()}
-          />
+          >
+            <Upload size={16} />
+            <span>Browse System</span>
+          </Button>
           <Button
             type="button"
-            icon={<Camera size={16} />}
-            label="Capture Image"
             title="Click to open camera"
-            className="h-9 sm:h-10 px-10 text-sm sm:text-base flex items-center rounded-xl gap-2 text-naples-yellow bg-fern-green border-fern-green"
+            className="w-full h-9 lg:h-10 flex items-center justify-center gap-3 !rounded-b-2xl !rounded-t-sm text-sm lg:text-base !text-white !bg-amber-800 dark:bg-amber-900 !border-0"
             onClick={() => {
               if (
                 window?.location?.protocol === "https:" ||
@@ -80,7 +79,10 @@ const UploadImageOptionsDialog = ({
                 );
               }
             }}
-          />
+          >
+            <Camera size={16} />
+            <span>Capture Image</span>
+          </Button>
         </div>
       </div>
     </Dialog>

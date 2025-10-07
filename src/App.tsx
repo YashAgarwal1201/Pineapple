@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { Toast } from "primereact/toast";
 import { Outlet } from "react-router-dom";
 
-import "./App.scss";
+import "./App.css";
 import { usePineappleStore } from "./Services/zustand";
 
 export function App() {
@@ -18,7 +18,7 @@ export function App() {
   }, [setToastRef]);
 
   return (
-    <div className="w-screen h-[100dvh]">
+    <div className="w-screen h-[100dvh] bg-amber-50 dark:bg-amber-900">
       <Toast ref={toastRef} position="top-left" />
       <Outlet />
     </div>

@@ -1,15 +1,18 @@
 import { startTransition, useEffect, useState } from "react";
 
-import { ArrowLeft } from "lucide-react";
+import { Download, RefreshCcw } from "lucide-react";
 import { Button } from "primereact/button";
-import Lottie from "react-lottie-player";
 import { useNavigate } from "react-router-dom";
 
+import PineappleLoader from "../../Components/Loaders/Loaders";
 import Layout from "../../Layout/Layout";
+import {
+  AMBER_PRIMARY_BTN_STYLES,
+  LIME_PRIMARY_BTN_STYLES,
+} from "../../Services/constants";
 import { downloadPolygonsData } from "../../Services/functionServices";
 import "./SuccessPage.scss";
 import { usePineappleStore } from "../../Services/zustand";
-import loadingDotsAnimation from "./../../assets/Lottie/loadingDotsAnimation.json";
 
 const SuccessPage = () => {
   const navigate = useNavigate();
@@ -64,30 +67,25 @@ const SuccessPage = () => {
     <Layout>
       {loading ? (
         <div className="w-full h-full p-3 flex flex-col justify-center items-center gap-y-3">
-          <Lottie
-            loop
-            animationData={loadingDotsAnimation}
-            play
-            className="w-1/2 h-fit"
-          />
+          <PineappleLoader variant="spinner" />
           <p className="font-heading text-xl sm:text-2xl text-center text-metallic-brown">
-            No image found. Navigating to home page.
+            No data found. Navigating to home page.
           </p>
         </div>
       ) : (
         <div
-          className={`h-full p-3 flex flex-col md:flex-row justify-center items-center gap-y-10 md:gap-y-auto text-naples-yellow bg-metallic-brown rounded-lg shadow-md transition-all duration-1000 transform ${
+          className={`h-full p-3 flex flex-col md:flex-row justify-center items-center gap-y-10 md:gap-y-auto text-naples-yellow bg-amber-50 dark:bg-stone-900 rounded-xl sm:rounded-2xl shadow-md transition-all duration-1000 transform ${
             showContent
               ? "translate-y-0 md:translate-x-0 opacity-100"
               : "-translate-y-0 md:-translate-x-full opacity-0"
           } relative`}
         >
-          <Button
+          {/* <Button
             icon={<ArrowLeft size={20} />}
             title="go back button"
-            className={` aspect-square absolute top-3 left-3 text-naples-yellow bg-fern-green border-0 rounded-3xl`}
+            className={`aspect-square !absolute top-3 left-3 !bg-amber-400 hover:!bg-amber-500 !text-stone-900 dark:!bg-amber-500 dark:hover:!bg-amber-600 dark:!text-stone-900 !border-0 !rounded-full`}
             onClick={() => window.history.go(-1)}
-          />
+          /> */}
           <div className="w-full md:w-1/2 h-auto md:h-full flex justify-center items-center">
             <div className="w-[300px] sm:w-[350px] h-[300px] sm:h-[350px] relative">
               <img
@@ -95,47 +93,47 @@ const SuccessPage = () => {
                 alt=""
                 className="w-full h-full object-contain"
               />
-              <div className="absolute right-16 top-28 sm:top-32">
+              <div className="!absolute right-16 top-28 sm:top-32">
                 <div className="p-5 md:p-7 bg-transparent rounded-full relative">
-                  <span className="success-check pi pi-check w-12 h-12 flex justify-center items-center z-10 text-naples-yellow bg-fern-green rounded-full"></span>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 h-16 border-2 border-dashed border-fern-green rounded-full animate-spin duration-5000"></div>
+                  <span className="success-check pi pi-check w-12 h-12 flex justify-center items-center z-10 bg-lime-500 dark:bg-lime-400 rounded-full"></span>
+                  <div className="!absolute inset-0 flex items-center justify-center">
+                    <div className="w-16 h-16 border border-dashed border-lime-500 dark:border-lime-400 rounded-full animate-spin duration-5000"></div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="w-full md:w-1/2 h-auto md:h-full flex flex-col justify-center items-center gap-y-10">
-            <h1 className="text-center font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-naples-yellow select-none">
-              <span className="text-bud-green">Thank you for using</span>{" "}
+          <div className="w-full md:w-1/2 h-auto md:h-full flex flex-col justify-center items-center gap-y-10 p-2">
+            <h1 className="text-center font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-lime-700 dark:text-lime-400 select-none">
+              <span className="text-amber-700 dark:text-amber-300 ">
+                Thank you for using
+              </span>{" "}
               Project Pineapple
             </h1>
-            <div className="w-full flex flex-row justify-center items-center gap-x-3 lg:gap-x-5 gap-y-2 font-content">
-              {/* <Button
-              icon="pi pi-angle-left"
-              title="go back button"
-              rounded
-              className={` text-naples-yellow bg-fern-green border-0`}
-              onClick={() => window.history.go(-1)}
-            /> */}
+            <div className="w-full flex flex-col xs:flex-row justify-center items-center gap-1 font-content">
               <Button
                 loading={loader}
-                icon="pi pi-times"
-                title="Close & Restart"
-                rounded
-                className=" text-sm sm:text-base text-naples-yellow bg-transparent border xs:border-2 border-naples-yellow"
                 onClick={async () => {
                   setLoader(true);
                   await clearSessionStorageAndNavigate();
                 }}
-              />
+                className={`${LIME_PRIMARY_BTN_STYLES}
+      w-full xs:w-auto
+      flex items-center justify-center xs:justify-start gap-x-2
+      text-sm sm:text-base !font-content xs:flex-shrink-0
+  
+      !rounded-tl-2xl !rounded-tr-2xl !rounded-bl-sm !rounded-br-sm
+     
+      xs:!rounded-tl-2xl xs:!rounded-bl-2xl xs:!rounded-tr-sm xs:!rounded-br-sm
+    `}
+              >
+                <RefreshCcw size={16} />
+                <span>Start again</span>
+              </Button>
+
               <Button
                 disabled={polygons.length < 1 || loader}
-                icon="pi pi-download"
-                title="Download data"
-                rounded
-                className=" text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
                 onClick={() => {
                   console.log("Download data", polygons, annotatedCanvasImage);
                   downloadPolygonsData(
@@ -144,22 +142,18 @@ const SuccessPage = () => {
                     showToast
                   );
                 }}
-              />
-              {!loader ? (
-                <a
-                  title="check developer profile"
-                  href={"https://yashagarwal1201.github.io/"}
-                  rel="noopener noreferrer nofollow"
-                  target="_blank"
-                  className="w-12 h-12 flex justify-center items-center text-sm sm:text-base bg-naples-yellow text-metallic-brown border-0 rounded-full"
-                >
-                  <span className="pi pi-user text-sm"></span>
-                </a>
-              ) : (
-                <div className="w-12 h-12 flex justify-center items-center text-sm sm:text-base bg-naples-yellow text-metallic-brown border-0 rounded-full opacity-50 cursor-not-allowed">
-                  <span className="pi pi-user text-sm"></span>
-                </div>
-              )}
+                className={`${AMBER_PRIMARY_BTN_STYLES}
+      w-full xs:w-auto
+      flex items-center justify-center xs:justify-start gap-x-2
+      text-sm sm:text-base !font-content xs:flex-shrink-0
+      
+      !rounded-bl-2xl !rounded-br-2xl !rounded-tl-sm !rounded-tr-sm      
+      xs:!rounded-tr-2xl xs:!rounded-br-2xl xs:!rounded-tl-sm xs:!rounded-bl-sm
+    `}
+              >
+                <Download size={16} />
+                <span>Download data</span>
+              </Button>
             </div>
           </div>
         </div>
