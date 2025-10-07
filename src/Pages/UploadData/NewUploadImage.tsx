@@ -149,7 +149,7 @@ const UploadData = () => {
   return (
     <Layout>
       <div
-        className={`h-full p-3 sm:p-4 lg:p-6 xl:p-8 flex flex-col bg-amber-50 dark:bg-stone-900 overflow-y-auto rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-md transition-all duration-1000 transform ${
+        className={`h-full p-3 sm:p-4 lg:p-6 xl:p-8 overflow-y-auto flex flex-col bg-amber-50 dark:bg-stone-900 rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-md transition-all duration-1000 transform ${
           showContent
             ? "translate-y-0 opacity-100"
             : "-translate-y-full opacity-0"
@@ -169,12 +169,12 @@ const UploadData = () => {
         </div>
 
         {/* Main Content - Responsive Grid Layout */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-12 min-h-0">
+        <div className="w-full flex-grow h-full flex flex-col lg:flex-row gap-5 min-h-0">
           {/* Upload Zone - Takes more space on large screens */}
-          <div className="lg:col-span-8 xl:col-span-7 flex flex-col">
+          <div className="flex-grow max-h-full w-full lg:w-4/6 flex flex-row">
             <div
               ref={dropZoneRef}
-              className={`flex-1 relative border border-dashed rounded-xl lg:rounded-2xl cursor-pointer transition-all duration-300 min-h-[320px] sm:min-h-[400px] lg:min-h-[500px] ${
+              className={`w-full h-full relative border border-dashed rounded-xl lg:rounded-2xl cursor-pointer transition-all duration-300 ${
                 isDragOver
                   ? "border-amber-500 bg-gradient-to-br from-amber-100/80 to-orange-100/80 dark:from-amber-900/30 dark:to-orange-900/30 scale-[1.01] shadow-2xl"
                   : hasImage
@@ -320,7 +320,7 @@ const UploadData = () => {
           </div>
 
           {/* Sidebar - Options and Actions */}
-          <div className="lg:col-span-4 xl:col-span-5 flex flex-col gap-6 lg:gap-8">
+          <div className="h-full w-full lg:w-2/6 flex flex-col gap-5">
             {/* Quick Actions - Always visible */}
             <div className="bg-white/60 dark:bg-black/20 backdrop-blur-sm rounded-xl lg:rounded-2xl p-4 lg:p-5 xl:p-6 shadow-lg border border-amber-200/50 dark:border-amber-800/50">
               <h3 className="text-lg lg:text-xl font-heading font-bold text-amber-700 dark:text-amber-300 mb-4 lg:mb-6">
@@ -380,10 +380,6 @@ const UploadData = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-blue-500 mt-1">•</span>
                   <span>Use high-quality images for better results</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-500 mt-1">•</span>
-                  <span>Ensure good lighting and clear focus</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-blue-500 mt-1">•</span>

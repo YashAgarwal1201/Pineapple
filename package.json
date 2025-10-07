@@ -1,8 +1,8 @@
 {
-  "name": "vite-project",
+  "name": "pineapple",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://yashagarwal1201.github.io/Pineapple/",
+  "homepage": "https://project-pineapple.vercel.app/",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.12",
-    "lucide-react": "^0.541.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.545.0",
     "primeicons": "^7.0.0",
     "primereact": "^10.8.4",
     "react": "^18.2.0",

@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { usePineappleStore } from "../../Services/zustand";
 
-const Header = () => {
+const Navbar = () => {
   const navigate = useNavigate();
   const { toggleSideMenu } = usePineappleStore();
 
@@ -63,4 +63,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default Navbar;
