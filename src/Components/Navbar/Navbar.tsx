@@ -4,26 +4,25 @@ import { ArrowLeft, Menu } from "lucide-react";
 import { Button } from "primereact/button";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const Header = ({
-  setShowSidebar,
-}: {
-  setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+import { usePineappleStore } from "../../Services/zustand";
+
+const Navbar = () => {
   const navigate = useNavigate();
+  const { toggleSideMenu } = usePineappleStore();
 
   // const location = useLocation();
   const { pathname } = useLocation();
 
   return (
-    <div className="w-full h-full p-1 flex flex-row md:flex-col justify-between items-center bg-metallic-brown rounded-br-2xl rounded-bl-2xl md:rounded-bl-none rounded-tr-none md:rounded-tr-2xl shadow-md">
+    <div className="w-full h-full p-1 flex flex-row md:flex-col justify-between items-center">
       <Button
         disabled={pathname === "/"}
         icon={<ArrowLeft size={20} />}
         title="go back"
-        className={`w-auto md:w-full h-full md:h-auto aspect-square rounded-2xl md:rounded-3xl ${
+        className={`!w-auto md:!w-full h-full md:h-auto aspect-square !rounded-2xl !border-none ${
           pathname === "/"
             ? "text-transparent bg-transparent"
-            : "text-naples-yellow "
+            : "!bg-amber-400 hover:!bg-amber-500 !text-stone-900 dark:!bg-amber-500 dark:hover:!bg-amber-600 dark:!text-stone-900"
         } border-0`}
         onClick={() => {
           if (pathname.includes("/upload-image")) {
@@ -57,19 +56,11 @@ const Header = ({
 
       <Button
         icon={<Menu size={20} />}
-        className="w-auto md:w-full h-full md:h-auto aspect-square rounded-2xl md:rounded-3xl text-naples-yellow "
-        onClick={() => setShowSidebar(true)}
+        className="!w-auto md:!w-full h-full md:h-auto aspect-square !border-none !rounded-2xl !bg-lime-500 hover:!bg-lime-600 !text-white dark:!bg-lime-600 dark:hover:!bg-lime-700 "
+        onClick={() => toggleSideMenu()}
       />
-      {/* <a
-        title="check developer profile"
-        href={"https://yashagarwal1201.github.io/"}
-        target="_blank"
-        className="!h-8 !w-8 flex justify-center items-center bg-fern-green text-naples-yellow border-0 rounded-full"
-      >
-        <span className="pi pi-user text-sm"></span>
-      </a> */}
     </div>
   );
 };
 
-export default Header;
+export default Navbar;

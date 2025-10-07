@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
 
-import { ArrowUp, Trash, X } from "lucide-react";
+import { ArrowUp, Check, Pencil, Trash, X } from "lucide-react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Panel } from "primereact/panel";
 import { ScrollTop } from "primereact/scrolltop";
 import { Sidebar } from "primereact/sidebar";
-import Lottie from "react-lottie-player";
 import { useNavigate } from "react-router-dom";
 
+import PineappleLoader from "../../Components/Loaders/Loaders";
 import PolygonDrawer from "../../Components/PolygonDrawer/PolygonDrawer";
 import Layout from "../../Layout/Layout";
 import { Polygon } from "../../Services/interfaces";
 import { usePineappleStore } from "../../Services/zustand";
-import loadingDotsAnimation from "./../../assets/Lottie/loadingDotsAnimation.json";
 
 const DrawPolygon = () => {
   const navigate = useNavigate();
@@ -125,12 +124,7 @@ const DrawPolygon = () => {
     <Layout>
       {loading ? (
         <div className="w-full h-full p-3 flex flex-col justify-center items-center gap-y-3">
-          <Lottie
-            loop
-            animationData={loadingDotsAnimation}
-            play
-            className="w-1/2 h-fit"
-          />
+          <PineappleLoader variant="spinner" />
           <p className="font-heading text-xl sm:text-2xl text-center text-metallic-brown">
             No image found. Navigating to home page.
           </p>
@@ -144,11 +138,12 @@ const DrawPolygon = () => {
         onHide={() => setShowListOfPolygons(false)}
         dismissable
         header={
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-naples-yellow">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-lime-700 dark:text-lime-400">
             Polygons
           </h2>
         }
-        className="polygon-list-sidebar side-menu rounded-none md:rounded-r-3xl bg-metallic-brown aboutDialog w-full md:w-[768px]"
+        className="polygon-list-sidebar side-menu !rounded-none md:!rounded-r-3xl !bg-white dark:!bg-black aboutDialog !w-full md:!w-[768px]"
+        // className=" side-menu rounded-none md:rounded-r-3xl bg-metallic-brown aboutDialog w-full md:w-[768px]"
         position="left"
         closeIcon={
           <span className=" text-naples-yellow">
@@ -157,7 +152,7 @@ const DrawPolygon = () => {
         }
         maskClassName="backdrop-blur"
       >
-        <div className="w-full px-4 py-4 text-fern-green bg-naples-yellow rounded-3xl overflow-y-auto">
+        <div className="w-full px-4 py-4 bg-amber-50 dark:bg-stone-900 rounded-3xl overflow-y-auto text-stone-700 dark:text-stone-300 font-content">
           {state.polygons.length > 0 ? (
             state.polygons?.map((polygon, index) => (
               <div className="mb-2" key={index}>
@@ -188,7 +183,7 @@ const DrawPolygon = () => {
 
                         <Button
                           onClick={() => handleDeletePolygon(index)}
-                          className="p-2 text-sm flex items-center justify-center gap-2 bg-fern-green text-naples-yellow aspect-square border-0 rounded-full"
+                          className="p-2 text-sm flex items-center justify-center gap-2 bg-fern-green text-naples-yellow aspect-square border-0 !rounded-full"
                         >
                           <Trash size={16} />
                         </Button>
@@ -212,43 +207,53 @@ const DrawPolygon = () => {
                       }}
                     />
 
-                    {editLabel === index ? (
-                      <p className="text-fern-green">
-                        Enter new label for the polygon
-                      </p>
-                    ) : (
-                      <p className="text-fern-green font-medium">
-                        Change the label of polygon
-                      </p>
-                    )}
-                    <div className="w-full h-fit text-sm sm:text-base flex flex-col justify-center xs:flex-row items-end xs:items-center gap-4">
+                    <p className="font-content text-amber-600 dark:text-amber-400">
+                      {editLabel === index
+                        ? "Enter new label for the polygon"
+                        : "Change the label of polygon"}
+                    </p>
+                    <div className="w-full h-fit text-sm sm:text-base flex justify-center flex-col gap-4">
                       <InputText
                         value={
                           editLabel !== index ? polygon?.label : editedLabel
                         }
-                        readOnly={editLabel !== index}
-                        className="h-10 w-full xs:w-[calc(100%-2.5rem)] rounded-full px-4 py-2 font-content bg-naples-yellow border xs:border-2 border-fern-green focus-visible:border-bud-green text-metallic-brown"
+                        disabled={editLabel !== index}
+                        className={`h-10 w-full !rounded-2xl px-4 py-2 font-content bg-naples-yellow border xs:border border-fern-green focus-visible:border-bud-green text-metallic-brown`}
                         onChange={(e) => setEditedLabel(e.target?.value)}
                       />
-                      {editLabel === index ? (
-                        <Button
-                          icon="pi pi-check"
-                          // label="Save Label"
-                          className="w-10 h-10 rounded-full bg-fern-green text-naples-yellow border-fern-green"
-                          onClick={handleSaveLabel}
-                        />
-                      ) : (
-                        <Button
-                          icon="pi pi-pencil"
-                          // label="Edit Label"
-                          className="w-10 h-10 rounded-full bg-fern-green text-naples-yellow border-fern-green"
-                          onClick={() => handleEditLabel(index)}
-                        />
-                      )}
+
+                      <div className="flex items-center gap-1">
+                        {editLabel === index ? (
+                          <>
+                            <Button
+                              className="px-4 py-2 flex items-center gap-x-2 !text-white !bg-lime-600 dark:!bg-lime-700 border !border-lime-600 dark:!border-lime-700 !rounded-l-2xl !rounded-r-sm"
+                              onClick={handleSaveLabel}
+                            >
+                              <Check size={16} />
+                              <span>Save Label</span>
+                            </Button>
+                            <Button
+                              className="px-4 py-2 flex items-center gap-x-2 !bg-transparent !border !border-red-300 !text-red-500 hover:!bg-red-50 hover:!border-red-400 dark:!border-red-600 dark:!text-red-400 !rounded-r-2xl !rounded-l-sm"
+                              onClick={() => handleEditLabel(-1)}
+                            >
+                              <X size={16} />
+                              <span>Cancel</span>
+                            </Button>
+                          </>
+                        ) : (
+                          <Button
+                            className="px-4 py-2 flex items-center gap-x-2 !text-white !bg-amber-600 dark:!bg-amber-700 border !border-amber-600 dark:!border-amber-700 !rounded-2xl"
+                            onClick={() => handleEditLabel(index)}
+                          >
+                            <Pencil size={16} />
+                            <span>Edit label</span>
+                          </Button>
+                        )}
+                      </div>
                     </div>
 
                     <div className="w-full flex flex-col gap-y-1 font-content mt-5">
-                      <p className="w-full text-fern-green font-medium rounded-lg">
+                      <p className="font-content text-amber-600 dark:text-amber-400">
                         Coordinates
                       </p>
                       {polygon.points?.map((values, key) => (
@@ -256,16 +261,16 @@ const DrawPolygon = () => {
                           className="w-full flex flex-row items-center gap-x-1 text-sm sm:text-base"
                           key={key}
                         >
-                          <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-l-lg text-right">
+                          <span className="w-[20%] p-2 border border-bud-green text-metallic-brown rounded-l-lg text-right">
                             X{key}
                           </span>
-                          <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-r-lg">
+                          <span className="w-[30%] p-2 border border-bud-green text-metallic-brown rounded-r-lg">
                             {Math.round(values.x)}
                           </span>
-                          <span className="w-[20%] p-2 border-2 border-bud-green text-metallic-brown rounded-l-lg text-right">
+                          <span className="w-[20%] p-2 border border-bud-green text-metallic-brown rounded-l-lg text-right">
                             Y{key}
                           </span>
-                          <span className="w-[30%] p-2 border-2 border-bud-green text-metallic-brown rounded-r-lg">
+                          <span className="w-[30%] p-2 border border-bud-green text-metallic-brown rounded-r-lg">
                             {Math.round(values.y)}
                           </span>
                         </p>

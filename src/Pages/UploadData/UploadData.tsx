@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import CaptureImageLibrary from "../../Components/CaptureImage/CaptureImage";
 import UploadImageOptionsDialog from "../../Components/UploadImageOptionsDialog/UploadImageOptionsDialog";
 import Layout from "../../Layout/Layout";
-import "./UploadData.scss";
 import { usePineappleStore } from "../../Services/zustand";
 
 const UploadData = () => {
@@ -98,7 +97,7 @@ const UploadData = () => {
   return (
     <Layout>
       <div
-        className={`h-full p-2 sm:p-4 flex flex-col justify-around items-center bg-metallic-brown rounded-xl sm:rounded-2xl shadow-md transition-all duration-1000 transform ${
+        className={`h-full p-2 sm:p-4 flex flex-col justify-around items-center bg-amber-50 dark:bg-stone-900 rounded-xl sm:rounded-2xl shadow-md transition-all duration-1000 transform ${
           showContent
             ? "translate-y-0 opacity-100"
             : "-translate-y-full opacity-0"
@@ -107,10 +106,10 @@ const UploadData = () => {
         <div className="w-full h-full flex flex-col gap-y-3 md:gap-y-5">
           <div className="px-2 md:px-0 flex justify-between items-center">
             <div className="flex flex-col gap-1">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-heading text-naples-yellow">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-heading text-amber-700 dark:text-amber-300 font-bold">
                 Upload an image
               </h1>
-              <p className="text-base sm:text-lg md:text-xl text-bud-green font-content font-medium">
+              <p className="text-sm sm:text-base md:text-lg font-content text-amber-600 dark:text-amber-400 font-medium">
                 Choose an image of size less than 1MB
               </p>
             </div>
@@ -118,7 +117,7 @@ const UploadData = () => {
 
           <div className="w-full flex flex-col items-center gap-y-10 my-auto">
             <div
-              className="w-60 sm:w-64 md:w-72 lg:w-96 aspect-square p-3 border-2 border-dashed border-naples-yellow rounded-3xl cursor-pointer"
+              className="w-60 sm:w-64 md:w-72 lg:w-96 aspect-square p-3 border border-dashed border-stone-200 dark:border-stone-700 rounded-3xl cursor-pointer"
               onClick={() => {
                 if (state.imageSelected?.url === "") setShowOptions(true);
               }}
@@ -145,7 +144,7 @@ const UploadData = () => {
                     <Button
                       icon="pi pi-sync"
                       rounded
-                      className="absolute top-0.5 right-0.5 !w-[16px] !h-[16px] !p-[12px] bg-metallic-brown text-naples-yellow !text-xs border xs:border-2 border-naples-yellow font-content"
+                      className="absolute top-0.5 right-0.5 !w-[16px] !h-[16px] !p-[12px] bg-metallic-brown text-naples-yellow !text-xs border xs:border border-naples-yellow font-content"
                       type="button"
                       title="Click to change the image"
                       onClick={() => {
@@ -163,7 +162,7 @@ const UploadData = () => {
                 icon={<Trash size={16} />}
                 label="Remove Image"
                 title="Click to remove the selected image"
-                className="w-full sm:w-auto h-9 sm:h-10 px-10 flex items-center gap-2 rounded-2xl text-sm sm:text-base text-naples-yellow bg-metallic-brown border xs:border-2 border-naples-yellow"
+                className="w-full sm:w-auto h-9 sm:h-10 px-10 flex items-center gap-2 !rounded-2xl text-sm sm:text-base !bg-transparent !border-amber-400 !text-amber-400 hover:!bg-amber-100 dark:!border-amber-500 dark:!text-amber-500 dark:hover:!bg-amber-900"
                 onClick={() => removeHandeler()}
               />
               <Button
@@ -171,7 +170,7 @@ const UploadData = () => {
                 icon={<Check size={16} />}
                 label="Save & Continue"
                 title="Click to save and continue"
-                className="w-full sm:w-auto h-9 sm:h-10 px-10 flex items-center gap-2 rounded-2xl text-sm sm:text-base text-metallic-brown bg-naples-yellow border-naples-yellow"
+                className="w-full sm:w-auto h-9 sm:h-10 px-10 flex items-center gap-2 !border-none !rounded-2xl text-sm sm:text-base !bg-amber-400 hover:!bg-amber-500 !text-stone-900 dark:!bg-amber-500 dark:hover:!bg-amber-600 dark:!text-stone-900"
                 onClick={() => saveAndContinueHandeler()}
               />
             </div>
@@ -197,9 +196,9 @@ const UploadData = () => {
         closeIcon={
           <span className="pi pi-times text-metallic-brown bg-naples-yellow w-10 h-10 flex justify-center items-center"></span>
         }
-        className="polygon-list-sidebar w-full md:w-[768px] bg-ochre rounded-none md:rounded-l-md"
+        className="polygon-list-sidebar side-menu !rounded-none md:!rounded-r-3xl !bg-white dark:!bg-black aboutDialog !w-full md:!w-[768px]"
         header={
-          <h2 className="font-heading text-metallic-brown text-lg sm:text-xl md:text-2xl">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-lime-700 dark:text-lime-400">
             Capture Image
           </h2>
         }
