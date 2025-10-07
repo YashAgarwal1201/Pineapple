@@ -3,7 +3,7 @@ import React from "react";
 import { useLocation } from "react-router";
 
 import FeedbackDialog from "../Components/FeedbackDialog/FeedbackDialog";
-import Header from "../Components/Header/Header";
+import Navbar from "../Components/Navbar/Navbar";
 import MainSidebar from "../Components/Sidebar/Sidebar";
 import ThemeProvider from "../Services/ThemeProvider";
 
@@ -14,13 +14,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <ThemeProvider>
       <div className="w-full h-full relative flex flex-col md:flex-row bg-white dark:bg-black text-stone-700 dark:text-stone-300">
         <div className="block flex-shrink-0">
-          {location.pathname !== "/" ? (
+          {location.pathname !== "/" && (
             // !location.pathname.includes("/success")
             <div className="w-full md:w-16 h-14 md:h-full flex-shrink-0">
-              <Header />
+              <Navbar />
             </div>
-          ) : (
-            ""
           )}
         </div>
         <div

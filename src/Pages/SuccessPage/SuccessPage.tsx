@@ -2,9 +2,9 @@ import { startTransition, useEffect, useState } from "react";
 
 import { Download, RefreshCcw } from "lucide-react";
 import { Button } from "primereact/button";
-import Lottie from "react-lottie-player";
 import { useNavigate } from "react-router-dom";
 
+import PineappleLoader from "../../Components/Loaders/Loaders";
 import Layout from "../../Layout/Layout";
 import {
   AMBER_PRIMARY_BTN_STYLES,
@@ -13,7 +13,6 @@ import {
 import { downloadPolygonsData } from "../../Services/functionServices";
 import "./SuccessPage.scss";
 import { usePineappleStore } from "../../Services/zustand";
-import loadingDotsAnimation from "./../../assets/Lottie/loadingDotsAnimation.json";
 
 const SuccessPage = () => {
   const navigate = useNavigate();
@@ -68,12 +67,7 @@ const SuccessPage = () => {
     <Layout>
       {loading ? (
         <div className="w-full h-full p-3 flex flex-col justify-center items-center gap-y-3">
-          <Lottie
-            loop
-            animationData={loadingDotsAnimation}
-            play
-            className="w-1/2 h-fit"
-          />
+          <PineappleLoader variant="spinner" />
           <p className="font-heading text-xl sm:text-2xl text-center text-metallic-brown">
             No data found. Navigating to home page.
           </p>

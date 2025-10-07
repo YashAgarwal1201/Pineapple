@@ -12,9 +12,9 @@ import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
 import { Sidebar } from "primereact/sidebar";
 import { SpeedDial } from "primereact/speeddial";
-import Lottie from "react-lottie-player";
 import { useNavigate } from "react-router-dom";
 
+import PineappleLoader from "../../Components/Loaders/Loaders";
 import Layout from "../../Layout/Layout";
 import "./PreviewData.scss";
 import {
@@ -23,7 +23,6 @@ import {
 } from "../../Services/constants";
 import { Polygon } from "../../Services/interfaces";
 import { usePineappleStore } from "../../Services/zustand";
-import loadingDotsAnimation from "./../../assets/Lottie/loadingDotsAnimation.json";
 
 const PreviewData = () => {
   const navigate = useNavigate();
@@ -308,12 +307,7 @@ const PreviewData = () => {
     <Layout>
       {loading ? (
         <div className="w-full h-full p-3 flex flex-col justify-center items-center gap-y-3">
-          <Lottie
-            loop
-            animationData={loadingDotsAnimation}
-            play
-            className="w-1/2 h-fit"
-          />
+          <PineappleLoader variant="spinner" />
           <p className="font-heading text-xl sm:text-2xl text-center text-metallic-brown">
             No image found. Navigating to home page.
           </p>
