@@ -1,4 +1,4 @@
-"use client";
+// src/Components/FeedbackDialog/FeedbackDialog.tsx
 import { useState } from "react";
 
 import { X } from "lucide-react";

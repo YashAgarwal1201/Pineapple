@@ -1,4 +1,5 @@
-@import url(https://fonts.bunny.net/css?family=artifika:400|comfortaa:300,400,500,600,700);
+/* @import url(https://fonts.bunny.net/css?family=artifika:400|comfortaa:300,400,500,600,700); */
+@import url(https://fonts.bunny.net/css?family=artifika:400|comfortaa:300,400,500,600,700&display=swap);
 
 @import "tailwindcss";
 @import "primeicons/primeicons.css";
@@ -48,6 +49,7 @@
 
 * {
   scroll-behavior: smooth;
+  font-display: swap;
 }
 
 .p-button:focus,

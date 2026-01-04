@@ -312,7 +312,7 @@ const CaptureImageLibrary = ({ exitCamera, onCapture }) => {
         )}
       </div>
 
-      <div className="h-fit w-full flex justify-between items-center gap-x-3 md:gap-x-5">
+      <div className="h-fit w-full flex items-center gap-x-3 md:gap-x-5">
         {/* {!showImagePreview && (
           <div className="w-full flex justify-between items-center px-4 py-2">
             <div className="flex items-center gap-2">
@@ -364,12 +364,13 @@ const CaptureImageLibrary = ({ exitCamera, onCapture }) => {
               {option.label}
             </div>
           )}
-          className="bg-fern-green *:text-naples-yellow w-32 md:w-40 text-sm rounded-full"
+          className="bg-fern-green *:text-naples-yellow w-32 md:w-40 text-sm rounded-full mr-auto"
           panelClassName="rounded-2xl mb-2 py-2 bg-fern-green *:!bg-fern-green *:text-naples-yellow"
           placeholder="Aspect Ratio"
         />
 
         <Button
+          aria-label={showImagePreview ? "Retake photo" : "Go back"}
           className="border-0 bg-fern-green text-naples-yellow ml-auto"
           icon="pi pi-arrow-left"
           title={showImagePreview ? "Retake photo" : "Go back"}
@@ -382,6 +383,7 @@ const CaptureImageLibrary = ({ exitCamera, onCapture }) => {
           // Preview mode buttons
           <>
             <Button
+              aria-label="Retake Photo"
               className="border-0 bg-fern-green text-naples-yellow"
               icon={<RotateCcw size={16} />}
               title="Retake photo"
@@ -390,6 +392,7 @@ const CaptureImageLibrary = ({ exitCamera, onCapture }) => {
               onClick={() => retakePhoto()}
             />
             <Button
+              aria-label="Confirm Photo"
               className="border-0 bg-fern-green text-naples-yellow"
               icon={<Check size={16} />}
               title="Confirm photo"
@@ -402,6 +405,7 @@ const CaptureImageLibrary = ({ exitCamera, onCapture }) => {
           // Camera mode buttons
           <>
             <Button
+              aria-label="Take Photo"
               className="border-0 bg-fern-green text-naples-yellow"
               icon={<Camera size={16} />}
               title="Take photo"
@@ -410,6 +414,7 @@ const CaptureImageLibrary = ({ exitCamera, onCapture }) => {
               onClick={() => capture()}
             />
             <Button
+              aria-label="Flip Camera"
               className="border-0 bg-fern-green text-naples-yellow"
               icon={<SwitchCamera size={16} />}
               title="Flip camera"

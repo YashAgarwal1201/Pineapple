@@ -1,3 +1,4 @@
+// src/Pages/UploadData/UploadData.tsx
 import { startTransition, useEffect, useState } from "react";
 
 import { Check, Trash } from "lucide-react";
@@ -196,7 +197,7 @@ const UploadData = () => {
         closeIcon={
           <span className="pi pi-times text-metallic-brown bg-naples-yellow w-10 h-10 flex justify-center items-center"></span>
         }
-        className="polygon-list-sidebar side-menu !rounded-none md:!rounded-r-3xl !bg-white dark:!bg-black aboutDialog !w-full md:!w-[768px]"
+        className="polygon-list-sidebar side-menu !rounded-none md:!rounded-l-3xl !bg-white dark:!bg-black aboutDialog !w-full md:!w-[768px]"
         header={
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-lime-700 dark:text-lime-400">
             Capture Image
