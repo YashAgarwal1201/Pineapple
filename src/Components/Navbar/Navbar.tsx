@@ -1,3 +1,4 @@
+// src/Components/Navbar/Navbar.tsx
 import { startTransition } from "react";
 
 import { ArrowLeft, Menu } from "lucide-react";
@@ -19,6 +20,7 @@ const Navbar = () => {
         disabled={pathname === "/"}
         icon={<ArrowLeft size={20} />}
         title="go back"
+        aria-label="Go Back"
         className={`!w-auto md:!w-full h-full md:h-auto aspect-square !rounded-2xl !border-none ${
           pathname === "/"
             ? "text-transparent bg-transparent"
@@ -55,6 +57,7 @@ const Navbar = () => {
       />
 
       <Button
+        aria-label="Side Menu"
         icon={<Menu size={20} />}
         className="!w-auto md:!w-full h-full md:h-auto aspect-square !border-none !rounded-2xl !bg-lime-500 hover:!bg-lime-600 !text-white dark:!bg-lime-600 dark:hover:!bg-lime-700 "
         onClick={() => toggleSideMenu()}

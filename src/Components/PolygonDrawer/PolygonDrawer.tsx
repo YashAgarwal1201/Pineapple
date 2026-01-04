@@ -1,3 +1,4 @@
+// src/Components/PolygonDrawer/PolygonDrawer.tsx
 import React, {
   startTransition,
   useCallback,
@@ -434,6 +435,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
           className="p-speeddial absolute bottom-5 right-2"
           buttonTemplate={(options) => (
             <Button
+              aria-label="Menu"
               onClick={options.onClick}
               className="bg-ochre size-10 text-naples-yellow"
               icon={<Menu size={16} />}
