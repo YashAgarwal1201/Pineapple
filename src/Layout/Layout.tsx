@@ -1,5 +1,7 @@
+// src/Layout/Layout.tsx
 import React from "react";
 
+import { ConfirmDialog } from "primereact/confirmdialog";
 import { useLocation } from "react-router";
 
 import FeedbackDialog from "../Components/FeedbackDialog/FeedbackDialog";
@@ -12,6 +14,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <ThemeProvider>
+      <ConfirmDialog />
       <div className="w-full h-full relative flex flex-col md:flex-row bg-white dark:bg-black text-stone-700 dark:text-stone-300">
         <div className="block flex-shrink-0">
           {location.pathname !== "/" && (

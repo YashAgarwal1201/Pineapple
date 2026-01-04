@@ -1,15 +1,16 @@
+// src/Pages/LandingScreen/LandingScreen.tsx
 import { useEffect, useState } from "react";
 
 import { ChevronRight } from "lucide-react";
-import { Button } from "primereact/button";
-import { useNavigate } from "react-router-dom";
+// import { Button } from "primereact/button";
+// import { useNavigate } from "react-router-dom";
 
 // import "./UploadData.scss";
 import Layout from "../../Layout/Layout";
 import { PROJECT_NAME } from "../../Services/constants";
 
 const LandingScreen = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const [showContent, setShowContent] = useState<boolean>(false);
 
@@ -29,6 +30,7 @@ const LandingScreen = () => {
         <div className="flex flex-col justify-end mdl:justify-center items-center">
           <img
             src={"./logo.svg"}
+            fetchPriority="high"
             alt=""
             className="max-w-[200px] mdl:max-w-[300px] lg:max-w-max aspect-auto select-none pointer-events-none"
           />
@@ -51,18 +53,29 @@ const LandingScreen = () => {
           </Link> */}
 
           <div className="w-full flex flex-row-reverse justify-center items-center gap-x-3 lg:gap-x-5 gap-y-2 font-content">
-            <Button
+            {/* <Button
               title="Click to proceed"
               className="!rounded-2xl flex flex-row-reverse items-center gap-2 !bg-amber-400 hover:!bg-amber-500 !text-stone-900 dark:!bg-amber-500 dark:hover:!bg-amber-600 dark:!text-stone-900 !border-none animate-bounce-right"
               onClick={() => navigate("/upload-image")}
-              // icon={<span className="pi pi-chevron-right"></span>}
+              
             >
               <ChevronRight size={20} />
               <span>Start</span>
-            </Button>
+            </Button> */}
+
+            <a
+              href="/upload-image"
+              title="Click to proceed"
+              className="p-button !rounded-2xl flex flex-row-reverse items-center gap-2 !bg-amber-400 hover:!bg-amber-500 !text-stone-900 dark:!bg-amber-500 dark:hover:!bg-amber-600 dark:!text-stone-900 !border-none animate-bounce-right"
+              // onClick={() => navigate("/upload-image")}
+            >
+              <ChevronRight size={20} />
+              <span>Start</span>
+            </a>
 
             <a
               title="check developer profile"
+              aria-label="Developer Profile"
               href={"https://yashagarwal1201.github.io/"}
               rel="noopener noreferrer nofollow"
               target="_blank"

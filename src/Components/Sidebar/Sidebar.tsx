@@ -167,6 +167,12 @@ const MainSidebar = () => {
                   />
                   Share
                 </h3>
+
+                <span
+                  className={`pi ${
+                    options.collapsed ? "pi-chevron-down" : "pi-chevron-up"
+                  } text-amber-700 dark:text-amber-300 mr-1`}
+                ></span>
               </div>
             );
           }}
@@ -227,6 +233,12 @@ const MainSidebar = () => {
                   />
                   Clear Data
                 </h3>
+
+                <span
+                  className={`pi ${
+                    options.collapsed ? "pi-chevron-down" : "pi-chevron-up"
+                  } text-amber-700 dark:text-amber-300 mr-1`}
+                ></span>
               </div>
             );
           }}
