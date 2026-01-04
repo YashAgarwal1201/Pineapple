@@ -1,3 +1,5 @@
+// src/Pages/UploadData/NewUploadImage.tsx
+
 import {
   startTransition,
   useCallback,
@@ -15,6 +17,7 @@ import {
   Sparkles,
   Trash,
   Upload,
+  X,
 } from "lucide-react";
 import { Button } from "primereact/button";
 import { Image } from "primereact/image";
@@ -292,7 +295,7 @@ const UploadData = () => {
                           setShowOptions(true);
                         }}
                       >
-                        <RefreshCcw size={16} />
+                        <RefreshCcw size={16} className="shrink-0" />
                       </Button>
                     </>
                   ) : (
@@ -407,9 +410,11 @@ const UploadData = () => {
         maskClassName="backdrop-blur"
         position="right"
         closeIcon={
-          <span className="pi pi-times text-metallic-brown bg-naples-yellow w-10 h-10 flex justify-center items-center"></span>
+          <span className=" text-naples-yellow">
+            <X size={16} />
+          </span>
         }
-        className="polygon-list-sidebar side-menu !rounded-none md:!rounded-r-3xl !bg-white dark:!bg-black aboutDialog !w-full md:!w-[768px]"
+        className="polygon-list-sidebar side-menu !rounded-none md:!rounded-l-3xl !bg-white dark:!bg-black aboutDialog !w-full md:!w-[768px]"
         header={
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-lime-700 dark:text-lime-400">
             Capture Image

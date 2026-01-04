@@ -1,3 +1,4 @@
+// src/Components/UploadImageOptionsDialog/UploadImageOptionsDialog.tsx
 import { useEffect, useState } from "react";
 
 import { Camera, Upload } from "lucide-react";

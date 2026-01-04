@@ -1,3 +1,4 @@
+// src/App.tsx
 import { useEffect, useRef } from "react";
 
 import { Toast } from "primereact/toast";
@@ -18,7 +19,7 @@ export function App() {
   }, [setToastRef]);
 
   return (
-    <div className="w-screen h-[100dvh] bg-amber-50 dark:bg-amber-900">
+    <div className="w-screen h-[100dvh] bg-white dark:bg-black text-stone-700 dark:text-stone-300">
       <Toast ref={toastRef} position="top-left" />
       <Outlet />
     </div>
