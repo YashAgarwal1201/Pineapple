@@ -72,7 +72,7 @@ const MainSidebar = () => {
       showToast(
         "error",
         "Error",
-        "Failed to delete data. See console for details"
+        "Failed to delete data. See console for details",
       );
     }
   };
@@ -138,7 +138,7 @@ const MainSidebar = () => {
           href={import.meta.env.VITE_DEVELOPER_PROFILE ?? ""}
           target="_blank"
           rel="noopener noreferrer nofollow"
-          className="!w-full block py-4 px-2 bg-transparent font-subcontent  text-base sm:text-lg text-color6 rounded-xl not-italic"
+          className="w-full! block py-4 px-2 bg-transparent font-subcontent  text-base sm:text-lg text-color6 rounded-xl not-italic"
         >
           <h3 className="font-content font-medium flex items-center">
             <span className="pi pi-github mr-4 text-lime-500 dark:text-lime-600"></span>
