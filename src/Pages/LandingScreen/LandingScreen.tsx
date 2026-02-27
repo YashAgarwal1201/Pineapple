@@ -8,6 +8,7 @@ import { ChevronRight } from "lucide-react";
 // import "./UploadData.scss";
 import Layout from "../../Layout/Layout";
 import { PROJECT_NAME } from "../../Services/constants";
+import { Link } from "react-router-dom";
 
 const LandingScreen = () => {
   // const navigate = useNavigate();
@@ -63,15 +64,15 @@ const LandingScreen = () => {
               <span>Start</span>
             </Button> */}
 
-            <a
-              href="/upload-image"
+            <Link
+              to="/upload-image"
               title="Click to proceed"
               className="p-button !rounded-2xl flex flex-row-reverse items-center gap-2 !bg-amber-400 hover:!bg-amber-500 !text-stone-900 dark:!bg-amber-500 dark:hover:!bg-amber-600 dark:!text-stone-900 !border-none animate-bounce-right"
               // onClick={() => navigate("/upload-image")}
             >
               <ChevronRight size={20} />
               <span>Start</span>
-            </a>
+            </Link>
 
             <a
               title="check developer profile"
