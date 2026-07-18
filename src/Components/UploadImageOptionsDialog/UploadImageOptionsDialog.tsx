@@ -46,7 +46,7 @@ const UploadImageOptionsDialog = ({
       dismissableMask={true}
       className={`${
         openCamera ? "h-[90dvh] sm:h-auto" : "h-auto"
-      } w-full max-w-sm absolute bottom-0 md:bottom-auto !m-0 !border-0 !bg-white dark:!bg-black !rounded-3xl overflow-y-auto text-stone-700 dark:text-stone-300`}
+      } w-full max-w-sm absolute bottom-0 md:bottom-auto m-0! border-0! bg-white! dark:bg-black! rounded-3xl! overflow-y-auto text-stone-700 dark:text-stone-300`}
       position={isSmallScreen ? "bottom" : "center"}
       maskClassName="backdrop-blur"
     >
@@ -55,7 +55,7 @@ const UploadImageOptionsDialog = ({
           <Button
             type="button"
             title="Click to browse system"
-            className="w-full h-9 lg:h-10 flex items-center justify-center gap-3 !rounded-t-2xl !rounded-b-sm text-sm lg:text-base !text-white !bg-amber-800 dark:bg-amber-900 !border-0"
+            className="w-full h-9 lg:h-10 flex items-center justify-center gap-3 rounded-t-2xl! rounded-b-sm! text-sm lg:text-base text-white! bg-amber-800! dark:bg-amber-900 border-0!"
             onClick={() => uploadHandeler()}
           >
             <Upload size={16} />
@@ -64,7 +64,7 @@ const UploadImageOptionsDialog = ({
           <Button
             type="button"
             title="Click to open camera"
-            className="w-full h-9 lg:h-10 flex items-center justify-center gap-3 !rounded-b-2xl !rounded-t-sm text-sm lg:text-base !text-white !bg-amber-800 dark:bg-amber-900 !border-0"
+            className="w-full h-9 lg:h-10 flex items-center justify-center gap-3 rounded-b-2xl! rounded-t-sm! text-sm lg:text-base text-white! bg-amber-800! dark:bg-amber-900 border-0!"
             onClick={() => {
               if (
                 window?.location?.protocol === "https:" ||
@@ -76,7 +76,7 @@ const UploadImageOptionsDialog = ({
                   "warn",
                   "Warning",
                   "Please use different method to attach file. Camera access is denied according to browser protocols in HTTP",
-                  5000
+                  5000,
                 );
               }
             }}

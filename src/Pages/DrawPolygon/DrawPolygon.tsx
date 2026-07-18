@@ -13,18 +13,22 @@ import { useNavigate } from "react-router-dom";
 import PineappleLoader from "../../Components/Loaders/Loaders";
 import PolygonDrawer from "../../Components/PolygonDrawer/PolygonDrawer";
 import Layout from "../../Layout/Layout";
-import { Polygon } from "../../Services/interfaces";
+import { resetColorIndex } from "../../Services/functionServices";
+import { Polygon, Rectangle } from "../../Services/interfaces";
 import { usePineappleStore } from "../../Services/zustand";
 
 const DrawPolygon = () => {
   const navigate = useNavigate();
 
   const state = usePineappleStore();
-  const { setPolygons, showToast } = state;
+  const { setPolygons, setRectangles, showToast } = state;
 
   const [loading, setLoading] = useState<boolean>(false);
   const [showListOfPolygons, setShowListOfPolygons] = useState<boolean>(false);
-  const [editLabel, setEditLabel] = useState<number | null>(null);
+  // Identifies which shape (of either type) is mid-edit — a plain index
+  // isn't enough now that two separate arrays share this sidebar, so the
+  // key carries the shape kind too, e.g. "rectangle-2".
+  const [editKey, setEditKey] = useState<string | null>(null);
   const [editedLabel, setEditedLabel] = useState<string>("");
 
   useEffect(() => {
@@ -36,28 +40,54 @@ const DrawPolygon = () => {
     }
   }, []);
 
-  const handleDeletePolygon = (index: number) => {
-    const updatedPolygons = [...state.polygons];
-    updatedPolygons.splice(index, 1);
-    setPolygons(updatedPolygons);
-    showToast("warn", "Warning", "Polygon deleted");
-  };
-
-  // Enable Edit for Polygon Lable
-  const handleEditLabel = (index: number) => {
-    setEditLabel(index);
-    setEditedLabel(state.polygons[index].label);
-  };
-
-  // Save new Polygon Label
-  const handleSaveLabel = () => {
-    if (editLabel !== null && editedLabel.trim() !== "") {
-      const updatedPolygons = [...state.polygons];
-      updatedPolygons[editLabel].label = editedLabel?.trim();
-      setPolygons(updatedPolygons);
-      showToast("success", "Success", "Label Updated");
+  const handleDeleteShape = (kind: "polygon" | "rectangle", index: number) => {
+    if (kind === "polygon") {
+      const updated = [...state.polygons];
+      updated.splice(index, 1);
+      setPolygons(updated);
+      // Only reset the color cycle once every shape is gone, since polygons
+      // and rectangles draw from the same palette/index.
+      if (updated.length === 0 && state.rectangles.length === 0) {
+        resetColorIndex();
+      }
+    } else {
+      const updated = [...state.rectangles];
+      updated.splice(index, 1);
+      setRectangles(updated);
+      if (updated.length === 0 && state.polygons.length === 0) {
+        resetColorIndex();
+      }
     }
-    setEditLabel(null);
+    showToast("warn", "Warning", "Shape deleted");
+  };
+
+  // Enable Edit for a shape's label
+  const handleEditLabel = (kind: "polygon" | "rectangle", index: number) => {
+    setEditKey(`${kind}-${index}`);
+    setEditedLabel(
+      kind === "polygon"
+        ? state.polygons[index].label
+        : state.rectangles[index].label,
+    );
+  };
+
+  // Save the new label back to the correct array
+  const handleSaveLabel = (kind: "polygon" | "rectangle", index: number) => {
+    if (editedLabel.trim() === "") {
+      setEditKey(null);
+      return;
+    }
+    if (kind === "polygon") {
+      const updated = [...state.polygons];
+      updated[index] = { ...updated[index], label: editedLabel.trim() };
+      setPolygons(updated);
+    } else {
+      const updated = [...state.rectangles];
+      updated[index] = { ...updated[index], label: editedLabel.trim() };
+      setRectangles(updated);
+    }
+    showToast("success", "Success", "Label Updated");
+    setEditKey(null);
   };
 
   const [image, setImage] = useState<HTMLImageElement | null>(null);
@@ -76,11 +106,21 @@ const DrawPolygon = () => {
   const drawMiniCroppedPolygon = (
     ctx: CanvasRenderingContext2D,
     polygon: Polygon,
-    image: HTMLImageElement
+    image: HTMLImageElement,
   ) => {
-    const [x1, y1, x2, y2] = polygon.bbox;
+    // const [x1, y1, x2, y2] = polygon.bbox;
+    // const cropWidth = x2 - x1;
+    // const cropHeight = y2 - y1;
+
+    const [rawX1, rawY1, rawX2, rawY2] = polygon.bbox;
+    // Clamp to image natural bounds to prevent black strips
+    const x1 = Math.max(0, rawX1);
+    const y1 = Math.max(0, rawY1);
+    const x2 = Math.min(image.naturalWidth, rawX2);
+    const y2 = Math.min(image.naturalHeight, rawY2);
     const cropWidth = x2 - x1;
     const cropHeight = y2 - y1;
+    if (cropWidth <= 0 || cropHeight <= 0) return; // guard against degenerate bbox
 
     // Clear previous canvas
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -99,7 +139,7 @@ const DrawPolygon = () => {
       0,
       0,
       ctx.canvas.width,
-      ctx.canvas.height
+      ctx.canvas.height,
     );
 
     // Transform and draw polygon
@@ -122,121 +162,72 @@ const DrawPolygon = () => {
     }
   };
 
-  // const drawMiniCroppedPolygon = (
-  //   ctx: CanvasRenderingContext2D,
-  //   polygon: Polygon,
-  //   image: HTMLImageElement
-  // ) => {
-  //   const canvas = ctx.canvas;
+  const drawMiniCroppedRectangle = (
+    ctx: CanvasRenderingContext2D,
+    rectangle: Rectangle,
+    image: HTMLImageElement,
+  ) => {
+    // Same padding-and-clamp approach as the polygon version, just derived
+    // from the rectangle's two corners instead of a stored bbox.
+    const padding = 40;
+    const rawX1 = Math.min(rectangle.startX, rectangle.endX) - padding;
+    const rawY1 = Math.min(rectangle.startY, rectangle.endY) - padding;
+    const rawX2 = Math.max(rectangle.startX, rectangle.endX) + padding;
+    const rawY2 = Math.max(rectangle.startY, rectangle.endY) + padding;
 
-  //   // Physical display size in CSS pixels
-  //   const displayWidth = 120;
-  //   const displayHeight = 120;
+    const x1 = Math.max(0, rawX1);
+    const y1 = Math.max(0, rawY1);
+    const x2 = Math.min(image.naturalWidth, rawX2);
+    const y2 = Math.min(image.naturalHeight, rawY2);
+    const cropWidth = x2 - x1;
+    const cropHeight = y2 - y1;
+    if (cropWidth <= 0 || cropHeight <= 0) return;
 
-  //   // Get device pixel ratio (2 for Retina, 1 for standard displays)
-  //   const dpr = window.devicePixelRatio || 1;
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-  //   // Set the canvas internal resolution (actual pixels)
-  //   canvas.width = displayWidth * dpr;
-  //   canvas.height = displayHeight * dpr;
+    const scaleX = ctx.canvas.width / cropWidth;
+    const scaleY = ctx.canvas.height / cropHeight;
 
-  //   // Scale the canvas back down to display size via CSS
-  //   canvas.style.width = `${displayWidth}px`;
-  //   canvas.style.height = `${displayHeight}px`;
+    ctx.drawImage(
+      image,
+      x1,
+      y1,
+      cropWidth,
+      cropHeight,
+      0,
+      0,
+      ctx.canvas.width,
+      ctx.canvas.height,
+    );
 
-  //   // Scale all drawing operations by DPR
-  //   ctx.scale(dpr, dpr);
+    const rx = (Math.min(rectangle.startX, rectangle.endX) - x1) * scaleX;
+    const ry = (Math.min(rectangle.startY, rectangle.endY) - y1) * scaleY;
+    const rw = Math.abs(rectangle.endX - rectangle.startX) * scaleX;
+    const rh = Math.abs(rectangle.endY - rectangle.startY) * scaleY;
 
-  //   // Enable high-quality image smoothing
-  //   ctx.imageSmoothingEnabled = true;
-  //   ctx.imageSmoothingQuality = "high";
+    ctx.beginPath();
+    ctx.rect(rx, ry, rw, rh);
+    ctx.strokeStyle = rectangle.color;
+    ctx.lineWidth = 1.5;
+    ctx.fillStyle = `${rectangle.color}60`;
+    ctx.fill();
+    ctx.stroke();
+  };
 
-  //   const [x1, y1, x2, y2] = polygon.bbox;
-  //   const cropWidth = x2 - x1;
-  //   const cropHeight = y2 - y1;
-
-  //   ctx.clearRect(0, 0, displayWidth, displayHeight);
-
-  //   // Calculate scale ratios based on DISPLAY size (not canvas.width/height)
-  //   const scaleX = displayWidth / cropWidth;
-  //   const scaleY = displayHeight / cropHeight;
-
-  //   // Draw image at display dimensions
-  //   ctx.drawImage(
-  //     image,
-  //     x1,
-  //     y1,
-  //     cropWidth,
-  //     cropHeight,
-  //     0,
-  //     0,
-  //     displayWidth,
-  //     displayHeight
-  //   );
-
-  //   // Transform and draw polygon
-  //   const adjustedPoints = polygon.points.map((p) => ({
-  //     x: (p.x - x1) * scaleX,
-  //     y: (p.y - y1) * scaleY,
-  //   }));
-
-  //   ctx.beginPath();
-  //   if (adjustedPoints.length > 0) {
-  //     ctx.moveTo(adjustedPoints[0].x, adjustedPoints[0].y);
-  //     adjustedPoints.forEach((pt) => ctx.lineTo(pt.x, pt.y));
-  //     ctx.closePath();
-
-  //     ctx.strokeStyle = polygon.color;
-  //     ctx.lineWidth = 2; // Will be scaled by DPR automatically
-  //     ctx.fillStyle = `${polygon.color}60`;
-  //     ctx.fill();
-  //     ctx.stroke();
-  //   }
-
-  //   // Draw coordinate labels
-  //   ctx.font = "bold 11px Comfortaa, sans-serif";
-  //   ctx.textAlign = "center";
-  //   ctx.textBaseline = "middle";
-
-  //   adjustedPoints.forEach((pt, index) => {
-  //     const label = `x${index},y${index}`;
-  //     const metrics = ctx.measureText(label);
-  //     const padding = 4;
-
-  //     // Background box
-  //     ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
-  //     ctx.fillRect(
-  //       pt.x - metrics.width / 2 - padding,
-  //       pt.y - 9,
-  //       metrics.width + padding * 2,
-  //       18
-  //     );
-
-  //     // Text
-  //     ctx.fillStyle = "#000";
-  //     ctx.fillText(label, pt.x, pt.y);
-
-  //     // Point circle
-  //     ctx.beginPath();
-  //     ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI * 2);
-  //     ctx.fillStyle = polygon.color;
-  //     ctx.fill();
-  //     ctx.strokeStyle = "#fff";
-  //     ctx.lineWidth = 2;
-  //     ctx.stroke();
-  //   });
-  // };
-
-  const confirmDeletePolygon = (index: number) => {
+  const confirmDeleteShape = (kind: "polygon" | "rectangle", index: number) => {
+    const label =
+      kind === "polygon"
+        ? state.polygons[index].label
+        : state.rectangles[index].label;
     confirmDialog({
-      message: `Are you sure you want to delete "${state.polygons[index].label}"? This action cannot be undone.`,
+      message: `Are you sure you want to delete "${label}"? This action cannot be undone.`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       defaultFocus: "reject",
       acceptClassName: "!bg-red-600 !border-red-600 hover:!bg-red-700",
       rejectClassName:
         "!bg-transparent !border-stone-300 !text-stone-700 dark:!text-stone-300",
-      accept: () => handleDeletePolygon(index),
+      accept: () => handleDeleteShape(kind, index),
       reject: () => {
         // Optional: show cancelled toast
         showToast("info", "Info", "Deletion cancelled");
@@ -263,7 +254,7 @@ const DrawPolygon = () => {
         dismissable
         header={
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-lime-700 dark:text-lime-400">
-            Polygons
+            Shapes
           </h2>
         }
         className="polygon-list-sidebar side-menu !rounded-none md:!rounded-r-3xl !bg-white dark:!bg-black aboutDialog !w-full md:!w-[768px]"
@@ -277,154 +268,216 @@ const DrawPolygon = () => {
         maskClassName="backdrop-blur"
       >
         <div className="w-full px-4 py-4 bg-amber-50 dark:bg-stone-900 rounded-3xl overflow-y-auto text-stone-700 dark:text-stone-300 font-content">
-          {state.polygons.length > 0 ? (
-            state.polygons?.map((polygon, index) => (
-              <div className="mb-2" key={index}>
-                <Panel
-                  className="w-full bg-transparent rounded-2xl"
-                  collapsed={true}
-                  headerTemplate={(options) => {
-                    const togglePanel = (
-                      event: React.MouseEvent<HTMLElement>
-                    ) => {
-                      options.onTogglerClick!(event); // Trigger expand/collapse behavior
-                    };
+          {state.polygons.length + state.rectangles.length > 0 ? (
+            [
+              ...state.polygons.map((data, index) => ({
+                kind: "polygon" as const,
+                index,
+                data,
+              })),
+              ...state.rectangles.map((data, index) => ({
+                kind: "rectangle" as const,
+                index,
+                data,
+              })),
+            ].map((shape, listPos, list) => {
+              const { kind, index, data } = shape;
+              const key = `${kind}-${index}`;
+              const isEditing = editKey === key;
 
-                    return (
-                      <div
-                        className="cursor-pointer custom-panel-header w-full flex justify-between items-center px-2 py-4 rounded-xl"
-                        onClick={togglePanel}
-                      >
-                        <div className="flex items-center gap-x-2">
-                          <span
-                            className="size-2 rounded-full"
-                            style={{ backgroundColor: polygon.color }}
-                          ></span>
-                          <span className="text-base sm:text-lg font-heading">
-                            {polygon?.label}
-                          </span>
-                        </div>
+              return (
+                <div className="mb-2" key={key}>
+                  <Panel
+                    className="w-full bg-transparent rounded-2xl"
+                    collapsed={true}
+                    headerTemplate={(options) => {
+                      const togglePanel = (
+                        event: React.MouseEvent<HTMLElement>,
+                      ) => {
+                        options.onTogglerClick!(event); // Trigger expand/collapse behavior
+                      };
 
-                        <div className="flex items-center gap-x-2">
-                          <Button
-                            aria-label="Delete Annotation"
-                            // onClick={() => handleDeletePolygon(index)}
-                            onClick={(e) => {
-                              e.stopPropagation(); // Prevent panel toggle
-                              confirmDeletePolygon(index);
-                            }}
-                            className="p-2 text-sm flex items-center justify-center gap-2 bg-fern-green text-naples-yellow aspect-square border-0 !rounded-full"
-                          >
-                            <Trash size={16} />
-                          </Button>
-
-                          <div className="p-button p-2 text-sm flex items-center justify-center gap-2 bg-fern-green text-naples-yellow aspect-square border-0 !rounded-full">
+                      return (
+                        <div
+                          className="cursor-pointer custom-panel-header w-full flex justify-between items-center px-2 py-4 rounded-xl"
+                          onClick={togglePanel}
+                        >
+                          <div className="flex items-center gap-x-2">
                             <span
-                              className={`pi ${
-                                options.collapsed
-                                  ? "pi-chevron-down"
-                                  : "pi-chevron-up"
-                              } `}
+                              className="size-2 rounded-full"
+                              style={{ backgroundColor: data.color }}
                             ></span>
+                            <span className="text-base sm:text-lg font-heading">
+                              {data.label}
+                            </span>
+                            <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-stone-200/70 dark:bg-stone-700/60 text-stone-500 dark:text-stone-400">
+                              {kind}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-x-2">
+                            <Button
+                              aria-label="Delete Annotation"
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevent panel toggle
+                                confirmDeleteShape(kind, index);
+                              }}
+                              className="p-2 text-sm flex items-center justify-center gap-2 bg-fern-green text-naples-yellow aspect-square border-0 !rounded-full"
+                            >
+                              <Trash size={16} />
+                            </Button>
+
+                            <div className="p-button p-2 text-sm flex items-center justify-center gap-2 bg-fern-green text-naples-yellow aspect-square border-0 !rounded-full">
+                              <span
+                                className={`pi ${
+                                  options.collapsed
+                                    ? "pi-chevron-down"
+                                    : "pi-chevron-up"
+                                } `}
+                              ></span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  }}
-                  toggleable
-                >
-                  <div className="w-full flex flex-col gap-3 font-content">
-                    <canvas
-                      width={120}
-                      height={120}
-                      className="rounded-lg border border-ochre mb-3"
-                      ref={(el) => {
-                        if (el && image) {
-                          const ctx = el.getContext("2d");
-                          if (ctx) {
-                            drawMiniCroppedPolygon(ctx, polygon, image);
+                      );
+                    }}
+                    toggleable
+                  >
+                    <div className="w-full flex flex-col gap-3 font-content">
+                      <canvas
+                        width={120}
+                        height={120}
+                        className="rounded-lg border border-ochre mb-3"
+                        ref={(el) => {
+                          if (el && image) {
+                            const ctx = el.getContext("2d");
+                            if (ctx) {
+                              if (kind === "polygon") {
+                                drawMiniCroppedPolygon(
+                                  ctx,
+                                  data as Polygon,
+                                  image,
+                                );
+                              } else {
+                                drawMiniCroppedRectangle(
+                                  ctx,
+                                  data as Rectangle,
+                                  image,
+                                );
+                              }
+                            }
                           }
-                        }
-                      }}
-                    />
-
-                    <p className="font-content text-amber-600 dark:text-amber-400">
-                      {editLabel === index
-                        ? "Enter new label for the polygon"
-                        : "Change the label of polygon"}
-                    </p>
-                    <div className="w-full h-fit text-sm sm:text-base flex justify-center flex-col gap-4">
-                      <InputText
-                        value={
-                          editLabel !== index ? polygon?.label : editedLabel
-                        }
-                        disabled={editLabel !== index}
-                        className={`h-10 w-full !rounded-2xl px-4 py-2 font-content bg-naples-yellow border xs:border border-fern-green focus-visible:border-bud-green text-metallic-brown`}
-                        onChange={(e) => setEditedLabel(e.target?.value)}
+                        }}
                       />
 
-                      <div className="flex items-center gap-1">
-                        {editLabel === index ? (
-                          <>
+                      <p className="font-content text-amber-600 dark:text-amber-400">
+                        {isEditing
+                          ? `Enter new label for the ${kind}`
+                          : `Change the label of this ${kind}`}
+                      </p>
+                      <div className="w-full h-fit text-sm sm:text-base flex justify-center flex-col gap-4">
+                        <InputText
+                          value={!isEditing ? data.label : editedLabel}
+                          disabled={!isEditing}
+                          className={`h-10 w-full !rounded-2xl px-4 py-2 font-content bg-naples-yellow border xs:border border-fern-green focus-visible:border-bud-green text-metallic-brown`}
+                          onChange={(e) => setEditedLabel(e.target?.value)}
+                        />
+
+                        <div className="flex items-center gap-1">
+                          {isEditing ? (
+                            <>
+                              <Button
+                                className="px-4 py-2 flex items-center gap-x-2 !text-white !bg-lime-600 dark:!bg-lime-700 border !border-lime-600 dark:!border-lime-700 !rounded-l-2xl !rounded-r-sm"
+                                onClick={() => handleSaveLabel(kind, index)}
+                              >
+                                <Check size={16} />
+                                <span>Save Label</span>
+                              </Button>
+                              <Button
+                                className="px-4 py-2 flex items-center gap-x-2 !bg-transparent border! !border-red-300 !text-red-500 hover:!bg-red-50 hover:!border-red-400 dark:!border-red-600 dark:!text-red-400 !rounded-r-2xl !rounded-l-sm"
+                                onClick={() => setEditKey(null)}
+                              >
+                                <X size={16} />
+                                <span>Cancel</span>
+                              </Button>
+                            </>
+                          ) : (
                             <Button
-                              className="px-4 py-2 flex items-center gap-x-2 !text-white !bg-lime-600 dark:!bg-lime-700 border !border-lime-600 dark:!border-lime-700 !rounded-l-2xl !rounded-r-sm"
-                              onClick={handleSaveLabel}
+                              className="px-4 py-2 flex items-center gap-x-2 !text-white !bg-amber-600 dark:!bg-amber-700 border !border-amber-600 dark:!border-amber-700 !rounded-2xl"
+                              onClick={() => handleEditLabel(kind, index)}
                             >
-                              <Check size={16} />
-                              <span>Save Label</span>
+                              <Pencil size={16} />
+                              <span>Edit label</span>
                             </Button>
-                            <Button
-                              className="px-4 py-2 flex items-center gap-x-2 !bg-transparent !border !border-red-300 !text-red-500 hover:!bg-red-50 hover:!border-red-400 dark:!border-red-600 dark:!text-red-400 !rounded-r-2xl !rounded-l-sm"
-                              onClick={() => handleEditLabel(-1)}
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="w-full flex flex-col gap-y-1 font-content mt-5">
+                        <p className="font-content text-amber-600 dark:text-amber-400">
+                          Coordinates
+                        </p>
+                        {kind === "polygon" ? (
+                          (data as Polygon).points?.map((values, key) => (
+                            <p
+                              className="w-full flex flex-row items-center gap-x-1 text-sm sm:text-base"
+                              key={key}
                             >
-                              <X size={16} />
-                              <span>Cancel</span>
-                            </Button>
-                          </>
+                              <span className="w-[20%] p-2 border border-bud-green text-metallic-brown rounded-l-lg text-right">
+                                X{key}
+                              </span>
+                              <span className="w-[30%] p-2 border border-bud-green text-metallic-brown rounded-r-lg">
+                                {Math.round(values.x)}
+                              </span>
+                              <span className="w-[20%] p-2 border border-bud-green text-metallic-brown rounded-l-lg text-right">
+                                Y{key}
+                              </span>
+                              <span className="w-[30%] p-2 border border-bud-green text-metallic-brown rounded-r-lg">
+                                {Math.round(values.y)}
+                              </span>
+                            </p>
+                          ))
                         ) : (
-                          <Button
-                            className="px-4 py-2 flex items-center gap-x-2 !text-white !bg-amber-600 dark:!bg-amber-700 border !border-amber-600 dark:!border-amber-700 !rounded-2xl"
-                            onClick={() => handleEditLabel(index)}
-                          >
-                            <Pencil size={16} />
-                            <span>Edit label</span>
-                          </Button>
+                          <>
+                            <p className="w-full flex flex-row items-center gap-x-1 text-sm sm:text-base">
+                              <span className="w-[20%] p-2 border border-bud-green text-metallic-brown rounded-l-lg text-right">
+                                X1
+                              </span>
+                              <span className="w-[30%] p-2 border border-bud-green text-metallic-brown rounded-r-lg">
+                                {Math.round((data as Rectangle).startX)}
+                              </span>
+                              <span className="w-[20%] p-2 border border-bud-green text-metallic-brown rounded-l-lg text-right">
+                                Y1
+                              </span>
+                              <span className="w-[30%] p-2 border border-bud-green text-metallic-brown rounded-r-lg">
+                                {Math.round((data as Rectangle).startY)}
+                              </span>
+                            </p>
+                            <p className="w-full flex flex-row items-center gap-x-1 text-sm sm:text-base">
+                              <span className="w-[20%] p-2 border border-bud-green text-metallic-brown rounded-l-lg text-right">
+                                X2
+                              </span>
+                              <span className="w-[30%] p-2 border border-bud-green text-metallic-brown rounded-r-lg">
+                                {Math.round((data as Rectangle).endX)}
+                              </span>
+                              <span className="w-[20%] p-2 border border-bud-green text-metallic-brown rounded-l-lg text-right">
+                                Y2
+                              </span>
+                              <span className="w-[30%] p-2 border border-bud-green text-metallic-brown rounded-r-lg">
+                                {Math.round((data as Rectangle).endY)}
+                              </span>
+                            </p>
+                          </>
                         )}
                       </div>
                     </div>
+                  </Panel>
 
-                    <div className="w-full flex flex-col gap-y-1 font-content mt-5">
-                      <p className="font-content text-amber-600 dark:text-amber-400">
-                        Coordinates
-                      </p>
-                      {polygon.points?.map((values, key) => (
-                        <p
-                          className="w-full flex flex-row items-center gap-x-1 text-sm sm:text-base"
-                          key={key}
-                        >
-                          <span className="w-[20%] p-2 border border-bud-green text-metallic-brown rounded-l-lg text-right">
-                            X{key}
-                          </span>
-                          <span className="w-[30%] p-2 border border-bud-green text-metallic-brown rounded-r-lg">
-                            {Math.round(values.x)}
-                          </span>
-                          <span className="w-[20%] p-2 border border-bud-green text-metallic-brown rounded-l-lg text-right">
-                            Y{key}
-                          </span>
-                          <span className="w-[30%] p-2 border border-bud-green text-metallic-brown rounded-r-lg">
-                            {Math.round(values.y)}
-                          </span>
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                </Panel>
-
-                {index !== state.polygons?.length - 1 && (
-                  <div className="mx-2 my-1 p-0 max-w-full h-[1.5px] bg-ochre" />
-                )}
-              </div>
-            ))
+                  {listPos !== list.length - 1 && (
+                    <div className="mx-2 my-1 p-0 max-w-full h-[1.5px] bg-ochre" />
+                  )}
+                </div>
+              );
+            })
           ) : (
             <div className="w-full h-full flex justify-center items-center">
               <p className="text-center h-[40px] text-ochre font-content text-base xs:text-lg md:text-xl  my-auto">

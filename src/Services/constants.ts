@@ -25,4 +25,4 @@ export const AMBER_PRIMARY_BTN_STYLES =
   "!text-white !bg-amber-800 dark:bg-amber-900 !border-amber-800 dark:!border-amber-900";
 
 export const RED_SECONDARY_BTN_STYLES =
-  "!bg-transparent !border !border-red-500 !text-red-500";
+  "!bg-transparent border! !border-red-500 !text-red-500";

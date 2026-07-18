@@ -37,9 +37,9 @@ import App from "./../App";
 
 // Lazy Loaded Components
 const LandingScreen = lazy(
-  () => import("./../Pages/LandingScreen/LandingScreen")
+  () => import("./../Pages/LandingScreen/LandingScreen"),
 );
-const UploadPage = lazy(() => import("./../Pages/UploadData/NewUploadImage")); //lazy(() => import("./../Pages/UploadData/UploadData"));
+const UploadPage = lazy(() => import("./../Pages/UploadData/UploadData"));
 const DrawComponent = lazy(() => import("./../Pages/DrawPolygon/DrawPolygon"));
 const PreviewData = lazy(() => import("./../Pages/PreviewData/PreviewData"));
 const SuccessPage = lazy(() => import("../Pages/SuccessPage/SuccessPage"));
@@ -54,8 +54,8 @@ const Router = createBrowserRouter(
       <Route path="/draw" element={<DrawComponent />} />
       <Route path="/preview" element={<PreviewData />} />
       <Route path="/success" element={<SuccessPage />} />
-    </Route>
-  )
+    </Route>,
+  ),
   // { basename: import.meta.env.DEV ? "/" : "/Pineapple/" }
 );
 
