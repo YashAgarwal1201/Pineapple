@@ -2,6 +2,17 @@
 // src/Components/PolygonDrawer/PolygonDrawer.tsx
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
+import {
+  Check,
+  Hexagon,
+  List,
+  Minus,
+  Plus,
+  Square,
+  ThumbsUp,
+  Undo2,
+  X,
+} from "lucide-react";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
@@ -933,6 +944,24 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
     [zoomAt, viewport.containerWidth, viewport.containerHeight, viewport.zoom],
   );
 
+  // ── Hint text ─────────────────────────────────────────────────────────────
+  // One sentence, tailored to exactly what the user can do right now — the
+  // biggest source of "how does this work?" confusion for a first-time user
+  // is this line staying generic while the toolbar underneath it changes
+  // shape (literally) depending on drawMode.
+  const hintText = (() => {
+    if (!addNew) {
+      return drawMode === "polygon"
+        ? "Polygon tool selected — tap Add Polygon, then click points around the shape to trace it. Scroll to pan, Ctrl+scroll or pinch to zoom."
+        : "Rectangle tool selected — tap Add Rectangle, then click and drag a box around the shape. Scroll to pan, Ctrl+scroll or pinch to zoom.";
+    }
+    if (drawMode === "rectangle") {
+      return "Click and drag across the image to draw a box — release to finish. Esc cancels.";
+    }
+    const pointCount = currentPolygon?.points.length ?? 0;
+    return `${pointCount} point${pointCount === 1 ? "" : "s"} placed — click to add more, click the first point (or press Enter) to close the shape, Esc to undo the last point. Drag to pan, pinch/Ctrl+scroll to zoom.`;
+  })();
+
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
@@ -944,15 +973,16 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
             : "-translate-y-full opacity-0"
         }`}
       >
-        {/* ── Header — title + hint only. Actions live in the toolbar below. ── */}
+        {/* ── Header — title + hint only. Actions live in the toolbar below.
+            Hint is allowed to wrap to two lines (no truncate) since a
+            first-time user reading it in full matters more than a tidy
+            single line. ── */}
         <div className="flex-none px-1 mb-3">
           <h1 className="text-lg sm:text-xl md:text-2xl font-heading text-amber-700 dark:text-amber-300 font-bold truncate">
             Draw annotations
           </h1>
-          <p className="text-xs sm:text-sm font-content text-amber-600 dark:text-amber-400 truncate">
-            {addNew
-              ? `${currentPolygon?.points.length ?? 0} point${currentPolygon?.points.length === 1 ? "" : "s"} placed — Enter to finish, Esc to undo. Drag to pan, pinch/Ctrl+scroll to zoom.`
-              : "Add a polygon, then tap points on the image. Scroll to pan, Ctrl+scroll or pinch to zoom."}
+          <p className="text-xs sm:text-sm font-content text-amber-600 dark:text-amber-400">
+            {hintText}
           </p>
         </div>
 
@@ -976,7 +1006,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                   <button
                     type="button"
                     aria-pressed={drawMode === "polygon"}
-                    title="Polygon tool"
+                    title="Polygon tool — trace a shape point by point"
                     onClick={() => setDrawMode("polygon")}
                     className={`h-full px-2.5 text-sm flex items-center gap-1.5 transition-colors ${
                       drawMode === "polygon"
@@ -984,13 +1014,13 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                         : "bg-transparent text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-stone-700/60"
                     }`}
                   >
-                    <span className="pi pi-share-alt text-sm" />
+                    <Hexagon size={16} />
                     {labelsVisible && <span>Polygon</span>}
                   </button>
                   <button
                     type="button"
                     aria-pressed={drawMode === "rectangle"}
-                    title="Rectangle tool"
+                    title="Rectangle tool — click and drag a box"
                     onClick={() => setDrawMode("rectangle")}
                     className={`h-full px-2.5 text-sm flex items-center gap-1.5 transition-colors border-l border-amber-200/60 dark:border-amber-800/50 ${
                       drawMode === "rectangle"
@@ -998,21 +1028,13 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                         : "bg-transparent text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-stone-700/60"
                     }`}
                   >
-                    <span className="pi pi-stop text-sm" />
+                    <Square size={16} />
                     {labelsVisible && <span>Rectangle</span>}
                   </button>
                 </div>
 
                 <Button
                   disabled={state.imageSelected.url === ""}
-                  icon="pi pi-pencil"
-                  label={
-                    labelsVisible
-                      ? drawMode === "polygon"
-                        ? "Add Polygon"
-                        : "Add Rectangle"
-                      : undefined
-                  }
                   title={
                     labelsVisible
                       ? undefined
@@ -1022,35 +1044,53 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                   }
                   className={`${AMBER_PRIMARY_BTN_STYLES} h-9 ${labelsVisible ? "px-4 gap-1.5" : "px-2.5"} text-sm flex items-center rounded-lg!`}
                   onClick={() => setAddNew(true)}
-                />
+                >
+                  {drawMode === "polygon" ? (
+                    <Hexagon size={16} />
+                  ) : (
+                    <Square size={16} />
+                  )}
+                  {labelsVisible && (
+                    <span>
+                      {drawMode === "polygon" ? "Add Polygon" : "Add Rectangle"}
+                    </span>
+                  )}
+                </Button>
               </>
             ) : drawMode === "polygon" ? (
               <>
                 <Button
-                  icon="pi pi-times"
-                  label={labelsVisible ? "Cancel" : undefined}
                   title={labelsVisible ? undefined : "Cancel"}
                   onClick={handleCancelDrawing}
                   className={`h-9 ${labelsVisible ? "px-3 gap-1.5" : "px-2.5"} text-sm flex items-center !rounded-lg !border-transparent !bg-stone-100/80 dark:!bg-stone-700/60 !text-stone-500 dark:!text-stone-400 hover:!bg-stone-200 dark:hover:!bg-stone-700`}
-                />
+                >
+                  <X size={16} />
+                  {labelsVisible && <span>Cancel</span>}
+                </Button>
                 <Button
-                  icon="pi pi-undo"
-                  label={labelsVisible ? "Undo Point" : undefined}
-                  title={labelsVisible ? undefined : "Undo Point"}
+                  title={labelsVisible ? undefined : "Undo last point"}
                   disabled={
                     !currentPolygon || currentPolygon.points.length === 0
                   }
                   onClick={handleUndoLastPoint}
                   className={`h-9 ${labelsVisible ? "px-3 gap-1.5" : "px-2.5"} text-sm flex items-center !rounded-lg !border-transparent !bg-amber-50/80 dark:!bg-stone-700/60 !text-amber-700 dark:!text-amber-300 hover:!bg-amber-100 dark:hover:!bg-stone-600`}
-                />
+                >
+                  <Undo2 size={16} />
+                  {labelsVisible && <span>Undo Point</span>}
+                </Button>
                 <Button
-                  icon="pi pi-check"
-                  label={labelsVisible ? "Complete Polygon" : undefined}
-                  title={labelsVisible ? undefined : "Complete Polygon"}
+                  title={
+                    labelsVisible
+                      ? undefined
+                      : "Complete polygon (needs 3+ points)"
+                  }
                   disabled={!currentPolygon || currentPolygon.points.length < 3}
                   onClick={handleCompletePolygon}
                   className={`${AMBER_PRIMARY_BTN_STYLES} h-9 ${labelsVisible ? "px-4 gap-1.5" : "px-2.5"} text-sm flex items-center rounded-lg!`}
-                />
+                >
+                  <Check size={16} />
+                  {labelsVisible && <span>Complete Polygon</span>}
+                </Button>
                 {currentPolygon && currentPolygon.points.length > 0 && (
                   <span className="ml-1 px-2.5 py-1 rounded-full text-xs font-content bg-amber-100/80 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 flex-none">
                     {currentPolygon.points.length} / 3 min
@@ -1060,14 +1100,15 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
             ) : (
               <>
                 <Button
-                  icon="pi pi-times"
-                  label={labelsVisible ? "Cancel" : undefined}
                   title={labelsVisible ? undefined : "Cancel"}
                   onClick={handleCancelDrawing}
                   className={`h-9 ${labelsVisible ? "px-3 gap-1.5" : "px-2.5"} text-sm flex items-center !rounded-lg !border-transparent !bg-stone-100/80 dark:!bg-stone-700/60 !text-stone-500 dark:!text-stone-400 hover:!bg-stone-200 dark:hover:!bg-stone-700`}
-                />
+                >
+                  <X size={16} />
+                  {labelsVisible && <span>Cancel</span>}
+                </Button>
                 <span className="ml-1 px-2.5 py-1 rounded-full text-xs font-content bg-amber-100/80 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 flex-none">
-                  Drag on the image to draw
+                  Drag on the image to draw a box
                 </span>
               </>
             )}
@@ -1078,12 +1119,6 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
           <div className="flex items-center gap-1.5 flex-none">
             <Button
               disabled={state.polygons.length + state.rectangles.length < 1}
-              icon="pi pi-list"
-              label={
-                labelsVisible
-                  ? `Shapes (${state.polygons.length + state.rectangles.length})`
-                  : undefined
-              }
               title={
                 labelsVisible
                   ? undefined
@@ -1091,18 +1126,26 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               }
               className={`${AMBER_PRIMARY_BTN_STYLES} h-9 ${labelsVisible ? "px-3 gap-1.5" : "px-2.5"} text-sm flex items-center !rounded-lg`}
               onClick={() => setShowListOfPolygons(true)}
-            />
+            >
+              <List size={16} />
+              {labelsVisible && (
+                <span>
+                  Shapes ({state.polygons.length + state.rectangles.length})
+                </span>
+              )}
+            </Button>
             <Button
               disabled={
                 state?.imageSelected?.url?.length <= 0 ||
                 state.polygons.length + state.rectangles.length < 1
               }
-              icon="pi pi-thumbs-up"
-              label={labelsVisible ? "Continue" : undefined}
               title={labelsVisible ? undefined : "Continue"}
               className={`${LIME_PRIMARY_BTN_STYLES} h-9 ${labelsVisible ? "px-3 gap-1.5" : "px-2.5"} text-sm flex items-center !rounded-lg`}
               onClick={() => navigate("/preview")}
-            />
+            >
+              <ThumbsUp size={16} />
+              {labelsVisible && <span>Continue</span>}
+            </Button>
           </div>
 
           <div className="flex-1 min-w-2" />
@@ -1112,10 +1155,11 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
           <div className="flex items-center gap-1 flex-none pl-1">
             <button
               aria-label="Zoom out"
+              title="Zoom out"
               onClick={() => stepZoom(-1)}
-              className="h-7 w-7 flex-none flex items-center justify-center rounded-full text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900 transition-colors text-base leading-none"
+              className="h-7 w-7 flex-none flex items-center justify-center rounded-full text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900 transition-colors"
             >
-              −
+              <Minus size={14} />
             </button>
             <input
               type="range"
@@ -1129,10 +1173,11 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
             />
             <button
               aria-label="Zoom in"
+              title="Zoom in"
               onClick={() => stepZoom(1)}
-              className="h-7 w-7 flex-none flex items-center justify-center rounded-full text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900 transition-colors text-base leading-none"
+              className="h-7 w-7 flex-none flex items-center justify-center rounded-full text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900 transition-colors"
             >
-              +
+              <Plus size={14} />
             </button>
             <button
               onClick={resetZoom}
@@ -1200,7 +1245,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               onClick={handleCancelDrawing}
               className={`h-11 ${labelsVisible ? "px-3 gap-1.5" : "w-11 justify-center"} flex items-center !border-transparent !bg-stone-100/80 dark:!bg-stone-800/70 !text-stone-500 dark:!text-stone-400 !rounded-xl flex-none`}
             >
-              <span className="pi pi-times text-base" />
+              <X size={18} />
               {labelsVisible && (
                 <span className="text-xs font-content leading-none">
                   Cancel
@@ -1214,19 +1259,21 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               onClick={handleUndoLastPoint}
               className={`h-11 ${labelsVisible ? "px-3 gap-1.5" : "w-11 justify-center"} flex items-center border-transparent! bg-amber-50/80! dark:bg-stone-800/70! text-amber-700! dark:text-amber-300! !rounded-xl flex-none`}
             >
-              <span className="pi pi-undo text-base" />
+              <Undo2 size={18} />
               {labelsVisible && (
                 <span className="text-xs font-content leading-none">Undo</span>
               )}
             </Button>
             <Button
               aria-label="Complete polygon"
-              title={labelsVisible ? undefined : "Complete polygon"}
+              title={
+                labelsVisible ? undefined : "Complete polygon (needs 3+ points)"
+              }
               disabled={!currentPolygon || currentPolygon.points.length < 3}
               onClick={handleCompletePolygon}
               className={`h-11 ${labelsVisible ? "px-4 gap-1.5" : "w-11 justify-center"} flex items-center ${AMBER_PRIMARY_BTN_STYLES} rounded-xl! flex-none`}
             >
-              <span className="pi pi-check text-base" />
+              <Check size={18} />
               {labelsVisible && (
                 <span className="text-xs font-content leading-none">
                   Complete
@@ -1244,7 +1291,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               onClick={handleCancelDrawing}
               className={`h-11 ${labelsVisible ? "px-3 gap-1.5" : "w-11 justify-center"} flex items-center !border-transparent !bg-stone-100/80 dark:!bg-stone-800/70 !text-stone-500 dark:!text-stone-400 !rounded-xl flex-none`}
             >
-              <span className="pi pi-times text-base" />
+              <X size={18} />
               {labelsVisible && (
                 <span className="text-xs font-content leading-none">
                   Cancel
