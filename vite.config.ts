@@ -1,28 +1,35 @@
-// import { defineConfig } from "vite";
-// import react from "@vitejs/plugin-react";
-
-// // https://vitejs.dev/config/
-// export default defineConfig({
-//   server: {
-//     port: 5373, // Change this to the desired port
-//   },
-//   plugins: [react()],
-//   base: "/Pineapple/",
-// });
-
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
+import fs from "node:fs";
+import path from "node:path";
 import { defineConfig } from "vite";
 
-export default defineConfig(() => {
-  const config = {
-    plugins: [react(), tailwindcss()],
-    base: "/",
-    server: {
-      port: 5373, // Change this to the desired port
-    },
-    assetsInclude: ["**/*.mov"],
-  };
+export default defineConfig(({ command }) => {
+  const keyPath = path.resolve(process.cwd(), "certs/localhost+3-key.pem");
+  const certPath = path.resolve(process.cwd(), "certs/localhost+3.pem");
 
-  return config;
+  const hasLocalCerts = fs.existsSync(keyPath) && fs.existsSync(certPath);
+
+  return {
+    plugins: [react(), tailwindcss()],
+
+    base: "/",
+
+    assetsInclude: ["**/*.mov"],
+
+    server:
+      command === "serve"
+        ? {
+            host: true,
+            port: 5373,
+
+            https: hasLocalCerts
+              ? {
+                  key: fs.readFileSync(keyPath),
+                  cert: fs.readFileSync(certPath),
+                }
+              : undefined,
+          }
+        : undefined,
+  };
 });

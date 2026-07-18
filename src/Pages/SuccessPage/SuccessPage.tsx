@@ -11,7 +11,10 @@ import {
   AMBER_PRIMARY_BTN_STYLES,
   LIME_PRIMARY_BTN_STYLES,
 } from "../../Services/constants";
-import { downloadPolygonsData } from "../../Services/functionServices";
+import {
+  downloadPolygonsData,
+  resetColorIndex,
+} from "../../Services/functionServices";
 import "./SuccessPage.scss";
 import { usePineappleStore } from "../../Services/zustand";
 
@@ -46,7 +49,7 @@ const SuccessPage = () => {
       setPolygons([]);
       setAnnotatedCanvasImage(null);
       setSelectedImage("", "", "");
-      setPolygons([]);
+      resetColorIndex();
 
       sessionStorage.removeItem("pineappleState");
       showToast("info", "Info", "Redirecting you to the home page");
@@ -140,7 +143,7 @@ const SuccessPage = () => {
                   downloadPolygonsData(
                     polygons,
                     annotatedCanvasImage,
-                    showToast
+                    showToast,
                   );
                 }}
                 className={`${AMBER_PRIMARY_BTN_STYLES}

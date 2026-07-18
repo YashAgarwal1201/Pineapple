@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import PineappleLoader from "../../Components/Loaders/Loaders";
 import PolygonDrawer from "../../Components/PolygonDrawer/PolygonDrawer";
 import Layout from "../../Layout/Layout";
+import { resetColorIndex } from "../../Services/functionServices";
 import { Polygon } from "../../Services/interfaces";
 import { usePineappleStore } from "../../Services/zustand";
 
@@ -40,6 +41,9 @@ const DrawPolygon = () => {
     const updatedPolygons = [...state.polygons];
     updatedPolygons.splice(index, 1);
     setPolygons(updatedPolygons);
+    // If the user just deleted the last polygon, reset the color cycle so
+    // the next annotation starts from the beginning of the palette again.
+    if (updatedPolygons.length === 0) resetColorIndex();
     showToast("warn", "Warning", "Polygon deleted");
   };
 
@@ -76,11 +80,21 @@ const DrawPolygon = () => {
   const drawMiniCroppedPolygon = (
     ctx: CanvasRenderingContext2D,
     polygon: Polygon,
-    image: HTMLImageElement
+    image: HTMLImageElement,
   ) => {
-    const [x1, y1, x2, y2] = polygon.bbox;
+    // const [x1, y1, x2, y2] = polygon.bbox;
+    // const cropWidth = x2 - x1;
+    // const cropHeight = y2 - y1;
+
+    const [rawX1, rawY1, rawX2, rawY2] = polygon.bbox;
+    // Clamp to image natural bounds to prevent black strips
+    const x1 = Math.max(0, rawX1);
+    const y1 = Math.max(0, rawY1);
+    const x2 = Math.min(image.naturalWidth, rawX2);
+    const y2 = Math.min(image.naturalHeight, rawY2);
     const cropWidth = x2 - x1;
     const cropHeight = y2 - y1;
+    if (cropWidth <= 0 || cropHeight <= 0) return; // guard against degenerate bbox
 
     // Clear previous canvas
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -99,7 +113,7 @@ const DrawPolygon = () => {
       0,
       0,
       ctx.canvas.width,
-      ctx.canvas.height
+      ctx.canvas.height,
     );
 
     // Transform and draw polygon
@@ -121,111 +135,6 @@ const DrawPolygon = () => {
       ctx.stroke();
     }
   };
-
-  // const drawMiniCroppedPolygon = (
-  //   ctx: CanvasRenderingContext2D,
-  //   polygon: Polygon,
-  //   image: HTMLImageElement
-  // ) => {
-  //   const canvas = ctx.canvas;
-
-  //   // Physical display size in CSS pixels
-  //   const displayWidth = 120;
-  //   const displayHeight = 120;
-
-  //   // Get device pixel ratio (2 for Retina, 1 for standard displays)
-  //   const dpr = window.devicePixelRatio || 1;
-
-  //   // Set the canvas internal resolution (actual pixels)
-  //   canvas.width = displayWidth * dpr;
-  //   canvas.height = displayHeight * dpr;
-
-  //   // Scale the canvas back down to display size via CSS
-  //   canvas.style.width = `${displayWidth}px`;
-  //   canvas.style.height = `${displayHeight}px`;
-
-  //   // Scale all drawing operations by DPR
-  //   ctx.scale(dpr, dpr);
-
-  //   // Enable high-quality image smoothing
-  //   ctx.imageSmoothingEnabled = true;
-  //   ctx.imageSmoothingQuality = "high";
-
-  //   const [x1, y1, x2, y2] = polygon.bbox;
-  //   const cropWidth = x2 - x1;
-  //   const cropHeight = y2 - y1;
-
-  //   ctx.clearRect(0, 0, displayWidth, displayHeight);
-
-  //   // Calculate scale ratios based on DISPLAY size (not canvas.width/height)
-  //   const scaleX = displayWidth / cropWidth;
-  //   const scaleY = displayHeight / cropHeight;
-
-  //   // Draw image at display dimensions
-  //   ctx.drawImage(
-  //     image,
-  //     x1,
-  //     y1,
-  //     cropWidth,
-  //     cropHeight,
-  //     0,
-  //     0,
-  //     displayWidth,
-  //     displayHeight
-  //   );
-
-  //   // Transform and draw polygon
-  //   const adjustedPoints = polygon.points.map((p) => ({
-  //     x: (p.x - x1) * scaleX,
-  //     y: (p.y - y1) * scaleY,
-  //   }));
-
-  //   ctx.beginPath();
-  //   if (adjustedPoints.length > 0) {
-  //     ctx.moveTo(adjustedPoints[0].x, adjustedPoints[0].y);
-  //     adjustedPoints.forEach((pt) => ctx.lineTo(pt.x, pt.y));
-  //     ctx.closePath();
-
-  //     ctx.strokeStyle = polygon.color;
-  //     ctx.lineWidth = 2; // Will be scaled by DPR automatically
-  //     ctx.fillStyle = `${polygon.color}60`;
-  //     ctx.fill();
-  //     ctx.stroke();
-  //   }
-
-  //   // Draw coordinate labels
-  //   ctx.font = "bold 11px Comfortaa, sans-serif";
-  //   ctx.textAlign = "center";
-  //   ctx.textBaseline = "middle";
-
-  //   adjustedPoints.forEach((pt, index) => {
-  //     const label = `x${index},y${index}`;
-  //     const metrics = ctx.measureText(label);
-  //     const padding = 4;
-
-  //     // Background box
-  //     ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
-  //     ctx.fillRect(
-  //       pt.x - metrics.width / 2 - padding,
-  //       pt.y - 9,
-  //       metrics.width + padding * 2,
-  //       18
-  //     );
-
-  //     // Text
-  //     ctx.fillStyle = "#000";
-  //     ctx.fillText(label, pt.x, pt.y);
-
-  //     // Point circle
-  //     ctx.beginPath();
-  //     ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI * 2);
-  //     ctx.fillStyle = polygon.color;
-  //     ctx.fill();
-  //     ctx.strokeStyle = "#fff";
-  //     ctx.lineWidth = 2;
-  //     ctx.stroke();
-  //   });
-  // };
 
   const confirmDeletePolygon = (index: number) => {
     confirmDialog({
@@ -285,7 +194,7 @@ const DrawPolygon = () => {
                   collapsed={true}
                   headerTemplate={(options) => {
                     const togglePanel = (
-                      event: React.MouseEvent<HTMLElement>
+                      event: React.MouseEvent<HTMLElement>,
                     ) => {
                       options.onTogglerClick!(event); // Trigger expand/collapse behavior
                     };
@@ -374,7 +283,7 @@ const DrawPolygon = () => {
                               <span>Save Label</span>
                             </Button>
                             <Button
-                              className="px-4 py-2 flex items-center gap-x-2 !bg-transparent !border !border-red-300 !text-red-500 hover:!bg-red-50 hover:!border-red-400 dark:!border-red-600 dark:!text-red-400 !rounded-r-2xl !rounded-l-sm"
+                              className="px-4 py-2 flex items-center gap-x-2 !bg-transparent border! !border-red-300 !text-red-500 hover:!bg-red-50 hover:!border-red-400 dark:!border-red-600 dark:!text-red-400 !rounded-r-2xl !rounded-l-sm"
                               onClick={() => handleEditLabel(-1)}
                             >
                               <X size={16} />
