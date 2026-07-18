@@ -15,7 +15,7 @@ import {
   calculateBBox,
   generateAnnotationColor,
 } from "../../Services/functionServices";
-import { Polygon } from "../../Services/interfaces";
+import { Polygon, Rectangle } from "../../Services/interfaces";
 import { usePineappleStore } from "../../Services/zustand";
 import LabelInputDialog from "../LabelInputDialog/LabelInputDialog";
 import "./PolygonDrawer.scss";
@@ -30,6 +30,13 @@ const CLOSE_HIT_RADIUS = 22;
 // it lifts within these bounds; otherwise it's treated as a pan-drag.
 const TAP_MOVE_THRESHOLD = 10; // px
 const TAP_TIME_THRESHOLD = 300; // ms
+
+// A rectangle drag shorter than this (in image-space px) is treated as an
+// accidental tap rather than an intentional box, and is discarded instead
+// of opening the label dialog on a near-zero-size rectangle.
+const MIN_RECT_SIZE = 6;
+
+type DrawMode = "polygon" | "rectangle";
 
 const ZOOM_STEP = 0.25; // per click of the +/- buttons or Ctrl+/-
 
@@ -59,7 +66,7 @@ const isFocusInInput = (): boolean => {
 const PolygonDrawer = ({ setShowListOfPolygons }) => {
   const navigate = useNavigate();
   const state = usePineappleStore();
-  const { setPolygons, showToast } = state;
+  const { setPolygons, setRectangles, showToast } = state;
 
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [currentPolygon, setCurrentPolygon] = useState<Polygon | null>(null);
@@ -70,6 +77,19 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
   const [showContent, setShowContent] = useState<boolean>(false);
   const [labelDialogVisible, setLabelDialogVisible] = useState(false);
   const pendingPolygonRef = useRef<Polygon | null>(null);
+
+  // ── Rectangle tool ──────────────────────────────────────────────────────
+  // Unlike polygons (tap-to-place-a-point), a rectangle is drawn with a
+  // single click-drag/touch-drag gesture — pointerdown marks the first
+  // corner, pointermove drags the opposite corner, pointerup finalizes it.
+  const [drawMode, setDrawMode] = useState<DrawMode>("polygon");
+  const [currentRectangle, setCurrentRectangle] = useState<Rectangle | null>(
+    null,
+  );
+  // Non-null while a rectangle drag is in progress; holds the image-space
+  // anchor corner so we don't need to re-derive it from state each move.
+  const rectStartRef = useRef<{ x: number; y: number } | null>(null);
+  const pendingRectangleRef = useRef<Rectangle | null>(null);
 
   // ── Toolbar label visibility ────────────────────────────────────────────
   // Icon-only by default (locked decision), toggled via a small icon in the
@@ -225,6 +245,48 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
     [],
   );
 
+  // Draws a rectangle in screen space. `inProgress` renders the dashed,
+  // unfilled, unlabeled variant used while the drag is still live — mirrors
+  // the polygon/in-progress-polygon split above.
+  const drawRectangle = useCallback(
+    (
+      ctx: CanvasRenderingContext2D,
+      corners: { x1: number; y1: number; x2: number; y2: number },
+      color: string,
+      label: string,
+      inProgress = false,
+    ) => {
+      const { x1, y1, x2, y2 } = corners;
+      const w = x2 - x1;
+      const h = y2 - y1;
+      if (w === 0 || h === 0) return;
+
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      if (inProgress) ctx.setLineDash([6, 3]);
+      ctx.rect(x1, y1, w, h);
+      if (!inProgress) {
+        ctx.fillStyle = `${color}50`;
+        ctx.fill();
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      if (!inProgress) {
+        ctx.font = "bold 13px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.shadowColor = "rgba(0,0,0,0.7)";
+        ctx.shadowBlur = 4;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText(label, x1 + w / 2, y1 + h / 2);
+        ctx.shadowBlur = 0;
+      }
+    },
+    [],
+  );
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !image) return;
@@ -256,19 +318,56 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
       drawPolygon(ctx, screenPoints, polygon.color, polygon.label);
     });
 
+    // Rectangles: same toScreen() mapping, just two corners instead of a
+    // point list. Stored startX/Y/endX/Y aren't guaranteed min→max (a drag
+    // can go in any direction), so screen-space corners are used as-is —
+    // ctx.rect() below handles negative width/height fine.
+    state.rectangles.forEach((rectangle) => {
+      const p1 = toScreen({ x: rectangle.startX, y: rectangle.startY });
+      const p2 = toScreen({ x: rectangle.endX, y: rectangle.endY });
+      drawRectangle(
+        ctx,
+        { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y },
+        rectangle.color,
+        rectangle.label,
+      );
+    });
+
     if (addNew && clickedPoints.length > 0 && currentPolygon) {
       const screenPoints = clickedPoints.map(toScreen);
       drawInProgress(ctx, screenPoints, currentPolygon.color);
+    }
+
+    if (addNew && drawMode === "rectangle" && currentRectangle) {
+      const p1 = toScreen({
+        x: currentRectangle.startX,
+        y: currentRectangle.startY,
+      });
+      const p2 = toScreen({
+        x: currentRectangle.endX,
+        y: currentRectangle.endY,
+      });
+      drawRectangle(
+        ctx,
+        { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y },
+        currentRectangle.color,
+        "",
+        true,
+      );
     }
   }, [
     image,
     viewport,
     state.polygons,
+    state.rectangles,
     clickedPoints,
     addNew,
     currentPolygon,
+    currentRectangle,
+    drawMode,
     toScreen,
     drawPolygon,
+    drawRectangle,
     drawInProgress,
     prepareCanvas,
     canvasRef,
@@ -353,11 +452,29 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
 
   const openLabelDialog = useCallback((polygon: Polygon) => {
     pendingPolygonRef.current = polygon;
+    pendingRectangleRef.current = null;
+    setLabelDialogVisible(true);
+  }, []);
+
+  const openRectangleLabelDialog = useCallback((rectangle: Rectangle) => {
+    pendingRectangleRef.current = rectangle;
+    pendingPolygonRef.current = null;
     setLabelDialogVisible(true);
   }, []);
 
   const handleLabelConfirm = useCallback(
     (label: string) => {
+      if (pendingRectangleRef.current) {
+        const rectangle = pendingRectangleRef.current;
+        setRectangles([...state.rectangles, { ...rectangle, label }]);
+        pendingRectangleRef.current = null;
+        setLabelDialogVisible(false);
+        setCurrentRectangle(null);
+        setAddNew(false);
+        showToast("success", "Success", `Rectangle "${label}" added.`);
+        return;
+      }
+
       const polygon = pendingPolygonRef.current;
       if (!polygon) return;
       setPolygons([...state.polygons, { ...polygon, label }]);
@@ -368,10 +485,21 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
       setAddNew(false);
       showToast("success", "Success", `Polygon "${label}" added.`);
     },
-    [state.polygons, setPolygons, showToast],
+    [state.polygons, state.rectangles, setPolygons, setRectangles, showToast],
   );
 
   const handleLabelCancel = useCallback(() => {
+    if (pendingRectangleRef.current) {
+      pendingRectangleRef.current = null;
+      setLabelDialogVisible(false);
+      // Unlike a polygon (which keeps its committed points on cancel), a
+      // rectangle has nothing partial to preserve — just clear it and let
+      // the user drag a fresh box.
+      setCurrentRectangle(null);
+      setAddNew(true);
+      return;
+    }
+
     pendingPolygonRef.current = null;
     setLabelDialogVisible(false);
     // Keep the in-progress polygon so the user can keep editing
@@ -410,11 +538,15 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
     setAddNew(false);
     setCurrentPolygon(null);
     setClickedPoints([]);
+    setCurrentRectangle(null);
+    rectStartRef.current = null;
   }, []);
 
-  // Keyboard shortcuts — ONLY fire when focus is NOT inside a text input
+  // Keyboard shortcuts — ONLY fire when focus is NOT inside a text input.
+  // Undo/Enter-to-complete are polygon-only concepts (a rectangle has no
+  // intermediate points and completes on pointer-up, not on a keypress).
   useEffect(() => {
-    if (!addNew) return;
+    if (!addNew || drawMode !== "polygon") return;
     const onKeyDown = (e: KeyboardEvent) => {
       // If the label dialog is open and focus is in an input, let the browser
       // handle the keystroke normally — do not intercept it for canvas actions.
@@ -440,11 +572,27 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [
     addNew,
+    drawMode,
     handleUndoLastPoint,
     handleCompletePolygon,
     handleCancelDrawing,
     currentPolygon,
   ]);
+
+  // Escape while rectangle drawing is armed — no undo concept, so it just
+  // exits drawing mode outright.
+  useEffect(() => {
+    if (!addNew || drawMode !== "rectangle") return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (isFocusInInput()) return;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        handleCancelDrawing();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [addNew, drawMode, handleCancelDrawing]);
 
   // ── Pointer events ────────────────────────────────────────────────────────
   //
@@ -557,7 +705,31 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
         return;
       }
 
-      // Drawing mode, single pointer, no modifier — undecided gesture.
+      // Rectangle tool: no tap-vs-pan ambiguity to resolve — a single-pointer
+      // drag always draws the box, so the anchor corner is committed
+      // immediately on pointerdown.
+      if (drawMode === "rectangle") {
+        if (!image) return;
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        const imagePoint = toImage({
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+        });
+        rectStartRef.current = imagePoint;
+        setCurrentRectangle({
+          label: "",
+          color: generateAnnotationColor(),
+          startX: imagePoint.x,
+          startY: imagePoint.y,
+          endX: imagePoint.x,
+          endY: imagePoint.y,
+        });
+        return;
+      }
+
+      // Polygon tool, single pointer, no modifier — undecided gesture.
       tapStateRef.current = {
         x: e.clientX,
         y: e.clientY,
@@ -565,7 +737,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
         moved: false,
       };
     },
-    [addNew, canvasRef],
+    [addNew, drawMode, image, toImage, canvasRef],
   );
 
   const handlePointerMove = useCallback(
@@ -602,7 +774,23 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
         return;
       }
 
-      // Single pointer, gesture still undecided (drawing mode).
+      // Rectangle drag in progress — drag the opposite corner.
+      if (rectStartRef.current) {
+        const canvas = canvasRef.current;
+        const rect = canvas?.getBoundingClientRect();
+        if (rect) {
+          const imagePoint = toImage({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+          });
+          setCurrentRectangle((prev) =>
+            prev ? { ...prev, endX: imagePoint.x, endY: imagePoint.y } : prev,
+          );
+        }
+        return;
+      }
+
+      // Single pointer, gesture still undecided (polygon drawing mode).
       if (tapStateRef.current) {
         const dx = e.clientX - tapStateRef.current.x;
         const dy = e.clientY - tapStateRef.current.y;
@@ -635,7 +823,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
         lastPanPos.current = { x: e.clientX, y: e.clientY };
       }
     },
-    [applyPan, zoomAt, viewport.zoom, canvasRef],
+    [applyPan, zoomAt, viewport.zoom, toImage, canvasRef],
   );
 
   const handlePointerUp = useCallback(
@@ -649,6 +837,28 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
       // panning doesn't jump when it resumes with the remaining finger.
       if (activePointersRef.current.size === 1) {
         lastPanPos.current = Array.from(activePointersRef.current.values())[0];
+      }
+
+      if (rectStartRef.current) {
+        rectStartRef.current = null;
+        const rect = currentRectangle;
+        if (rect) {
+          const width = Math.abs(rect.endX - rect.startX);
+          const height = Math.abs(rect.endY - rect.startY);
+          if (width < MIN_RECT_SIZE || height < MIN_RECT_SIZE) {
+            // Too small to be an intentional box — likely a stray tap.
+            setCurrentRectangle(null);
+          } else {
+            openRectangleLabelDialog({
+              ...rect,
+              startX: Math.min(rect.startX, rect.endX),
+              startY: Math.min(rect.startY, rect.endY),
+              endX: Math.max(rect.startX, rect.endX),
+              endY: Math.max(rect.startY, rect.endY),
+            });
+          }
+        }
+        return;
       }
 
       if (tapStateRef.current) {
@@ -670,7 +880,14 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
         canvasRef.current.style.cursor = viewport.zoom > 1 ? "grab" : "default";
       }
     },
-    [addNew, viewport.zoom, canvasRef, resolveTap],
+    [
+      addNew,
+      viewport.zoom,
+      canvasRef,
+      resolveTap,
+      currentRectangle,
+      openRectangleLabelDialog,
+    ],
   );
 
   const zoomPercent = Math.round(viewport.zoom * 100);
@@ -747,15 +964,67 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
         <div className="hidden md:flex flex-none items-center gap-2.5 mb-3 px-2 py-1.5 overflow-x-auto whitespace-nowrap rounded-xl bg-white/70 dark:bg-stone-800/50 shadow-sm">
           <div className="flex items-center gap-1.5 flex-none">
             {!addNew ? (
-              <Button
-                disabled={state.imageSelected.url === ""}
-                icon="pi pi-pencil"
-                label={labelsVisible ? "Add Polygon" : undefined}
-                title={labelsVisible ? undefined : "Add Polygon"}
-                className={`${AMBER_PRIMARY_BTN_STYLES} h-9 ${labelsVisible ? "px-4 gap-1.5" : "px-2.5"} text-sm flex items-center rounded-lg!`}
-                onClick={() => setAddNew(true)}
-              />
-            ) : (
+              <>
+                {/* Tool switcher — segmented control, sits right before the
+                    Add button so the mode you're about to draw is obvious
+                    before you commit to it. */}
+                <div
+                  role="group"
+                  aria-label="Drawing tool"
+                  className="flex items-center h-9 rounded-lg border border-amber-200/60 dark:border-amber-800/50 overflow-hidden flex-none"
+                >
+                  <button
+                    type="button"
+                    aria-pressed={drawMode === "polygon"}
+                    title="Polygon tool"
+                    onClick={() => setDrawMode("polygon")}
+                    className={`h-full px-2.5 text-sm flex items-center gap-1.5 transition-colors ${
+                      drawMode === "polygon"
+                        ? "bg-amber-500 dark:bg-amber-600 text-white"
+                        : "bg-transparent text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-stone-700/60"
+                    }`}
+                  >
+                    <span className="pi pi-share-alt text-sm" />
+                    {labelsVisible && <span>Polygon</span>}
+                  </button>
+                  <button
+                    type="button"
+                    aria-pressed={drawMode === "rectangle"}
+                    title="Rectangle tool"
+                    onClick={() => setDrawMode("rectangle")}
+                    className={`h-full px-2.5 text-sm flex items-center gap-1.5 transition-colors border-l border-amber-200/60 dark:border-amber-800/50 ${
+                      drawMode === "rectangle"
+                        ? "bg-amber-500 dark:bg-amber-600 text-white"
+                        : "bg-transparent text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-stone-700/60"
+                    }`}
+                  >
+                    <span className="pi pi-stop text-sm" />
+                    {labelsVisible && <span>Rectangle</span>}
+                  </button>
+                </div>
+
+                <Button
+                  disabled={state.imageSelected.url === ""}
+                  icon="pi pi-pencil"
+                  label={
+                    labelsVisible
+                      ? drawMode === "polygon"
+                        ? "Add Polygon"
+                        : "Add Rectangle"
+                      : undefined
+                  }
+                  title={
+                    labelsVisible
+                      ? undefined
+                      : drawMode === "polygon"
+                        ? "Add Polygon"
+                        : "Add Rectangle"
+                  }
+                  className={`${AMBER_PRIMARY_BTN_STYLES} h-9 ${labelsVisible ? "px-4 gap-1.5" : "px-2.5"} text-sm flex items-center rounded-lg!`}
+                  onClick={() => setAddNew(true)}
+                />
+              </>
+            ) : drawMode === "polygon" ? (
               <>
                 <Button
                   icon="pi pi-times"
@@ -788,6 +1057,19 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
                   </span>
                 )}
               </>
+            ) : (
+              <>
+                <Button
+                  icon="pi pi-times"
+                  label={labelsVisible ? "Cancel" : undefined}
+                  title={labelsVisible ? undefined : "Cancel"}
+                  onClick={handleCancelDrawing}
+                  className={`h-9 ${labelsVisible ? "px-3 gap-1.5" : "px-2.5"} text-sm flex items-center !rounded-lg !border-transparent !bg-stone-100/80 dark:!bg-stone-700/60 !text-stone-500 dark:!text-stone-400 hover:!bg-stone-200 dark:hover:!bg-stone-700`}
+                />
+                <span className="ml-1 px-2.5 py-1 rounded-full text-xs font-content bg-amber-100/80 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 flex-none">
+                  Drag on the image to draw
+                </span>
+              </>
             )}
           </div>
 
@@ -795,17 +1077,17 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
 
           <div className="flex items-center gap-1.5 flex-none">
             <Button
-              disabled={state.polygons.length < 1}
+              disabled={state.polygons.length + state.rectangles.length < 1}
               icon="pi pi-list"
               label={
                 labelsVisible
-                  ? `Polygons (${state.polygons.length})`
+                  ? `Shapes (${state.polygons.length + state.rectangles.length})`
                   : undefined
               }
               title={
                 labelsVisible
                   ? undefined
-                  : `Polygons (${state.polygons.length})`
+                  : `Shapes (${state.polygons.length + state.rectangles.length})`
               }
               className={`${AMBER_PRIMARY_BTN_STYLES} h-9 ${labelsVisible ? "px-3 gap-1.5" : "px-2.5"} text-sm flex items-center !rounded-lg`}
               onClick={() => setShowListOfPolygons(true)}
@@ -813,7 +1095,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
             <Button
               disabled={
                 state?.imageSelected?.url?.length <= 0 ||
-                state.polygons?.length < 1
+                state.polygons.length + state.rectangles.length < 1
               }
               icon="pi pi-thumbs-up"
               label={labelsVisible ? "Continue" : undefined}
@@ -910,7 +1192,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
         className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 dark:bg-stone-900/95 backdrop-blur-md border-t border-amber-200/60 dark:border-amber-800/50 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] px-2 py-2 pr-4 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap safe-area-bottom"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
-        {addNew ? (
+        {addNew && drawMode === "polygon" && (
           <div className="flex items-center gap-1.5 flex-none">
             <Button
               aria-label="Cancel drawing"
@@ -952,41 +1234,108 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               )}
             </Button>
           </div>
-        ) : (
+        )}
+
+        {addNew && drawMode === "rectangle" && (
           <div className="flex items-center gap-1.5 flex-none">
             <Button
-              aria-label="Add polygon"
-              title={labelsVisible ? undefined : "Add polygon"}
+              aria-label="Cancel drawing"
+              title={labelsVisible ? undefined : "Cancel"}
+              onClick={handleCancelDrawing}
+              className={`h-11 ${labelsVisible ? "px-3 gap-1.5" : "w-11 justify-center"} flex items-center !border-transparent !bg-stone-100/80 dark:!bg-stone-800/70 !text-stone-500 dark:!text-stone-400 !rounded-xl flex-none`}
+            >
+              <span className="pi pi-times text-base" />
+              {labelsVisible && (
+                <span className="text-xs font-content leading-none">
+                  Cancel
+                </span>
+              )}
+            </Button>
+            <span className="px-3 h-11 flex items-center rounded-xl text-xs font-content bg-amber-100/80 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 flex-none whitespace-nowrap">
+              Drag to draw a box
+            </span>
+          </div>
+        )}
+
+        {!addNew && (
+          <div className="flex items-center gap-1.5 flex-none">
+            {/* Tool switcher — same segmented control as desktop, just
+                touch-sized (h-11). */}
+            <div
+              role="group"
+              aria-label="Drawing tool"
+              className="flex items-center h-11 rounded-xl border border-amber-200/60 dark:border-amber-800/50 overflow-hidden flex-none"
+            >
+              <button
+                type="button"
+                aria-pressed={drawMode === "polygon"}
+                title="Polygon tool"
+                onClick={() => setDrawMode("polygon")}
+                className={`h-full w-11 flex items-center justify-center transition-colors ${
+                  drawMode === "polygon"
+                    ? "bg-amber-500 dark:bg-amber-600 text-white"
+                    : "bg-transparent text-amber-700 dark:text-amber-300"
+                }`}
+              >
+                <span className="pi pi-share-alt text-base" />
+              </button>
+              <button
+                type="button"
+                aria-pressed={drawMode === "rectangle"}
+                title="Rectangle tool"
+                onClick={() => setDrawMode("rectangle")}
+                className={`h-full w-11 flex items-center justify-center transition-colors border-l border-amber-200/60 dark:border-amber-800/50 ${
+                  drawMode === "rectangle"
+                    ? "bg-amber-500 dark:bg-amber-600 text-white"
+                    : "bg-transparent text-amber-700 dark:text-amber-300"
+                }`}
+              >
+                <span className="pi pi-stop text-base" />
+              </button>
+            </div>
+
+            <Button
+              aria-label={
+                drawMode === "polygon" ? "Add polygon" : "Add rectangle"
+              }
+              title={
+                labelsVisible
+                  ? undefined
+                  : drawMode === "polygon"
+                    ? "Add polygon"
+                    : "Add rectangle"
+              }
               disabled={state.imageSelected.url === ""}
               onClick={() => {
                 setAddNew(true);
                 setCurrentPolygon(null);
                 setClickedPoints([]);
+                setCurrentRectangle(null);
               }}
               className={`h-11 ${labelsVisible ? "px-4 gap-1.5" : "w-11 justify-center"} flex items-center ${AMBER_PRIMARY_BTN_STYLES} rounded-xl! flex-none`}
             >
               <span className="pi pi-pencil text-base" />
               {labelsVisible && (
                 <span className="text-xs font-content leading-none">
-                  Add Polygon
+                  {drawMode === "polygon" ? "Add Polygon" : "Add Rectangle"}
                 </span>
               )}
             </Button>
             <Button
-              aria-label="Show polygons list"
+              aria-label="Show shapes list"
               title={
                 labelsVisible
                   ? undefined
-                  : `Polygons (${state.polygons.length})`
+                  : `Shapes (${state.polygons.length + state.rectangles.length})`
               }
-              disabled={state.polygons.length < 1}
+              disabled={state.polygons.length + state.rectangles.length < 1}
               onClick={() => setShowListOfPolygons(true)}
               className={`h-11 ${labelsVisible ? "px-3 gap-1.5" : "w-11 justify-center"} flex items-center !border-transparent !bg-amber-50/80 dark:!bg-stone-800/70 !text-amber-700 dark:!text-amber-300 !rounded-xl flex-none`}
             >
               <span className="pi pi-list text-base" />
               {labelsVisible && (
                 <span className="text-xs font-content leading-none">
-                  Polygons ({state.polygons.length})
+                  Shapes ({state.polygons.length + state.rectangles.length})
                 </span>
               )}
             </Button>
@@ -995,7 +1344,7 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
               title={labelsVisible ? undefined : "Continue"}
               disabled={
                 state?.imageSelected?.url?.length <= 0 ||
-                state.polygons?.length < 1
+                state.polygons.length + state.rectangles.length < 1
               }
               onClick={() => navigate("/preview")}
               className={`h-11 ${labelsVisible ? "px-3 gap-1.5" : "w-11 justify-center"} flex items-center ${LIME_PRIMARY_BTN_STYLES} !rounded-xl flex-none`}
@@ -1064,7 +1413,9 @@ const PolygonDrawer = ({ setShowListOfPolygons }) => {
       <LabelInputDialog
         visible={labelDialogVisible}
         defaultLabel={
-          currentPolygon?.label ?? `Polygon ${state.polygons.length + 1}`
+          pendingRectangleRef.current
+            ? `Rectangle ${state.rectangles.length + 1}`
+            : (currentPolygon?.label ?? `Polygon ${state.polygons.length + 1}`)
         }
         onConfirm={handleLabelConfirm}
         onCancel={handleLabelCancel}
