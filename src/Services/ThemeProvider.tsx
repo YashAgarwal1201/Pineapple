@@ -13,7 +13,7 @@ export default function ThemeProvider({
 
   // On mount, load stored preference
   useEffect(() => {
-    const storedTheme = localStorage.getItem("theme") as
+    const storedTheme = localStorage.getItem("pineapple-app-theme") as
       | "system"
       | "light"
       | "dark"
@@ -28,7 +28,7 @@ export default function ThemeProvider({
     const applyTheme = () => {
       if (theme === "system") {
         const prefersDark = window.matchMedia(
-          "(prefers-color-scheme: dark)"
+          "(prefers-color-scheme: dark)",
         ).matches;
         root.classList.toggle("dark", prefersDark);
       } else {

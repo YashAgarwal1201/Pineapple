@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
 // import { Button } from "primereact/button";
 // import { useNavigate } from "react-router-dom";
-
 // import "./UploadData.scss";
+import { Link } from "react-router-dom";
+
 import Layout from "../../Layout/Layout";
 import { PROJECT_NAME } from "../../Services/constants";
-import { Link } from "react-router-dom";
 
 const LandingScreen = () => {
   // const navigate = useNavigate();
@@ -38,12 +38,18 @@ const LandingScreen = () => {
         </div>
 
         <div className="w-full  h-full px-2 flex flex-col justify-start mdl:justify-center items-center gap-y-10">
-          <h1 className="text-center font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-lime-700 dark:text-lime-400 select-none">
-            <span className="text-amber-700 dark:text-amber-300 ">
-              Welcome to
-            </span>{" "}
-            Project {PROJECT_NAME}
-          </h1>
+          <div className="flex flex-col items-center gap-3 md:gap-4">
+            <h1 className="text-center font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-lime-700 dark:text-lime-400 select-none">
+              <span className="text-amber-700 dark:text-amber-300 ">
+                Welcome to
+              </span>{" "}
+              Project {PROJECT_NAME}
+            </h1>
+            <p className="text-center font-content text-base sm:text-lg md:text-xl text-amber-600 dark:text-amber-400 max-w-3xl">
+              Draw polygon annotations on any image, right in your browser, and
+              export them as labeled JSON data alongside the annotated image.
+            </p>
+          </div>
 
           {/* <Link
             title="Click to proceed"
@@ -67,7 +73,7 @@ const LandingScreen = () => {
             <Link
               to="/upload-image"
               title="Click to proceed"
-              className="p-button !rounded-2xl flex flex-row-reverse items-center gap-2 !bg-amber-400 hover:!bg-amber-500 !text-stone-900 dark:!bg-amber-500 dark:hover:!bg-amber-600 dark:!text-stone-900 !border-none animate-bounce-right"
+              className="p-button rounded-2xl! flex flex-row-reverse items-center gap-2 bg-amber-400! hover:bg-amber-500! text-stone-900! dark:bg-amber-500! dark:hover:bg-amber-600! dark:text-stone-900! border-none! animate-bounce-right"
               // onClick={() => navigate("/upload-image")}
             >
               <ChevronRight size={20} />

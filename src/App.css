@@ -72,6 +72,10 @@ a:hover,
   color: unset;
 }
 
+.safe-area-bottom {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
 @media (hover: hover) {
   a:hover,
   .p-button:hover {

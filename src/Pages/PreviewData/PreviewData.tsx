@@ -4,18 +4,17 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 
-import { Menu, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
 import { Sidebar } from "primereact/sidebar";
-import { SpeedDial } from "primereact/speeddial";
 import { useNavigate } from "react-router-dom";
 
 import PineappleLoader from "../../Components/Loaders/Loaders";
+import { useCanvasSetup } from "../../hooks/useCanvasSetup";
 import Layout from "../../Layout/Layout";
 import "./PreviewData.scss";
 import {
@@ -30,14 +29,13 @@ const PreviewData = () => {
 
   const state = usePineappleStore();
 
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const canvasParentRef = useRef<HTMLDivElement | null>(null);
-
   const [loading, setLoading] = useState<boolean>(false);
   const [showListOfPolygons, setShowListOfPolygons] = useState<boolean>(false);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
-  const [scaleFactor, setScaleFactor] = useState({ x: 1, y: 1 });
   const [showContent, setShowContent] = useState<boolean>(false);
+
+  // useCanvasSetup provides DPR-compensated canvas sizing + stable resize
+  const { canvasRef, canvasParentRef, scaleFactor } = useCanvasSetup(image);
 
   useEffect(() => {
     if (state.imageSelected.url === "") {
@@ -48,55 +46,12 @@ const PreviewData = () => {
     }
   }, []);
 
-  const updateCanvasSize = useCallback((img: HTMLImageElement) => {
-    const canvas = canvasRef.current;
-    const parent = canvasParentRef.current;
-
-    if (canvas && parent) {
-      const parentWidth = parent.clientWidth;
-      const parentHeight = parent.clientHeight;
-
-      // Maintain aspect ratio of the image while resizing
-      const imageAspectRatio = img.width / img.height;
-      let newCanvasWidth, newCanvasHeight;
-
-      if (parentWidth / parentHeight > imageAspectRatio) {
-        newCanvasHeight = parentHeight;
-        newCanvasWidth = newCanvasHeight * imageAspectRatio;
-      } else {
-        newCanvasWidth = parentWidth;
-        newCanvasHeight = newCanvasWidth / imageAspectRatio;
-      }
-
-      canvas.width = newCanvasWidth;
-      canvas.height = newCanvasHeight;
-
-      // Scaling factors for rendering polygons
-      const scaleX = newCanvasWidth / img.width;
-      const scaleY = newCanvasHeight / img.height;
-      setScaleFactor({ x: scaleX, y: scaleY });
-    }
-  }, []);
-
   useEffect(() => {
     if (!state.imageSelected?.url) return;
-
     const img = new Image();
     img.src = state.imageSelected.url;
-    img.onload = () => {
-      setImage(img);
-      updateCanvasSize(img);
-    };
-  }, [state.imageSelected?.url, updateCanvasSize]);
-
-  useEffect(() => {
-    window.addEventListener("resize", () => image && updateCanvasSize(image));
-    return () =>
-      window.removeEventListener(
-        "resize",
-        () => image && updateCanvasSize(image)
-      );
-  }, [image, updateCanvasSize]);
+    img.onload = () => setImage(img);
+  }, [state.imageSelected?.url]);
 
   // Memoize scaled polygons for efficient rendering
   const scaledPolygons = useMemo(() => {
@@ -113,28 +68,27 @@ const PreviewData = () => {
   // Function to draw image and polygons on canvas
   const drawImageAndPolygons = useCallback(
     (ctx: CanvasRenderingContext2D) => {
-      if (image) {
-        ctx.clearRect(
-          0,
-          0,
-          canvasRef.current!.width,
-          canvasRef.current!.height
-        );
-        ctx.drawImage(
-          image,
-          0,
-          0,
-          image.width * scaleFactor.x,
-          image.height * scaleFactor.y
-        );
+      if (!image || !canvasRef.current) return;
 
-        // Draw polygons
-        scaledPolygons.forEach((polygon) => {
-          drawPolygon(ctx, polygon);
-        });
-      }
+      const dpr = window.devicePixelRatio || 1;
+      const canvas = canvasRef.current;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.save();
+      ctx.scale(dpr, dpr);
+
+      const displayW = canvas.width / dpr;
+      const displayH = canvas.height / dpr;
+      ctx.drawImage(image, 0, 0, displayW, displayH);
+
+      scaledPolygons.forEach((polygon) => {
+        drawPolygon(ctx, polygon);
+      });
+
+      ctx.restore();
     },
-    [image, scaledPolygons, scaleFactor]
+    [image, scaledPolygons, canvasRef],
   );
 
   useEffect(() => {
@@ -165,12 +119,16 @@ const PreviewData = () => {
       const centerX = points.reduce((sum, p) => sum + p.x, 0) / points.length;
       const centerY = points.reduce((sum, p) => sum + p.y, 0) / points.length;
 
-      ctx.fillStyle = "white";
-      ctx.font = "14px Arial";
+      ctx.font = "bold 13px system-ui, sans-serif";
       ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.shadowColor = "rgba(0,0,0,0.7)";
+      ctx.shadowBlur = 4;
+      ctx.fillStyle = "#ffffff";
       ctx.fillText(polygon.label, centerX, centerY);
+      ctx.shadowBlur = 0;
     },
-    []
+    [],
   );
 
   useEffect(() => {
@@ -192,73 +150,10 @@ const PreviewData = () => {
     state.showToast("success", "Success", "Annotated image saved");
   };
 
-  const actions = [
-    {
-      label: "Save & Continue",
-      icon: "pi pi-thumbs-up",
-      command: () => {
-        startTransition(() => {
-          navigate("/success");
-        });
-
-        saveAnnotatedImage();
-      },
-      disabled:
-        state?.imageSelected?.url?.length <= 0 || state.polygons?.length < 1,
-      className:
-        "bg-naples-yellow text-metallic-brown border-naples-yellow hover:bg-yellow-500",
-    },
-    {
-      label: "Show Polygons Data",
-      icon: "pi pi-list",
-      command: () => setShowListOfPolygons(true),
-      className:
-        "bg-transparent text-naples-yellow border border-naples-yellow hover:bg-naples-yellow hover:text-metallic-brown",
-    },
-  ];
-
-  // const drawMiniPolygon = (ctx: CanvasRenderingContext2D, polygon: Polygon) => {
-  //   const padding = 5;
-  //   const width = 100;
-  //   const height = 100;
-
-  //   // Clear canvas
-  //   ctx.clearRect(0, 0, width, height);
-
-  //   // Get min/max for normalization
-  //   const xs = polygon.points.map((p) => p.x);
-  //   const ys = polygon.points.map((p) => p.y);
-  //   const minX = Math.min(...xs);
-  //   const maxX = Math.max(...xs);
-  //   const minY = Math.min(...ys);
-  //   const maxY = Math.max(...ys);
-
-  //   const rangeX = maxX - minX || 1;
-  //   const rangeY = maxY - minY || 1;
-
-  //   // Scale and translate points into 100x100 box with padding
-  //   const scaledPoints = polygon.points.map((p) => ({
-  //     x: ((p.x - minX) / rangeX) * (width - 2 * padding) + padding,
-  //     y: ((p.y - minY) / rangeY) * (height - 2 * padding) + padding,
-  //   }));
-
-  //   // Draw polygon
-  //   ctx.beginPath();
-  //   ctx.moveTo(scaledPoints[0].x, scaledPoints[0].y);
-  //   scaledPoints.forEach((p) => ctx.lineTo(p.x, p.y));
-  //   ctx.closePath();
-
-  //   ctx.fillStyle = polygon.color + "66";
-  //   ctx.strokeStyle = polygon.color;
-  //   ctx.lineWidth = 2;
-  //   ctx.fill();
-  //   ctx.stroke();
-  // };
-
   const drawMiniCroppedPolygon = (
     ctx: CanvasRenderingContext2D,
     polygon: Polygon,
-    image: HTMLImageElement
+    image: HTMLImageElement,
   ) => {
     const [x1, y1, x2, y2] = polygon.bbox;
     const cropWidth = x2 - x1;
@@ -281,7 +176,7 @@ const PreviewData = () => {
       0,
       0,
       ctx.canvas.width,
-      ctx.canvas.height
+      ctx.canvas.height,
     );
 
     // Transform and draw polygon
@@ -316,7 +211,7 @@ const PreviewData = () => {
       ) : (
         <>
           <div
-            className={`customScrollbar h-full p-2 sm:p-4 flex flex-col justify-around items-center bg-amber-50 dark:bg-stone-900 rounded-xl sm:rounded-2xl shadow-md overflow-y-auto transition-all duration-1000 transform ${
+            className={`customScrollbar h-full p-2 pb-20 md:pb-4 sm:p-4 flex flex-col justify-around items-center bg-amber-50 dark:bg-stone-900 rounded-xl sm:rounded-2xl shadow-md overflow-y-auto transition-all duration-1000 transform ${
               showContent
                 ? "translate-y-0 opacity-100"
                 : "-translate-y-full opacity-0"
@@ -340,7 +235,7 @@ const PreviewData = () => {
                     }
                     icon="pi pi-thumbs-up"
                     label="Continue"
-                    className={`${LIME_PRIMARY_BTN_STYLES} h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-r-2xl !rounded-l-sm`}
+                    className={`${LIME_PRIMARY_BTN_STYLES} h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 rounded-r-2xl! rounded-l-sm!`}
                     onClick={() => {
                       startTransition(() => {
                         navigate("/success");
@@ -353,7 +248,7 @@ const PreviewData = () => {
                     icon={"pi pi-list"}
                     label={"Polygons Data"}
                     onClick={() => setShowListOfPolygons(true)}
-                    className={`${AMBER_PRIMARY_BTN_STYLES} h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 !rounded-l-2xl !rounded-r-sm`}
+                    className={`${AMBER_PRIMARY_BTN_STYLES} h-10 px-2 md:px-5 text-sm sm:text-base flex items-center gap-2 rounded-l-2xl! rounded-r-sm!`}
                   />
                 </div>
               </div>
@@ -372,23 +267,39 @@ const PreviewData = () => {
               </div>
             </div>
           </div>
-          <div className="block md:hidden">
-            <SpeedDial
-              model={actions}
-              direction="up"
-              buttonClassName="bg-metallic-brown text-naples-yellow border-naples-yellow"
-              showIcon="pi pi-bars"
-              hideIcon="pi pi-times"
-              className="p-speeddial absolute bottom-5 right-2"
-              buttonTemplate={(options) => (
-                <Button
-                  onClick={options.onClick}
-                  className="bg-ochre size-10 text-naples-yellow"
-                  icon={<Menu size={16} />}
-                  rounded
-                />
-              )}
-            />
+          {/* Mobile sticky bottom bar — same rationale as the Draw page: these
+       are primary actions, not secondary ones, so SpeedDial was a mismatch. */}
+          <div className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 dark:bg-stone-900/95 backdrop-blur-md border-t border-amber-200 dark:border-amber-800 px-2 py-2 flex items-center gap-1.5 safe-area-bottom">
+            <Button
+              aria-label="Show polygons data"
+              disabled={state.polygons.length < 1}
+              onClick={() => setShowListOfPolygons(true)}
+              className="flex-1 h-11 flex flex-col items-center justify-center gap-0.5 bg-transparent! text-amber-700! dark:text-amber-300! border! border-amber-400! dark:border-amber-600! rounded-xl!"
+            >
+              <span className="pi pi-list text-base" />
+              <span className="text-[11px] font-content leading-none">
+                Polygons ({state.polygons.length})
+              </span>
+            </Button>
+            <Button
+              aria-label="Continue"
+              disabled={
+                state?.imageSelected?.url?.length <= 0 ||
+                state.polygons?.length < 1
+              }
+              onClick={() => {
+                startTransition(() => {
+                  navigate("/success");
+                });
+                saveAnnotatedImage();
+              }}
+              className={`flex-1 h-11 flex flex-col items-center justify-center gap-0.5 ${LIME_PRIMARY_BTN_STYLES} rounded-xl!`}
+            >
+              <span className="pi pi-thumbs-up text-base" />
+              <span className="text-[11px] font-content leading-none">
+                Continue
+              </span>
+            </Button>
           </div>
         </>
       )}
@@ -402,7 +313,7 @@ const PreviewData = () => {
             Polygons Data
           </h2>
         }
-        className="polygon-list-sidebar side-menu !rounded-none md:!rounded-r-3xl !bg-white dark:!bg-black aboutDialog !w-full md:!w-[768px]"
+        className="polygon-list-sidebar side-menu rounded-none! md:rounded-r-3xl! bg-white! dark:bg-black! aboutDialog w-full! md:w-[768px]!"
         position="left"
         closeIcon={
           <span className=" text-naples-yellow">
@@ -420,7 +331,7 @@ const PreviewData = () => {
                   collapsed={true}
                   headerTemplate={(options) => {
                     const togglePanel = (
-                      event: React.MouseEvent<HTMLElement>
+                      event: React.MouseEvent<HTMLElement>,
                     ) => {
                       options.onTogglerClick!(event); // Trigger expand/collapse behavior
                     };
