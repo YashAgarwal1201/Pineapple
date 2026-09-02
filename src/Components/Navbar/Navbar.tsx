@@ -11,7 +11,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { toggleSideMenu } = usePineappleStore();
 
-  // const location = useLocation();
   const { pathname } = useLocation();
 
   return (
@@ -21,13 +20,23 @@ const Navbar = () => {
         icon={<ArrowLeft size={20} />}
         title="go back"
         aria-label="Go Back"
-        className={`!w-auto md:!w-full h-full md:h-auto aspect-square !rounded-2xl !border-none ${
+        className={`w-auto! md:w-full! h-full md:h-auto aspect-square rounded-2xl! border-none! ${
           pathname === "/"
             ? "text-transparent bg-transparent"
             : "!bg-amber-400 hover:!bg-amber-500 !text-stone-900 dark:!bg-amber-500 dark:hover:!bg-amber-600 dark:!text-stone-900"
         } border-0`}
         onClick={() => {
-          if (pathname.includes("/upload-image")) {
+          // Sub-routes of /upload-image (scratch, import) go back to the
+          // choice screen itself, not all the way to the landing page —
+          // check this BEFORE the generic "/upload-image" check below.
+          if (
+            pathname.includes("/upload-image/scratch") ||
+            pathname.includes("/upload-image/import")
+          ) {
+            startTransition(() => {
+              navigate("/upload-image");
+            });
+          } else if (pathname.includes("/upload-image")) {
             startTransition(() => {
               navigate("/");
             });
@@ -53,7 +62,6 @@ const Navbar = () => {
             });
           }
         }}
-        // onClick={() => startTransition(() => navigate("./../"))}
       />
 
       <Button

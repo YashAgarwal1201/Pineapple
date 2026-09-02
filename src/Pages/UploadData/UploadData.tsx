@@ -33,7 +33,7 @@ const UploadData = () => {
   const navigate = useNavigate();
 
   const state = usePineappleStore();
-  const { showToast, setSelectedImage, setPolygons } = state;
+  const { showToast, setSelectedImage, setPolygons, setImageFileToDb } = state;
 
   const [openCamera, setOpenCamera] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<boolean>(false);
@@ -49,28 +49,23 @@ const UploadData = () => {
 
   const processFile = useCallback(
     async (file: File) => {
-      const ONE_MB = 1024 * 1024;
-      if (file.size > ONE_MB) {
-        showToast("error", "Error", "Please select an image smaller than 1MB");
+      const TEN_MB = 10 * 1024 * 1024;
+      if (file.size > TEN_MB) {
+        showToast("error", "Error", "Please select an image smaller than 10MB");
         return;
       }
 
       const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
       if (ACCEPTED_TYPES.includes(file.type)) {
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-          const base64Data = e.target?.result as string;
-          setSelectedImage(file.name, base64Data, file.type);
-          setImageError(false);
-          showToast("success", "Success", "Rack image uploaded successfully!");
-          if (state.polygons?.length > 0) setPolygons([]);
-        };
-        reader.readAsDataURL(file);
+        await setImageFileToDb(file, file.name, file.type);
+        setImageError(false);
+        showToast("success", "Success", "Image uploaded successfully!");
+        if (state.polygons?.length > 0) setPolygons([]);
       } else {
         showToast("error", "Error", "Please select a valid image file");
       }
     },
-    [showToast, setSelectedImage, setPolygons, state.polygons?.length],
+    [showToast, setImageFileToDb, setPolygons, state.polygons?.length],
   );
 
   const uploadHandeler = () => {
@@ -152,11 +147,10 @@ const UploadData = () => {
   return (
     <Layout>
       <div
-        className={`h-full p-3 sm:p-4 lg:p-6 xl:p-8 overflow-y-auto flex flex-col bg-amber-50 dark:bg-stone-900 rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-md transition-all duration-1000 transform ${
-          showContent
+        className={`h-full p-3 sm:p-4 lg:p-6 xl:p-8 overflow-y-auto flex flex-col bg-amber-50 dark:bg-stone-900 rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-md transition-all duration-1000 transform ${showContent
             ? "translate-y-0 opacity-100"
             : "-translate-y-full opacity-0"
-        }`}
+          }`}
       >
         {/* Header Section */}
         <div className="shrink-0 mb-6 lg:mb-8">
@@ -177,13 +171,12 @@ const UploadData = () => {
           <div className="grow max-h-full w-full lg:w-4/6 flex flex-row">
             <div
               ref={dropZoneRef}
-              className={`w-full h-full relative border border-dashed rounded-xl lg:rounded-2xl cursor-pointer transition-all duration-300 ${
-                isDragOver
+              className={`w-full h-full relative border border-dashed rounded-xl lg:rounded-2xl cursor-pointer transition-all duration-300 ${isDragOver
                   ? "border-amber-500 bg-linear-to-br from-amber-100/80 to-orange-100/80 dark:from-amber-900/30 dark:to-orange-900/30 scale-[1.01] shadow-2xl"
                   : hasImage
                     ? "border-amber-400 dark:border-amber-600 shadow-xl"
                     : "border-amber-300 dark:border-amber-700 hover:border-amber-400 dark:hover:border-amber-600 hover:shadow-lg"
-              }`}
+                }`}
               onClick={() => {
                 if (!hasImage) uploadHandeler();
               }}
@@ -196,9 +189,8 @@ const UploadData = () => {
                 <div className="w-full h-full flex flex-col justify-center items-center p-6 lg:p-12 bg-linear-to-br from-amber-50/80 via-yellow-50/80 to-orange-50/80 dark:from-amber-900/10 dark:via-yellow-900/10 dark:to-orange-900/10 rounded-2xl lg:rounded-3xl">
                   {/* Main Upload Icon */}
                   <div
-                    className={`mb-8 lg:mb-12 transition-all duration-500 ${
-                      isDragOver ? "scale-125 rotate-6" : "hover:scale-110"
-                    }`}
+                    className={`mb-8 lg:mb-12 transition-all duration-500 ${isDragOver ? "scale-125 rotate-6" : "hover:scale-110"
+                      }`}
                   >
                     <div className="relative">
                       <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-36 lg:h-36 bg-linear-to-br from-amber-400 via-orange-400 to-yellow-500 rounded-3xl lg:rounded-4xl flex items-center justify-center shadow-2xl">
@@ -250,7 +242,7 @@ const UploadData = () => {
                     ))}
                     <div className="px-4 py-2 lg:px-6 lg:py-3 bg-linear-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-2xl border border-green-200 dark:border-green-800 shadow-md">
                       <span className="text-sm lg:text-base text-green-600 dark:text-green-400 font-bold">
-                        Max 1MB
+                        Max 10MB
                       </span>
                     </div>
                   </div>
@@ -386,7 +378,7 @@ const UploadData = () => {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-blue-500 mt-1">•</span>
-                  <span>Keep file size under 1MB for faster upload</span>
+                  <span>Keep file size under 10MB for faster upload</span>
                 </li>
               </ul>
             </div>
@@ -405,7 +397,7 @@ const UploadData = () => {
             <X size={16} />
           </span>
         }
-        className="polygon-list-sidebar side-menu rounded-none! md:rounded-l-3xl! bg-white! dark:bg-black! aboutDialog w-full! md:w-[768px]!"
+        className="polygon-list-sidebar side-menu rounded-none! md:rounded-l-3xl! bg-white! dark:bg-black! aboutDialog w-full! md:w-3xl!"
         header={
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-lime-700 dark:text-lime-400">
             Capture Image

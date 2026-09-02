@@ -1,7 +1,7 @@
 // src/Pages/DrawPolygon/DrawPolygon.tsx
 import { useEffect, useState } from "react";
 
-import { ArrowUp, Check, Pencil, Trash, X } from "lucide-react";
+import { ArrowUp, Check, Pencil, Trash, Upload, X } from "lucide-react";
 import { Button } from "primereact/button";
 import { confirmDialog } from "primereact/confirmdialog";
 import { InputText } from "primereact/inputtext";
@@ -14,6 +14,7 @@ import PineappleLoader from "../../Components/Loaders/Loaders";
 import PolygonDrawer from "../../Components/PolygonDrawer/PolygonDrawer";
 import Layout from "../../Layout/Layout";
 import { resetColorIndex } from "../../Services/functionServices";
+import { detectFormat, parseAnnotationFile } from "../../Services/importAdapters";
 import { Polygon, Rectangle } from "../../Services/interfaces";
 import { usePineappleStore } from "../../Services/zustand";
 
@@ -39,6 +40,67 @@ const DrawPolygon = () => {
       setLoading(false);
     }
   }, []);
+
+  const handleInDrawImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsText(file);
+      });
+
+      const guess = detectFormat(text);
+      if (guess === "unknown") {
+        showToast("error", "Error", "Unrecognized annotation format.");
+        return;
+      }
+
+      const img = new window.Image();
+      img.onload = () => {
+        const targetDims = { width: img.naturalWidth, height: img.naturalHeight };
+        const result = parseAnnotationFile(guess, text, targetDims, file.name);
+
+        confirmDialog({
+          message: `Found ${result.polygons.length + result.rectangles.length} shapes. Do you want to merge them with current shapes or replace them entirely?`,
+          header: "Import Annotations",
+          icon: "pi pi-info-circle",
+          acceptLabel: "Merge",
+          rejectLabel: "Replace",
+          acceptClassName: "!bg-lime-600 !border-lime-600 hover:!bg-lime-700",
+          rejectClassName: "!bg-amber-600 !border-amber-600 hover:!bg-amber-700 !text-white",
+          accept: () => {
+            setPolygons([...state.polygons, ...result.polygons]);
+            setRectangles([...state.rectangles, ...result.rectangles]);
+            showToast("success", "Success", "Annotations merged successfully.");
+            if (result.warnings.length > 0) showToast("warn", "Warning", "Import had warnings. See console.");
+            if (result.warnings.length > 0) console.warn(result.warnings);
+          },
+          reject: () => {
+            setPolygons(result.polygons);
+            setRectangles(result.rectangles);
+            showToast("success", "Success", "Annotations replaced successfully.");
+            if (result.warnings.length > 0) showToast("warn", "Warning", "Import had warnings. See console.");
+            if (result.warnings.length > 0) console.warn(result.warnings);
+          }
+        });
+      };
+      img.onerror = () => showToast("error", "Error", "Failed to read target image dimensions.");
+      img.src = state.imageSelected.url;
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error("Error reading annotation file:", err.message);
+      } else {
+        console.error("An unknown error occurred:", err);
+      }
+      showToast("error", "Error", "Failed to read annotation file.");
+    } finally {
+      e.target.value = "";
+    }
+  };
 
   const handleDeleteShape = (kind: "polygon" | "rectangle", index: number) => {
     if (kind === "polygon") {
@@ -253,9 +315,24 @@ const DrawPolygon = () => {
         onHide={() => setShowListOfPolygons(false)}
         dismissable
         header={
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-lime-700 dark:text-lime-400">
-            Shapes
-          </h2>
+          <div className="flex justify-between items-center w-full pr-6">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-normal text-lime-700 dark:text-lime-400">
+              Shapes
+            </h2>
+            <Button
+              className="p-button-sm !bg-amber-600 hover:!bg-amber-700 !border-none flex gap-2 items-center text-sm !rounded-xl"
+              onClick={() => document.getElementById('in-draw-import')?.click()}
+            >
+              <Upload size={16} /> Load
+            </Button>
+            <input
+              id="in-draw-import"
+              type="file"
+              accept=".json,.txt,.xml"
+              className="hidden"
+              onChange={handleInDrawImport}
+            />
+          </div>
         }
         className="polygon-list-sidebar side-menu !rounded-none md:!rounded-r-3xl !bg-white dark:!bg-black aboutDialog !w-full md:!w-[768px]"
         // className=" side-menu rounded-none md:rounded-r-3xl bg-metallic-brown aboutDialog w-full md:w-[768px]"
@@ -329,11 +406,10 @@ const DrawPolygon = () => {
 
                             <div className="p-button p-2 text-sm flex items-center justify-center gap-2 bg-fern-green text-naples-yellow aspect-square border-0 !rounded-full">
                               <span
-                                className={`pi ${
-                                  options.collapsed
+                                className={`pi ${options.collapsed
                                     ? "pi-chevron-down"
                                     : "pi-chevron-up"
-                                } `}
+                                  } `}
                               ></span>
                             </div>
                           </div>

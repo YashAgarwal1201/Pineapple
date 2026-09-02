@@ -25,33 +25,32 @@ const SuccessPage = () => {
     imageSelected,
     annotatedCanvasImage,
     polygons,
-    setAnnotatedCanvasImage,
-    setPolygons,
-    setSelectedImage,
+    rectangles,
     showToast,
+    clearSessionDb,
   } = usePineappleStore();
 
   const [loader, setLoader] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<boolean>(false);
 
+  const hasShapes = polygons.length > 0 || rectangles.length > 0;
+
   useEffect(() => {
-    if (imageSelected.url === "" || polygons.length < 1) {
+    if (imageSelected.url === "" || !hasShapes) {
       setLoading(true);
       setTimeout(() => navigate("/"), 750);
     } else {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const clearSessionStorageAndNavigate = async () => {
     try {
-      setPolygons([]);
-      setAnnotatedCanvasImage(null);
-      setSelectedImage("", "", "");
+      await clearSessionDb();
       resetColorIndex();
 
-      sessionStorage.removeItem("pineappleState");
       showToast("info", "Info", "Redirecting you to the home page");
       setTimeout(() => {
         startTransition(() => {
@@ -59,7 +58,7 @@ const SuccessPage = () => {
         });
       }, 2000);
     } catch (error) {
-      console.error("Error clearing sessionStorage:", error);
+      console.error("Error clearing session:", error);
     }
   };
 
@@ -78,29 +77,22 @@ const SuccessPage = () => {
         </div>
       ) : (
         <div
-          className={`h-full p-3 flex flex-col md:flex-row justify-center items-center gap-y-10 md:gap-y-auto text-naples-yellow bg-amber-50 dark:bg-stone-900 rounded-xl sm:rounded-2xl shadow-md transition-all duration-1000 transform ${
-            showContent
+          className={`h-full p-3 flex flex-col md:flex-row justify-center items-center gap-y-10 md:gap-y-auto text-naples-yellow bg-amber-50 dark:bg-stone-900 rounded-xl sm:rounded-2xl shadow-md transition-all duration-1000 transform ${showContent
               ? "translate-y-0 md:translate-x-0 opacity-100"
-              : "-translate-y-0 md:-translate-x-full opacity-0"
-          } relative`}
+              : "translate-y-0 md:-translate-x-full opacity-0"
+            } relative`}
         >
-          {/* <Button
-            icon={<ArrowLeft size={20} />}
-            title="go back button"
-            className={`aspect-square !absolute top-3 left-3 !bg-amber-400 hover:!bg-amber-500 !text-stone-900 dark:!bg-amber-500 dark:hover:!bg-amber-600 dark:!text-stone-900 !border-0 !rounded-full`}
-            onClick={() => window.history.go(-1)}
-          /> */}
           <div className="w-full md:w-1/2 h-auto md:h-full flex justify-center items-center">
-            <div className="w-[300px] sm:w-[350px] h-[300px] sm:h-[350px] relative">
+            <div className="w-75 sm:w-87.5 h-75 sm:h-87.5 relative">
               <img
                 src={"./logo.svg"}
                 alt=""
                 className="w-full h-full object-contain"
               />
-              <div className="!absolute right-16 top-28 sm:top-32">
+              <div className="absolute! right-16 top-28 sm:top-32">
                 <div className="p-5 md:p-7 bg-transparent rounded-full relative">
                   <span className="success-check pi pi-check w-12 h-12 flex justify-center items-center z-10 bg-lime-500 dark:bg-lime-400 rounded-full"></span>
-                  <div className="!absolute inset-0 flex items-center justify-center">
+                  <div className="absolute! inset-0 flex items-center justify-center">
                     <div className="w-16 h-16 border border-dashed border-lime-500 dark:border-lime-400 rounded-full animate-spin duration-5000"></div>
                   </div>
                 </div>
@@ -137,11 +129,11 @@ const SuccessPage = () => {
               </Button>
 
               <Button
-                disabled={polygons.length < 1 || loader}
+                disabled={!hasShapes || loader}
                 onClick={() => {
-                  console.log("Download data", polygons, annotatedCanvasImage);
                   downloadPolygonsData(
                     polygons,
+                    rectangles,
                     annotatedCanvasImage,
                     showToast,
                   );

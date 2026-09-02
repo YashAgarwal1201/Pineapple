@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import { Polygon, Rectangle } from "./interfaces";
+import { db } from "../db/db";
 
 // Define the store state type
 interface AppState {
@@ -17,13 +18,19 @@ interface AppState {
   polygons: Polygon[];
   annotatedCanvasImage: string | null;
   isSideMenuOpen: boolean;
-
   isFeedbackDialogOpen: boolean;
 
+  // Preferences
+  annotatorName: string;
+  crosshairCursor: boolean;
+
   // Actions
+  setAnnotatorName: (name: string) => void;
+  setCrosshairCursor: (enabled: boolean) => void;
   setToastRef: (toast: Toast) => void;
   setIsOptionSelected: (option: string | null) => void;
   setSelectedImage: (title: string, url: string, type: string) => void;
+  setImageFileToDb: (file: File | Blob, title: string, type: string) => Promise<void>;
   setRectangles: (rectangles: Rectangle[]) => void;
   setPolygons: (polygons: Polygon[]) => void;
   setAnnotatedCanvasImage: (dataUrl: string | null) => void;
@@ -37,6 +44,10 @@ interface AppState {
   closeSideMenu: () => void;
   openFeedbackDialog: () => void;
   closeFeedbackDialog: () => void;
+
+  // DB Actions
+  loadSessionFromDb: () => Promise<void>;
+  clearSessionDb: () => Promise<void>;
 }
 
 // Create the store
@@ -55,6 +66,10 @@ export const usePineappleStore = create<AppState>()(
       polygons: [],
       annotatedCanvasImage: null,
 
+      // Preferences
+      annotatorName: "Annotator",
+      crosshairCursor: true,
+
       // State for the side menu (open/close)
       isSideMenuOpen: false,
 
@@ -62,6 +77,8 @@ export const usePineappleStore = create<AppState>()(
       isFeedbackDialogOpen: false,
 
       // Actions
+      setAnnotatorName: (name) => set({ annotatorName: name }),
+      setCrosshairCursor: (enabled) => set({ crosshairCursor: enabled }),
       setToastRef: (toast: Toast) => set({ toast }),
 
       setIsOptionSelected: (option: string | null) =>
@@ -76,9 +93,41 @@ export const usePineappleStore = create<AppState>()(
           },
         }),
 
-      setRectangles: (rectangles: Rectangle[]) => set({ rectangles }),
+      setImageFileToDb: async (file: File | Blob, title: string, type: string) => {
+        const { imageSelected } = get();
+        if (imageSelected.url.startsWith("blob:")) {
+          URL.revokeObjectURL(imageSelected.url);
+        }
 
-      setPolygons: (polygons: Polygon[]) => set({ polygons }),
+        // Save to DB
+        const session = await db.sessions.get(1);
+        if (session) {
+          await db.sessions.update(1, { imageBlob: file, imageMeta: { title, type } });
+        } else {
+          await db.sessions.put({ id: 1, imageBlob: file, imageMeta: { title, type }, polygons: [], rectangles: [] });
+        }
+
+        const url = URL.createObjectURL(file);
+        set({
+          imageSelected: { title, type, url }
+        });
+      },
+
+      setRectangles: async (rectangles: Rectangle[]) => {
+        set({ rectangles });
+        const session = await db.sessions.get(1);
+        if (session) {
+          await db.sessions.update(1, { rectangles });
+        }
+      },
+
+      setPolygons: async (polygons: Polygon[]) => {
+        set({ polygons });
+        const session = await db.sessions.get(1);
+        if (session) {
+          await db.sessions.update(1, { polygons });
+        }
+      },
 
       setAnnotatedCanvasImage: (dataUrl: string | null) =>
         set({ annotatedCanvasImage: dataUrl }),
@@ -99,10 +148,47 @@ export const usePineappleStore = create<AppState>()(
       closeSideMenu: () => set({ isSideMenuOpen: false }),
       openFeedbackDialog: () => set({ isFeedbackDialogOpen: true }),
       closeFeedbackDialog: () => set({ isFeedbackDialogOpen: false }),
+
+      loadSessionFromDb: async () => {
+        const session = await db.sessions.get(1);
+        if (session) {
+          let url = "";
+          if (session.imageBlob) {
+            url = URL.createObjectURL(session.imageBlob);
+          }
+          set({
+            polygons: session.polygons || [],
+            rectangles: session.rectangles || [],
+            imageSelected: {
+              title: session.imageMeta?.title || "",
+              type: session.imageMeta?.type || "",
+              url,
+            }
+          });
+        }
+      },
+
+      clearSessionDb: async () => {
+        const { imageSelected } = get();
+        if (imageSelected.url.startsWith("blob:")) {
+          URL.revokeObjectURL(imageSelected.url);
+        }
+        await db.sessions.clear();
+        set({
+          polygons: [],
+          rectangles: [],
+          imageSelected: { title: "", url: "", type: "" },
+          annotatedCanvasImage: null
+        });
+      }
     }),
     {
-      name: "pineapple-storage", // storage key
-      storage: createJSONStorage(() => sessionStorage),
+      name: "pineapple-preferences",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        annotatorName: state.annotatorName,
+        crosshairCursor: state.crosshairCursor,
+      }),
     }
   )
 );

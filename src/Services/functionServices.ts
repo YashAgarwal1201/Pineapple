@@ -1,5 +1,5 @@
 // src/Services/functionServices.ts
-import { Polygon } from "./interfaces";
+import { Polygon, Rectangle } from "./interfaces";
 
 // ─── Annotation colors ────────────────────────────────────────────────────────
 
@@ -111,8 +111,16 @@ export const removeLabelPreset = (label: string): string[] => {
 
 // ─── Download ─────────────────────────────────────────────────────────────────
 
+/**
+ * Downloads the current session's annotations as a single JSON file, plus
+ * the rendered annotated image. The JSON is written as
+ * `{ polygons, rectangles }` — this is the same shape the import adapters
+ * (see importAdapters.ts) expect for a Pineapple-format import, so a
+ * downloaded file can be re-imported without any transformation.
+ */
 export const downloadPolygonsData = (
   polygons: Polygon[],
+  rectangles: Rectangle[],
   annotatedCanvasImage: string | null,
   showToast: (
     severity: "success" | "info" | "warn" | "error",
@@ -121,8 +129,8 @@ export const downloadPolygonsData = (
   ) => void,
 ) => {
   try {
-    if (polygons.length === 0) {
-      showToast("error", "Error", "No polygons data to download.");
+    if (polygons.length === 0 && rectangles.length === 0) {
+      showToast("error", "Error", "No annotation data to download.");
       return;
     }
 
@@ -132,7 +140,7 @@ export const downloadPolygonsData = (
     }
 
     // Download JSON
-    const jsonData = JSON.stringify(polygons, null, 2);
+    const jsonData = JSON.stringify({ polygons, rectangles }, null, 2);
     const jsonBlob = new Blob([jsonData], { type: "application/json" });
     const jsonAnchor = document.createElement("a");
     const jsonUrl = URL.createObjectURL(jsonBlob);
@@ -154,7 +162,7 @@ export const downloadPolygonsData = (
     showToast(
       "success",
       "Success",
-      "Polygons data and annotated image downloaded successfully.",
+      "Annotation data and annotated image downloaded successfully.",
     );
   } catch (error) {
     console.error("Error downloading annotation data:", error);
