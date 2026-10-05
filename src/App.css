@@ -91,3 +91,20 @@ a:hover,
     max-width: 80%;
   }
 }
+
+/* Global Dialog Styles */
+.p-dialog {
+  @apply rounded-3xl overflow-hidden shadow-2xl border-none;
+}
+.p-dialog-header {
+  @apply bg-amber-50 dark:bg-stone-900 border-b border-amber-200 dark:border-amber-800 px-5 py-4 font-heading text-amber-800 dark:text-amber-200;
+}
+.p-dialog-content {
+  @apply bg-amber-50 dark:bg-stone-900 px-5 py-4 font-content text-stone-700 dark:text-stone-300;
+}
+.p-dialog-footer {
+  @apply bg-amber-50 dark:bg-stone-900 border-t border-amber-200 dark:border-amber-800 px-5 py-3 flex justify-end gap-3;
+}
+.p-dialog-mask {
+  @apply backdrop-blur-sm bg-black/40;
+}

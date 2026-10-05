@@ -46,9 +46,8 @@ const UploadImageOptionsDialog = ({
       dismissableMask={true}
       className={`${
         openCamera ? "h-[90dvh] sm:h-auto" : "h-auto"
-      } w-full max-w-sm absolute bottom-0 md:bottom-auto m-0! border-0! bg-white! dark:bg-black! rounded-3xl! overflow-y-auto text-stone-700 dark:text-stone-300`}
+      } w-full max-w-sm absolute bottom-0 md:bottom-auto m-0! overflow-y-auto`}
       position={isSmallScreen ? "bottom" : "center"}
-      maskClassName="backdrop-blur"
     >
       <div className="w-full h-full flex items-center justify-center">
         <div className="w-full xs:max-w-[90%] flex flex-col flex-wrap justify-center items-center gap-y-1 font-content">

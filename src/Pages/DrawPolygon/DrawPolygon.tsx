@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import PineappleLoader from "../../Components/Loaders/Loaders";
 import PolygonDrawer from "../../Components/PolygonDrawer/PolygonDrawer";
 import Layout from "../../Layout/Layout";
-import { resetColorIndex } from "../../Services/functionServices";
+import { getErrorMessage, resetColorIndex } from "../../Services/functionServices";
 import { detectFormat, parseAnnotationFile } from "../../Services/importAdapters";
 import { Polygon, Rectangle } from "../../Services/interfaces";
 import { usePineappleStore } from "../../Services/zustand";
@@ -91,12 +91,8 @@ const DrawPolygon = () => {
       img.onerror = () => showToast("error", "Error", "Failed to read target image dimensions.");
       img.src = state.imageSelected.url;
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error("Error reading annotation file:", err.message);
-      } else {
-        console.error("An unknown error occurred:", err);
-      }
-      showToast("error", "Error", "Failed to read annotation file.");
+      console.error("Error reading annotation file:", err);
+      showToast("error", "Error", `Failed to read annotation file: ${getErrorMessage(err)}`);
     } finally {
       e.target.value = "";
     }

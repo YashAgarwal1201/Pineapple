@@ -1,4 +1,5 @@
 // src/Services/functionServices.ts
+import { exportToCOCO, exportToYOLO } from "./exportAdapters";
 import { Polygon, Rectangle } from "./interfaces";
 
 // ─── Annotation colors ────────────────────────────────────────────────────────
@@ -56,8 +57,13 @@ export const calculateBBox = (
 
 // ─── Label presets ────────────────────────────────────────────────────────────
 
-const PRESET_STORAGE_KEY = "pineapple-label-presets";
+const PRESET_STORAGE_KEY = "pineapple_label_presets";
 const MAX_PRESETS = 30;
+
+export const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) return error.message;
+  return String(error);
+};
 
 /**
  * Returns the current list of saved label presets from localStorage.
@@ -111,17 +117,26 @@ export const removeLabelPreset = (label: string): string[] => {
 
 // ─── Download ─────────────────────────────────────────────────────────────────
 
+const getImageDimensions = (url: string): Promise<{ width: number; height: number }> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+    img.onerror = () => reject(new Error("Failed to load image"));
+    img.src = url;
+  });
+};
+
 /**
- * Downloads the current session's annotations as a single JSON file, plus
- * the rendered annotated image. The JSON is written as
- * `{ polygons, rectangles }` — this is the same shape the import adapters
- * (see importAdapters.ts) expect for a Pineapple-format import, so a
- * downloaded file can be re-imported without any transformation.
+ * Downloads the current session's annotations in the specified format,
+ * plus the rendered annotated image.
  */
-export const downloadPolygonsData = (
+export const downloadPolygonsData = async (
+  format: "pineapple" | "coco" | "yolo",
   polygons: Polygon[],
   rectangles: Rectangle[],
   annotatedCanvasImage: string | null,
+  imageMeta: { title: string; type: string; url: string } | null,
+  annotatorName: string,
   showToast: (
     severity: "success" | "info" | "warn" | "error",
     summary: "Success" | "Info" | "Warning" | "Error",
@@ -139,30 +154,45 @@ export const downloadPolygonsData = (
       return;
     }
 
-    // Download JSON
-    const jsonData = JSON.stringify({ polygons, rectangles }, null, 2);
-    const jsonBlob = new Blob([jsonData], { type: "application/json" });
-    const jsonAnchor = document.createElement("a");
-    const jsonUrl = URL.createObjectURL(jsonBlob);
-    jsonAnchor.href = jsonUrl;
-    jsonAnchor.download = "annotations_data.json";
-    document.body.appendChild(jsonAnchor);
-    jsonAnchor.click();
-    document.body.removeChild(jsonAnchor);
-    URL.revokeObjectURL(jsonUrl);
+    if (!imageMeta?.url) {
+      showToast("error", "Error", "No image source found.");
+      return;
+    }
+
+    const downloadFile = (blob: Blob, filename: string) => {
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+      URL.revokeObjectURL(url);
+    };
+
+    const dims = await getImageDimensions(imageMeta.url);
+
+    if (format === "coco") {
+      const cocoStr = exportToCOCO(polygons, rectangles, imageMeta, dims, annotatorName);
+      downloadFile(new Blob([cocoStr], { type: "application/json" }), "coco_annotations.json");
+    } else if (format === "yolo") {
+      const yoloData = exportToYOLO(polygons, rectangles, dims);
+      downloadFile(new Blob([yoloData.annotationsTxt], { type: "text/plain" }), "annotations.txt");
+      downloadFile(new Blob([yoloData.classesTxt], { type: "text/plain" }), "classes.txt");
+    } else {
+      // Pineapple JSON
+      const jsonData = JSON.stringify({ polygons, rectangles }, null, 2);
+      downloadFile(new Blob([jsonData], { type: "application/json" }), "annotations_data.json");
+    }
 
     // Download annotated image
-    const imgAnchor = document.createElement("a");
-    imgAnchor.href = annotatedCanvasImage;
-    imgAnchor.download = "annotated_image.png";
-    document.body.appendChild(imgAnchor);
-    imgAnchor.click();
-    document.body.removeChild(imgAnchor);
+    const imgBlob = await (await fetch(annotatedCanvasImage)).blob();
+    downloadFile(imgBlob, "annotated_image.png");
 
     showToast(
       "success",
       "Success",
-      "Annotation data and annotated image downloaded successfully.",
+      `Annotation data (${format}) and annotated image downloaded successfully.`,
     );
   } catch (error) {
     console.error("Error downloading annotation data:", error);

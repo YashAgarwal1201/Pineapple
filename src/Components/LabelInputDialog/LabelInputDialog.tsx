@@ -110,20 +110,6 @@ const LabelInputDialog = ({
       draggable={false}
       resizable={false}
       className="w-[92vw] max-w-md"
-      pt={{
-        root: { className: "!rounded-2xl overflow-hidden" },
-        header: {
-          className:
-            "bg-amber-50 dark:bg-stone-900 border-b border-amber-200 dark:border-amber-800 px-5 py-4",
-        },
-        content: {
-          className: "bg-amber-50 dark:bg-stone-900 px-5 py-4",
-        },
-        footer: {
-          className:
-            "bg-amber-50 dark:bg-stone-900 border-t border-amber-200 dark:border-amber-800 px-5 py-3",
-        },
-      }}
       footer={
         <div className="flex items-center justify-end gap-2">
           <Button

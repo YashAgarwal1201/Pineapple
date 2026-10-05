@@ -35,14 +35,16 @@ Development is organized by feature categories.
 - [x] Polish: Add mode-aware hint text for first-time users
 
 ## Import System
-- [ ] Add "Load annotations" option on upload page (accepts JSON export schema)
-- [ ] Validate JSON and load polygons/rectangles into store
-- [ ] Navigate to `/draw` upon successful load
+- [x] Add "Load annotations" option on upload page (accepts JSON export schema)
+- [x] Validate JSON and load polygons/rectangles into store
+- [x] Navigate to `/draw` upon successful load
+- [x] Support COCO JSON import and auto-detect formats
+- [x] Full session state backup export and import
 
 ## Export Formats
-- [ ] Implement COCO JSON format export
-- [ ] Implement YOLO `.txt` format export
-- [ ] Ensure rectangles map cleanly to COCO/YOLO bounding boxes
+- [x] Implement COCO JSON format export
+- [x] Implement YOLO `.txt` format export
+- [x] Ensure rectangles map cleanly to COCO/YOLO bounding boxes
 
 ## Canvas-Side Point Editing
 - [ ] Hover/select/drag existing polygon points (drag-point gesture tier)
@@ -54,5 +56,5 @@ Development is organized by feature categories.
 ## Backlog / Ideas
 - [ ] Multiple images per session, ZIP export
 - [ ] Export format options for Pascal VOC
-- [ ] Crosshair cursor + live edge preview while drawing
+- [x] Crosshair cursor toggle in Settings
 - [ ] Annotation statistics panel on the Preview page

@@ -12,6 +12,7 @@ import {
   LIME_PRIMARY_BTN_STYLES,
   RED_SECONDARY_BTN_STYLES,
 } from "../../Services/constants";
+import { getErrorMessage } from "../../Services/functionServices";
 import { FeedbackFormType } from "../../Services/interfaces";
 import { usePineappleStore } from "../../Services/zustand";
 
@@ -69,12 +70,12 @@ const FeedbackDialog = () => {
       } else {
         showToast("error", "Error", "Error submitting form");
         setLoader(false);
-        console.error(response);
+        console.error("Feedback submit response error:", response);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       setLoader(false);
-      showToast("error", "Error", "Unexpected error occurred");
-      console.error("Error:", error);
+      console.error("Error submitting feedback:", error);
+      showToast("error", "Error", `Unexpected error occurred: ${getErrorMessage(error)}`);
     }
   };
 

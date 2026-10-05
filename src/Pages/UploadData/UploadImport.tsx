@@ -15,6 +15,7 @@ import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
 
+import FormatGuide from "../../Components/FormatGuide/FormatGuide";
 import Layout from "../../Layout/Layout";
 import { RED_SECONDARY_BTN_STYLES } from "../../Services/constants";
 import {
@@ -66,6 +67,8 @@ const UploadImport = () => {
     usePineappleStore();
 
   const [showContent, setShowContent] = useState<boolean>(false);
+  const [showFormatGuide, setShowFormatGuide] = useState<boolean>(false);
+  
   useEffect(() => {
     setShowContent(true);
   }, []);
@@ -167,6 +170,7 @@ const UploadImport = () => {
 
   return (
     <Layout>
+      <FormatGuide visible={showFormatGuide} onHide={() => setShowFormatGuide(false)} />
       <div
         className={`h-full p-3 sm:p-4 lg:p-6 xl:p-8 overflow-y-auto flex flex-col bg-amber-50 dark:bg-stone-900 rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-md transition-all duration-1000 transform ${
           showContent
@@ -412,6 +416,12 @@ const UploadImport = () => {
                   </li>
                 ))}
               </ul>
+              <Button
+                onClick={() => setShowFormatGuide(true)}
+                className="mt-4 w-full p-button-outlined p-button-secondary !border-blue-300 dark:!border-blue-700 !text-blue-700 dark:!text-blue-300 font-content text-sm !rounded-xl"
+              >
+                View Format Guide
+              </Button>
             </div>
           </div>
         </div>

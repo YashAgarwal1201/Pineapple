@@ -3,6 +3,7 @@ import { startTransition, useEffect, useState } from "react";
 
 import { Download, RefreshCcw } from "lucide-react";
 import { Button } from "primereact/button";
+import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
 
 import PineappleLoader from "../../Components/Loaders/Loaders";
@@ -13,6 +14,7 @@ import {
 } from "../../Services/constants";
 import {
   downloadPolygonsData,
+  getErrorMessage,
   resetColorIndex,
 } from "../../Services/functionServices";
 import "./SuccessPage.scss";
@@ -28,11 +30,19 @@ const SuccessPage = () => {
     rectangles,
     showToast,
     clearSessionDb,
+    annotatorName,
   } = usePineappleStore();
 
   const [loader, setLoader] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<boolean>(false);
+  const [format, setFormat] = useState<"pineapple" | "coco" | "yolo">("pineapple");
+
+  const FORMAT_OPTIONS = [
+    { label: "Pineapple JSON", value: "pineapple" },
+    { label: "COCO JSON", value: "coco" },
+    { label: "YOLO (.txt)", value: "yolo" },
+  ];
 
   const hasShapes = polygons.length > 0 || rectangles.length > 0;
 
@@ -54,11 +64,11 @@ const SuccessPage = () => {
       showToast("info", "Info", "Redirecting you to the home page");
       setTimeout(() => {
         startTransition(() => {
-          navigate("/");
         });
       }, 2000);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error clearing session:", error);
+      showToast("error", "Error", `Failed to clear session: ${getErrorMessage(error)}`);
     }
   };
 
@@ -107,7 +117,7 @@ const SuccessPage = () => {
               </span>{" "}
               Project Pineapple
             </h1>
-            <div className="w-full flex flex-col xs:flex-row justify-center items-center gap-1 font-content">
+            <div className="w-full flex flex-col xs:flex-row justify-center items-center gap-2 font-content">
               <Button
                 loading={loader}
                 onClick={async () => {
@@ -118,38 +128,46 @@ const SuccessPage = () => {
       w-full xs:w-auto
       flex items-center justify-center xs:justify-start gap-x-2
       text-sm sm:text-base !font-content xs:flex-shrink-0
-  
-      !rounded-tl-2xl !rounded-tr-2xl !rounded-bl-sm !rounded-br-sm
-     
-      xs:!rounded-tl-2xl xs:!rounded-bl-2xl xs:!rounded-tr-sm xs:!rounded-br-sm
+      !rounded-xl
     `}
               >
                 <RefreshCcw size={16} />
                 <span>Start again</span>
               </Button>
 
-              <Button
-                disabled={!hasShapes || loader}
-                onClick={() => {
-                  downloadPolygonsData(
-                    polygons,
-                    rectangles,
-                    annotatedCanvasImage,
-                    showToast,
-                  );
-                }}
-                className={`${AMBER_PRIMARY_BTN_STYLES}
-      w-full xs:w-auto
-      flex items-center justify-center xs:justify-start gap-x-2
-      text-sm sm:text-base !font-content xs:flex-shrink-0
-      
-      !rounded-bl-2xl !rounded-br-2xl !rounded-tl-sm !rounded-tr-sm      
-      xs:!rounded-tr-2xl xs:!rounded-br-2xl xs:!rounded-tl-sm xs:!rounded-bl-sm
-    `}
-              >
-                <Download size={16} />
-                <span>Download data</span>
-              </Button>
+              <div className="flex items-center gap-1 w-full xs:w-auto">
+                <Dropdown
+                  value={format}
+                  options={FORMAT_OPTIONS}
+                  onChange={(e) => setFormat(e.value)}
+                  className="w-full xs:w-40 !rounded-xl text-sm sm:text-base border-amber-300 dark:border-amber-700"
+                />
+                <Button
+                  disabled={!hasShapes || loader}
+                  onClick={async () => {
+                    setLoader(true);
+                    await downloadPolygonsData(
+                      format,
+                      polygons,
+                      rectangles,
+                      annotatedCanvasImage,
+                      imageSelected,
+                      annotatorName,
+                      showToast,
+                    );
+                    setLoader(false);
+                  }}
+                  className={`${AMBER_PRIMARY_BTN_STYLES}
+        w-full xs:w-auto
+        flex items-center justify-center xs:justify-start gap-x-2
+        text-sm sm:text-base !font-content xs:flex-shrink-0
+        !rounded-xl
+      `}
+                >
+                  <Download size={16} />
+                  <span>Download</span>
+                </Button>
+              </div>
             </div>
           </div>
         </div>

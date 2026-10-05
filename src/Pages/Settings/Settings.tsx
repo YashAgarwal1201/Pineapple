@@ -8,8 +8,10 @@ import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
 import { useNavigate } from "react-router-dom";
 
+import FormatGuide from "../../Components/FormatGuide/FormatGuide";
 import Layout from "../../Layout/Layout";
-import { resetColorIndex } from "../../Services/functionServices";
+import { exportFullBackup, importFullBackup } from "../../Services/backupServices";
+import { getErrorMessage, resetColorIndex } from "../../Services/functionServices";
 import { useThemeStore } from "../../Services/themeStore";
 import { usePineappleStore } from "../../Services/zustand";
 
@@ -17,6 +19,7 @@ const Settings = () => {
   const navigate = useNavigate();
   const [showContent, setShowContent] = useState<boolean>(false);
   const [storageUsage, setStorageUsage] = useState<string>("Calculating...");
+  const [showFormatGuide, setShowFormatGuide] = useState<boolean>(false);
 
   const {
     annotatorName,
@@ -50,12 +53,43 @@ const Settings = () => {
     { label: "Dark", value: "dark" },
   ];
 
-  const handleExport = () => {
-    showToast("info", "Info", "Export backup feature coming soon!");
+  const handleExport = async () => {
+    try {
+      await exportFullBackup();
+      showToast("success", "Success", "Backup exported successfully.");
+    } catch (e: unknown) {
+      console.error("Failed to export backup:", e);
+      showToast("error", "Error", `Failed to export backup: ${getErrorMessage(e)}`);
+    }
   };
 
   const handleImport = () => {
-    showToast("info", "Info", "Import backup feature coming soon!");
+    confirmDialog({
+      message: "Please select a valid pineapple-backup.json file. Warning: Importing a full backup will completely overwrite your current active image, annotations, and preferences.",
+      header: "Import Full Backup",
+      icon: "pi pi-exclamation-triangle",
+      acceptLabel: "Select File",
+      acceptClassName: "!bg-amber-600 !border-amber-600 hover:!bg-amber-700",
+      rejectClassName: "!bg-transparent !border-stone-300 !text-stone-700 dark:!text-stone-300",
+      accept: () => {
+        document.getElementById("settings-import-backup")?.click();
+      }
+    });
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      await importFullBackup(file);
+      showToast("success", "Success", "Backup restored successfully!");
+    } catch (error: unknown) {
+      console.error("Failed to restore backup:", error);
+      showToast("error", "Error", `This doesn't look like a valid Pineapple backup file: ${getErrorMessage(error)}`);
+    } finally {
+      e.target.value = "";
+    }
   };
 
   const confirmReset = () => {
@@ -74,9 +108,9 @@ const Settings = () => {
           startTransition(() => {
             navigate("/");
           });
-        } catch (error) {
+        } catch (error: unknown) {
           console.error("Error resetting app:", error);
-          showToast("error", "Error", "Failed to reset app. See console.");
+          showToast("error", "Error", `Failed to reset app: ${getErrorMessage(error)}`);
         }
       },
     });
@@ -84,6 +118,14 @@ const Settings = () => {
 
   return (
     <Layout>
+      <FormatGuide visible={showFormatGuide} onHide={() => setShowFormatGuide(false)} />
+      <input
+        id="settings-import-backup"
+        type="file"
+        accept=".json"
+        className="hidden"
+        onChange={handleFileSelect}
+      />
       <div
         className={`h-full p-3 sm:p-4 lg:p-6 xl:p-8 overflow-y-auto flex flex-col bg-amber-50 dark:bg-stone-900 rounded-xl sm:rounded-2xl lg:rounded-3xl transition-all duration-1000 transform ${showContent ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
           }`}
@@ -195,13 +237,21 @@ const Settings = () => {
                   <span className="font-content font-bold text-stone-700 dark:text-stone-300 text-sm sm:text-base">Import session</span>
                   <span className="font-content text-xs sm:text-sm text-stone-500 dark:text-stone-400">Restore from a previously exported backup file.</span>
                 </div>
-                <Button
-                  onClick={handleImport}
-                  className="w-full sm:w-auto p-button-outlined p-button-secondary !border-stone-300 dark:!border-stone-600 !text-stone-700 dark:!text-stone-300 font-content text-sm !rounded-xl"
-                >
-                  <Upload size={16} className="mr-2" />
-                  Import...
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Button
+                    onClick={() => setShowFormatGuide(true)}
+                    className="w-full sm:w-auto p-button-text !text-amber-600 dark:!text-amber-400 font-content text-sm hover:underline"
+                  >
+                    View Format Guide
+                  </Button>
+                  <Button
+                    onClick={handleImport}
+                    className="w-full sm:w-auto p-button-outlined p-button-secondary !border-stone-300 dark:!border-stone-600 !text-stone-700 dark:!text-stone-300 font-content text-sm !rounded-xl"
+                  >
+                    <Upload size={16} className="mr-2" />
+                    Import...
+                  </Button>
+                </div>
               </div>
 
               {/* Reset App */}

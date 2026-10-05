@@ -7,6 +7,7 @@ import { Image as PImage } from "primereact/image";
 import Webcam from "react-webcam";
 
 import { aspectRatios } from "../../Services/constants";
+import { getErrorMessage } from "../../Services/functionServices";
 import { usePineappleStore } from "../../Services/zustand";
 
 const CaptureImageLibrary = ({ exitCamera, onCapture }) => {
@@ -170,9 +171,9 @@ const CaptureImageLibrary = ({ exitCamera, onCapture }) => {
         setShowImagePreview(true);
         showToast("success", "Success", "Image captured");
       }
-    } catch (error) {
-      console.log(error);
-      showToast("error", "Error", "OOPS an error has occured with this method");
+    } catch (error: unknown) {
+      console.error("Capture image error:", error);
+      showToast("error", "Error", `An error has occurred: ${getErrorMessage(error)}`);
     }
   }, [webcamRef, setSelectedImage, showToast, selectedAspectRatio]);
 
